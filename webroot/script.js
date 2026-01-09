@@ -51,27 +51,88 @@ const VARIANTS = {
 const FLOPPY1280_DEVICES = ['a25x', 'a33x', 'a53x', 'm33x', 'm34x', 'gta4xls', 'a26xs'];
 
 async function init() {
-    // Navigation Logic
     const navItems = document.querySelectorAll('.nav-item');
-    const tabContents = document.querySelectorAll('.tab-content');
+    const sliderTrack = document.getElementById('slider-track');
+    const TAB_COUNT = 4; // Status, Features, Tweaks, About
 
-    navItems.forEach(item => {
+    function updateSlide(index) {
+        // Update Bottom Nav
+        navItems.forEach((nav, i) => {
+            if (i === index) nav.classList.add('active');
+            else nav.classList.remove('active');
+        });
+
+        // Slide Track
+        // 0 -> 0%, 1 -> -25%, 2 -> -50%, 3 -> -75%
+        const percentage = index * -25;
+        sliderTrack.style.transform = `translateX(${percentage}%)`;
+    }
+
+    navItems.forEach((item, index) => {
         item.addEventListener('click', () => {
-            // Deactivate all
-            navItems.forEach(nav => nav.classList.remove('active'));
-            tabContents.forEach(tab => tab.classList.add('hidden'));
-            tabContents.forEach(tab => tab.classList.remove('active'));
-
-            // Activate clicked
-            item.classList.add('active');
-            const targetId = item.getAttribute('data-tab');
-            const targetTab = document.getElementById(targetId);
-            if (targetTab) {
-                targetTab.classList.remove('hidden');
-                targetTab.classList.add('active');
-            }
+            updateSlide(index);
         });
     });
+
+    // Touch / Swipe Logic
+    let startX = 0;
+    let currentX = 0;
+    let isDragging = false;
+    let currentIndex = 0;
+
+    const minSwipeDistance = 50; // px
+
+    // Attach to slider container or document
+    const sliderContainer = document.querySelector('.slider-container');
+
+    sliderContainer.addEventListener('touchstart', (e) => {
+        startX = e.touches[0].clientX;
+        isDragging = true;
+        sliderTrack.style.transition = 'none'; // Disable transition for direct follow
+    }, { passive: true });
+
+    sliderContainer.addEventListener('touchmove', (e) => {
+        if (!isDragging) return;
+        currentX = e.touches[0].clientX;
+        const diff = currentX - startX;
+
+        // Calculate resistance or limit
+        // Current translate percentage
+        const baseTranslate = currentIndex * -25; // %
+        // Convert diff to percentage of container width
+        const containerWidth = sliderContainer.offsetWidth;
+        const diffPercent = (diff / containerWidth) * 100 / 4; // /4 because track is 400%
+
+        let newTranslate = baseTranslate + diffPercent;
+
+        // Form boundaries with resistance
+        if (newTranslate > 0) newTranslate = newTranslate * 0.3;
+        // Max negative is -75% (3 * -25)
+        if (newTranslate < -75) newTranslate = -75 + (newTranslate + 75) * 0.3;
+
+        sliderTrack.style.transform = `translateX(${newTranslate}%)`;
+    }, { passive: true });
+
+    sliderContainer.addEventListener('touchend', (e) => {
+        if (!isDragging) return;
+        isDragging = false;
+        sliderTrack.style.transition = 'transform 0.3s cubic-bezier(0.2, 0, 0, 1)'; // Restore transition
+
+        const diff = currentX - startX;
+        // Determine whether to change slide
+        if (Math.abs(diff) > minSwipeDistance) {
+            if (diff < 0 && currentIndex < TAB_COUNT - 1) {
+                currentIndex++;
+            } else if (diff > 0 && currentIndex > 0) {
+                currentIndex--;
+            }
+        }
+
+        updateSlide(currentIndex);
+    });
+
+    // Sync state on init if needed (defaults to 0)
+    updateSlide(0);
 
     const statusCard = document.getElementById('status-card');
     const errorCard = document.getElementById('error-card');
@@ -92,7 +153,17 @@ async function init() {
         const displayName = deviceModel ? `${deviceModel} (${deviceName})` : deviceName;
         deviceEl.textContent = displayName;
 
-        if (FLOPPY1280_DEVICES.includes(deviceName)) {
+        // Theme Logic
+        const TRINKET_DEVICES = ['ginkgo', 'willow', 'sm6125', 'trinket']; // FloppyTrinketMi family
+        const deviceCode = (deviceName || '').toLowerCase();
+
+        // Check if device is in Trinket list
+        const isTrinket = TRINKET_DEVICES.some(code => deviceCode.includes(code));
+
+        if (isTrinket) {
+            document.body.classList.add('theme-orange');
+            if (subtitleEl) subtitleEl.textContent = "Managing: FloppyTrinketMi";
+        } else if (FLOPPY1280_DEVICES.includes(deviceName)) {
             // Apply "Exynos Blue" specific styling if needed via class
             document.body.classList.add('theme-exynos-blue');
             if (subtitleEl) subtitleEl.textContent = 'Managing: Floppy1280';

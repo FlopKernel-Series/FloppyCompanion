@@ -16,19 +16,45 @@
     --md-sys-shape-corner-medium: 12px;
 }
 
+--md-sys-color-primary: #b6c4ff;
+/* ... existing dark blue ... */
+/* ... */
+}
+
+/* Theme: Orange (FloppyTrinketMi) */
+body.theme-orange {
+    --md-sys-color-primary: #9c4100;
+    --md-sys-color-on-primary: #ffffff;
+    --md-sys-color-primary-container: #ffdbcc;
+    --md-sys-color-on-primary-container: #351000;
+    --md-sys-color-secondary-container: #ffdbcc;
+    --md-sys-color-on-secondary-container: #351000;
+}
+
 @media (prefers-color-scheme: dark) {
     :root {
         --md-sys-color-primary: #b6c4ff;
         --md-sys-color-on-primary: #00287d;
         --md-sys-color-primary-container: #003db2;
         --md-sys-color-on-primary-container: #dce1ff;
-        --md-sys-color-secondary-container: #003db2;
-        --md-sys-color-on-secondary-container: #dce1ff;
+        /* Updated Pill Color: Use Primary Light Blue for background */
+        --md-sys-color-secondary-container: #b6c4ff;
+        /* Use Deep Blue for icon/text on the light pill */
+        --md-sys-color-on-secondary-container: #00287d;
         --md-sys-color-surface: #191c1a;
         --md-sys-color-on-surface: #e1e3e0;
         --md-sys-color-surface-variant: #444745;
         --md-sys-color-on-surface-variant: #c4c7c5;
         --md-sys-color-outline: #8e918f;
+    }
+
+    body.theme-orange {
+        --md-sys-color-primary: #ffb68f;
+        --md-sys-color-on-primary: #532200;
+        --md-sys-color-primary-container: #763300;
+        --md-sys-color-on-primary-container: #ffdbcc;
+        --md-sys-color-secondary-container: #763300;
+        --md-sys-color-on-secondary-container: #ffdbcc;
     }
 }
 
@@ -104,6 +130,31 @@ body {
     max-width: 600px;
     margin: 0 auto;
     /* Center the container content */
+}
+
+/* Slider Layout */
+.slider-container {
+    width: 100%;
+    overflow: hidden;
+}
+
+.slider-track {
+    display: flex;
+    width: 400%;
+    /* 4 Tabs */
+    transition: transform 0.3s cubic-bezier(0.2, 0, 0, 1);
+    /* Material Decelerate Easing */
+}
+
+.tab-content {
+    width: 25%;
+    /* Each tab is 25% of track (100% of container) */
+    flex-shrink: 0;
+}
+
+.tab-content.hidden {
+    display: block !important;
+    /* Override utility if present */
 }
 
 /* Bottom Navigation */
