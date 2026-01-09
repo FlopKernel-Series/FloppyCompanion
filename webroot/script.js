@@ -142,21 +142,24 @@ async function init() {
     const deviceName = await exec('cat /sys/kernel/sec_detect/device_name');
     const deviceModel = await exec('cat /sys/kernel/sec_detect/device_model');
 
+    let isTrinketMi = false;
+    let is1280 = false;
+
     if (deviceName) {
         const displayName = deviceModel ? `${deviceModel} (${deviceName})` : deviceName;
         deviceEl.textContent = displayName;
 
-        // Theme Logic
+        // Theme & Identification Logic
         const TRINKET_DEVICES = ['ginkgo', 'willow', 'sm6125', 'trinket']; // FloppyTrinketMi family
         const deviceCode = (deviceName || '').toLowerCase();
 
-        // Check if device is in Trinket list
-        const isTrinket = TRINKET_DEVICES.some(code => deviceCode.includes(code));
+        isTrinketMi = TRINKET_DEVICES.some(code => deviceCode.includes(code));
+        is1280 = FLOPPY1280_DEVICES.includes(deviceName);
 
-        if (isTrinket) {
+        if (isTrinketMi) {
             document.body.classList.add('theme-orange');
             if (subtitleEl) subtitleEl.textContent = "Managing: FloppyTrinketMi";
-        } else if (FLOPPY1280_DEVICES.includes(deviceName)) {
+        } else if (is1280) {
             // Apply "Exynos Blue" specific styling if needed via class
             document.body.classList.add('theme-exynos-blue');
             if (subtitleEl) subtitleEl.textContent = 'Managing: Floppy1280';
@@ -165,6 +168,28 @@ async function init() {
         }
     } else {
         deviceEl.textContent = 'Unknown';
+    }
+
+    // --- Device Specific Features ---
+
+    // AOSP Mode (Floppy1280 Only)
+    if (is1280) {
+        const rowAosp = document.getElementById('row-aosp-mode');
+        const valAosp = document.getElementById('val-aosp-mode');
+
+        if (rowAosp && valAosp) {
+            try {
+                const cmdline = await exec('cat /proc/cmdline');
+                if (cmdline) {
+                    // Check for aosp_mode=1
+                    const isAosp = cmdline.includes('aosp_mode=1');
+                    valAosp.textContent = isAosp ? 'Yes' : 'No';
+                    rowAosp.classList.remove('hidden');
+                }
+            } catch (err) {
+                console.error('Failed to check AOSP Mode', err);
+            }
+        }
     }
 
     // Setup Exit Button
