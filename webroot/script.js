@@ -397,10 +397,9 @@ async function init() {
     }
 
     async function runBackend(action, ...args) {
-        const scriptPath = '/data/adb/modules/floppy_companion/backend.sh';
-
+        const scriptPath = '/data/adb/modules/floppy_companion/features_backend.sh';
         let cmd = `sh "${scriptPath}" ${action}`;
-        if (args.length) {
+        if (args.length > 0) {
             cmd += ' "' + args.join('" "') + '"';
         }
 
@@ -734,6 +733,31 @@ async function init() {
             logToModal(res);
 
             if (res.includes("Success")) {
+                logToModal("\nPersisting changes...");
+
+                // Persist changes to /cache/fk_feat
+                for (const [key, val] of Object.entries(pendingChanges)) {
+                    // Use currentSchema which is set globally in renderFeatures
+                    const feature = currentSchema.find(f => f.key === key);
+
+                    if (feature && feature.save) {
+                        try {
+                            let pRes;
+                            if (val === '0') {
+                                // Disabled: Remove from cache entirely
+                                pRes = await exec(`sh /data/adb/modules/floppy_companion/persistence.sh remove "${key}"`);
+                                logToModal(`Removed ${key}: ${pRes}`);
+                            } else {
+                                // Enabled: Save to cache
+                                pRes = await exec(`sh /data/adb/modules/floppy_companion/persistence.sh save "${key}" "${val}" "${feature.type}"`);
+                                logToModal(`Saved ${key}: ${pRes}`);
+                            }
+                        } catch (pe) {
+                            logToModal(`Failed to persist ${key}: ${pe.message}`);
+                        }
+                    }
+                }
+
                 logToModal("\nAll done! Please reboot.");
                 modalClose.classList.remove('hidden');
                 fabApply.style.display = 'none';

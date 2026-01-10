@@ -37,20 +37,22 @@
                     "experimental": false
                 }
             ],
-            "warnIfMismatch": true
+            "save": true
         },
         {
             "key": "force_perm",
             "title": "Force Permissive",
             "type": "toggle",
             "desc": "Force SELinux Permissive mode. For developers.",
-            "experimental": true
+            "experimental": true,
+            "save": true
         },
         {
             "key": "ems_efficient",
             "title": "EMS Efficient Mode",
             "type": "toggle",
-            "desc": "Enable EMS efficient scheduler mode. Reduces performance and improves battery."
+            "desc": "Enable EMS efficient scheduler mode. Reduces performance and improves battery.",
+            "save": true
         },
         {
             "key": "aosp_mode",
