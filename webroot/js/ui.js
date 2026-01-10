@@ -6,6 +6,25 @@ let currentIndex = 0;
 function updateSlide(index) {
     currentIndex = index;
 
+    // --- Theme Toggle Visibility ---
+    const themeBtn = document.getElementById('theme-toggle');
+    if (themeBtn) {
+        // 'About' tab is index 3
+        if (index === 3) {
+            themeBtn.classList.remove('hidden');
+            // Small delay to allow display:block to apply before opacity transition
+            setTimeout(() => themeBtn.style.opacity = '1', 10);
+            themeBtn.style.pointerEvents = 'auto';
+        } else {
+            themeBtn.style.opacity = '0';
+            themeBtn.style.pointerEvents = 'none';
+            // Wait for transition to finish before hiding
+            setTimeout(() => {
+                if (currentIndex !== 3) themeBtn.classList.add('hidden');
+            }, 300);
+        }
+    }
+
     // Update Bottom Nav
     const navItems = document.querySelectorAll('.nav-item');
     navItems.forEach((nav, i) => {
