@@ -72,6 +72,7 @@ body.theme-orange {
 
 /* Feature Cards */
 .feature-card {
+    position: relative;
     background-color: var(--md-sys-color-surface-container);
     border-radius: 24px;
     padding: 20px;
@@ -562,15 +563,21 @@ body {
 }
 
 .experimental-badge {
-    display: inline-block;
-    background: var(--md-sys-color-error);
-    color: var(--md-sys-color-on-error);
-    font-size: 10px;
-    padding: 2px 6px;
-    border-radius: 4px;
-    margin-left: 8px;
-    text-transform: uppercase;
-    font-weight: 600;
+    position: absolute;
+    display: inline-flex;
+    align-items: center;
+}
+
+/* Feature cards need larger inset for rounded corners */
+.feature-card>.experimental-badge {
+    top: 16px;
+    right: 16px;
+}
+
+/* Option items use smaller inset */
+.option-item>.experimental-badge {
+    top: 8px;
+    right: 8px;
 }
 
 /* --- Custom Modal Styles --- */
@@ -771,6 +778,7 @@ body {
 }
 
 .option-item {
+    position: relative;
     background-color: var(--md-sys-color-surface);
     border: 1px solid var(--md-sys-color-outline);
     border-radius: 12px;
