@@ -56,6 +56,44 @@ if echo "$KERN_VER" | grep -q "Floppy"; then
     [ -n "$VERSION" ] && ui_print "  Version: $VERSION"
     [ -n "$VARIANT" ] && ui_print "  Variant: $VARIANT"
     ui_print "  Build: $BUILD_TYPE$DIRTY"
+
+    # Check for unsupported version
+    UNSUPPORTED=0
+    MIN_MSG=""
+    if [ -n "$VERSION" ]; then
+        VER_MAJOR=$(echo "$VERSION" | sed 's/v//' | cut -d. -f1)
+        VER_MINOR=$(echo "$VERSION" | sed 's/v//' | cut -d. -f2)
+        
+        # Floppy1280: minimum v6.2
+        if [ "$KERN_NAME" = "Floppy1280" ]; then
+            if [ "$VER_MAJOR" -lt 6 ] 2>/dev/null; then
+                UNSUPPORTED=1
+            elif [ "$VER_MAJOR" -eq 6 ] && [ "$VER_MINOR" -lt 2 ] 2>/dev/null; then
+                UNSUPPORTED=1
+            fi
+            MIN_MSG="Floppy1280 versions below v6.2"
+        fi
+        
+        # FloppyTrinketMi: minimum v1.2
+        if [ "$KERN_NAME" = "FloppyTrinketMi" ]; then
+            if [ "$VER_MAJOR" -lt 1 ] 2>/dev/null; then
+                UNSUPPORTED=1
+            elif [ "$VER_MAJOR" -eq 1 ] && [ "$VER_MINOR" -lt 2 ] 2>/dev/null; then
+                UNSUPPORTED=1
+            fi
+            MIN_MSG="FloppyTrinketMi versions below v1.2"
+        fi
+    fi
+    
+    if [ "$UNSUPPORTED" = "1" ]; then
+        ui_print "  ----------------------------------------"
+        ui_print "  ⚠️  UNSUPPORTED VERSION"
+        ui_print "  ----------------------------------------"
+        ui_print "  $MIN_MSG are"
+        ui_print "  not fully supported by this module."
+        ui_print "  Please update your kernel."
+        ui_print "  ----------------------------------------"
+    fi
     ui_print ""
 else
     ui_print ""

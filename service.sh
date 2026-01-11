@@ -83,6 +83,36 @@ if echo "$KERN_VER" | grep -q "Floppy"; then
     INFO="$KERN_NAME $VERSION"
     [ -n "$VARIANT" ] && INFO="$INFO, $VARIANT"
     INFO="$INFO, $BUILD_TYPE$DIRTY"
+    
+    # Check for unsupported version
+    UNSUPPORTED=0
+    if [ -n "$VERSION" ]; then
+        VER_MAJOR=$(echo "$VERSION" | sed 's/v//' | cut -d. -f1)
+        VER_MINOR=$(echo "$VERSION" | sed 's/v//' | cut -d. -f2)
+        
+        # Floppy1280: minimum v6.2
+        if [ "$KERN_NAME" = "Floppy1280" ]; then
+            if [ "$VER_MAJOR" -lt 6 ] 2>/dev/null; then
+                UNSUPPORTED=1
+            elif [ "$VER_MAJOR" -eq 6 ] && [ "$VER_MINOR" -lt 2 ] 2>/dev/null; then
+                UNSUPPORTED=1
+            fi
+        fi
+        
+        # FloppyTrinketMi: minimum v1.2
+        if [ "$KERN_NAME" = "FloppyTrinketMi" ]; then
+            if [ "$VER_MAJOR" -lt 1 ] 2>/dev/null; then
+                UNSUPPORTED=1
+            elif [ "$VER_MAJOR" -eq 1 ] && [ "$VER_MINOR" -lt 2 ] 2>/dev/null; then
+                UNSUPPORTED=1
+            fi
+        fi
+    fi
+    
+    if [ "$UNSUPPORTED" = "1" ]; then
+        STATUS="⚠️"
+        INFO="$INFO (Unsupported)"
+    fi
 else
     STATUS="❌"
     INFO="Not Floppy or incompatible version"
