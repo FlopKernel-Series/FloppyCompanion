@@ -158,20 +158,16 @@ function updateZramPendingIndicator() {
     const indicator = document.getElementById('zram-pending-indicator');
     if (!indicator) return;
 
-    // Only show pending if we have saved values AND they differ from pending
-    // If nothing saved yet, don't show indicator
-    const hasSaved = zramSavedState.disksize || zramSavedState.algorithm || zramSavedState.enabled;
+    // Check if pending differs from saved
+    // If nothing is saved, compare pending to current (initial) values
+    const savedDisksize = zramSavedState.disksize || zramCurrentState.disksize;
+    const savedAlgorithm = zramSavedState.algorithm || zramCurrentState.algorithm;
+    const savedEnabled = zramSavedState.enabled !== undefined ? zramSavedState.enabled : zramCurrentState.enabled;
 
-    if (!hasSaved) {
-        indicator.classList.add('hidden');
-        return;
-    }
-
-    // Compare pending vs saved
     const hasPending =
-        (zramPendingState.disksize !== zramSavedState.disksize) ||
-        (zramPendingState.algorithm !== zramSavedState.algorithm) ||
-        (zramPendingState.enabled !== zramSavedState.enabled);
+        (zramPendingState.disksize !== savedDisksize) ||
+        (zramPendingState.algorithm !== savedAlgorithm) ||
+        (zramPendingState.enabled !== savedEnabled);
 
     if (hasPending) {
         indicator.classList.remove('hidden');

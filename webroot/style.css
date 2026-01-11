@@ -783,12 +783,18 @@ body {
 .custom-input-row input {
     flex: 1;
     max-width: 150px;
-    padding: 10px 12px;
+    padding: 12px 14px;
     border: 1px solid var(--md-sys-color-outline);
-    border-radius: var(--md-sys-shape-corner-small);
-    background-color: var(--md-sys-color-surface);
+    border-radius: var(--md-sys-shape-corner-medium);
+    background-color: var(--md-sys-color-surface-container-high);
     color: var(--md-sys-color-on-surface);
     font-size: 14px;
+    outline: none;
+}
+
+.custom-input-row input:focus {
+    border-color: var(--md-sys-color-primary);
+    border-width: 2px;
 }
 
 .custom-input-row input::placeholder {
