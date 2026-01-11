@@ -290,6 +290,22 @@ body {
     color: var(--md-sys-color-on-surface);
 }
 
+/* Header Actions - always right-aligned, stacked buttons */
+.header-actions {
+    margin-left: auto;
+    position: relative;
+    width: 40px;
+    /* Size of icon-button */
+    height: 40px;
+}
+
+/* Header action items stack in the same position */
+.header-actions>* {
+    position: absolute;
+    top: 0;
+    right: 0;
+}
+
 .icon-button {
     background: none;
     border: none;

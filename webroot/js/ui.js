@@ -11,17 +11,11 @@ function updateSlide(index) {
     if (themeBtn) {
         // 'About' tab is index 3
         if (index === 3) {
-            themeBtn.classList.remove('hidden');
-            // Small delay to allow display:block to apply before opacity transition
-            setTimeout(() => themeBtn.style.opacity = '1', 10);
+            themeBtn.style.opacity = '1';
             themeBtn.style.pointerEvents = 'auto';
         } else {
             themeBtn.style.opacity = '0';
             themeBtn.style.pointerEvents = 'none';
-            // Wait for transition to finish before hiding
-            setTimeout(() => {
-                if (currentIndex !== 3) themeBtn.classList.add('hidden');
-            }, 300);
         }
     }
 
@@ -31,9 +25,11 @@ function updateSlide(index) {
     if (rebootContainer) {
         // 'Features' tab is index 1
         if (index === 1) {
-            rebootContainer.classList.remove('hidden');
+            rebootContainer.style.opacity = '1';
+            rebootContainer.style.pointerEvents = 'auto';
         } else {
-            rebootContainer.classList.add('hidden');
+            rebootContainer.style.opacity = '0';
+            rebootContainer.style.pointerEvents = 'none';
             // Close dropdown when leaving tab
             if (rebootMenu) {
                 rebootMenu.classList.remove('visible');
@@ -41,6 +37,7 @@ function updateSlide(index) {
             }
         }
     }
+
 
 
     // Update Bottom Nav

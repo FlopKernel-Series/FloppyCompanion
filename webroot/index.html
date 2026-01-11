@@ -18,30 +18,36 @@
             </svg>
         </button>
         <span class="title">FloppyCompanion</span>
-        <!-- Reboot Dropdown (Features Tab Only) -->
-        <div id="reboot-dropdown-container" class="dropdown-container hidden" style="margin-left: auto;">
-            <button id="reboot-btn" class="icon-button" aria-label="Reboot Options">
-                <!-- restart_alt icon -->
+        <!-- Header Actions Container (always right-aligned) -->
+        <div class="header-actions">
+            <!-- Reboot Dropdown (Features Tab Only) -->
+            <div id="reboot-dropdown-container" class="dropdown-container"
+                style="opacity: 0; transition: opacity 0.3s;">
+                <button id="reboot-btn" class="icon-button" aria-label="Reboot Options">
+                    <!-- restart_alt icon -->
+                    <svg class="icon-svg" viewBox="0 0 24 24">
+                        <path
+                            d="M12 5V2L8 6l4 4V7c3.31 0 6 2.69 6 6 0 2.97-2.17 5.43-5 5.91v2.02c3.95-.49 7-3.85 7-7.93 0-4.42-3.58-8-8-8zm-6 8c0-1.65.67-3.15 1.76-4.24L6.34 7.34C4.9 8.79 4 10.79 4 13c0 4.08 3.05 7.44 7 7.93v-2.02c-2.83-.48-5-2.94-5-5.91z" />
+                    </svg>
+                </button>
+                <div id="reboot-menu" class="dropdown-menu hidden">
+                    <div class="dropdown-item" data-action="system">Reboot System</div>
+                    <div class="dropdown-item" data-action="recovery">Reboot to Recovery</div>
+                    <div class="dropdown-item" data-action="fastboot">Reboot to Fastboot</div>
+                    <div class="dropdown-item platform-samsung hidden" data-action="download">Reboot to Download</div>
+                    <div class="dropdown-item platform-trinket hidden" data-action="bootloader">Reboot to Bootloader
+                    </div>
+                </div>
+            </div>
+            <!-- Theme Toggle (About Tab Only) -->
+            <button id="theme-toggle" class="icon-button" style="opacity: 0; transition: opacity 0.3s;">
+                <!-- Icon will be set by JS -->
                 <svg class="icon-svg" viewBox="0 0 24 24">
                     <path
-                        d="M12 5V2L8 6l4 4V7c3.31 0 6 2.69 6 6 0 2.97-2.17 5.43-5 5.91v2.02c3.95-.49 7-3.85 7-7.93 0-4.42-3.58-8-8-8zm-6 8c0-1.65.67-3.15 1.76-4.24L6.34 7.34C4.9 8.79 4 10.79 4 13c0 4.08 3.05 7.44 7 7.93v-2.02c-2.83-.48-5-2.94-5-5.91z" />
+                        d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9c0-.46-.04-.92-.1-1.36a5.389 5.389 0 0 1-4.4 2.26 5.403 5.403 0 0 1-3.14-9.8c3.13-.33 6.09 1.48 7.34 4.54.12.3.21.61.27.93.04-.44.07-.89.07-1.34 0-4.97-4.03-9-9-9zm0-2c6.075 0 11 4.925 11 11s-4.925 11-11 11S1 18.075 1 12 5.925 1 12 1z" />
                 </svg>
             </button>
-            <div id="reboot-menu" class="dropdown-menu hidden">
-                <div class="dropdown-item" data-action="system">Reboot System</div>
-                <div class="dropdown-item" data-action="recovery">Reboot to Recovery</div>
-                <div class="dropdown-item" data-action="fastboot">Reboot to Fastboot</div>
-                <div class="dropdown-item platform-samsung hidden" data-action="download">Reboot to Download</div>
-                <div class="dropdown-item platform-trinket hidden" data-action="bootloader">Reboot to Bootloader</div>
-            </div>
         </div>
-        <button id="theme-toggle" class="icon-button hidden" style="margin-left: auto; transition: opacity 0.3s;">
-            <!-- Icon will be set by JS -->
-            <svg class="icon-svg" viewBox="0 0 24 24">
-                <path
-                    d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9c0-.46-.04-.92-.1-1.36a5.389 5.389 0 0 1-4.4 2.26 5.403 5.403 0 0 1-3.14-9.8c3.13-.33 6.09 1.48 7.34 4.54.12.3.21.61.27.93.04-.44.07-.89.07-1.34 0-4.97-4.03-9-9-9zm0-2c6.075 0 11 4.925 11 11s-4.925 11-11 11S1 18.075 1 12 5.925 1 12 1z" />
-            </svg>
-        </button>
     </nav>
 
     <div class="slider-container">
