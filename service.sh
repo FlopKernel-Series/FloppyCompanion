@@ -44,6 +44,11 @@ if [ -f "$MODDIR/tweaks/thermal.sh" ]; then
     sh "$MODDIR/tweaks/thermal.sh" apply_saved
 fi
 
+# Misc Floppy1280 Tweaks
+if [ -f "$MODDIR/tweaks/misc.sh" ]; then
+    sh "$MODDIR/tweaks/misc.sh" apply_saved
+fi
+
 # --- Update Module Description ---
 KERN_VER=$(uname -r)
 DESCRIPTION="Companion module to tweak FloppyKernel."

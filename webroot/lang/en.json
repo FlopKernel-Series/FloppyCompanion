@@ -106,6 +106,14 @@
             "unlockConfirmTitle": "Unlock full range?",
             "unlockConfirmBody": "<p>Values beyond 15% have <strong>no practical use</strong> and will cause immediate instability.</p><p>Are you sure you want to unlock the full range?</p>"
         },
+        "misc": {
+            "title": "Misc Floppy1280 Tweaks",
+            "blockEd3": "Block Ear Detect Mode 3",
+            "gpuClkLock": "GPU Clock Lock",
+            "gpuUnlock": "GPU Overclock",
+            "enabled": "Enabled",
+            "disabled": "Disabled"
+        },
         "platformTweaks": "Platform Tweaks",
         "dismiss": "Dismiss",
         "tooltip": {
@@ -114,7 +122,10 @@
             "gpu": "Sets the maximum GPU frequency. Higher values improve performance but use more battery.",
             "ioScheduler": "Algorithm used to order and merge I/O requests. Affects storage performance and latency.",
             "thermal": "Controls Big cluster CPU throttling. Mode 3 is aggressive performance, Mode 1 is stock-like, Mode 0 disables throttling (dangerous!).",
-            "undervolt": "Reduces voltage to save power and reduce heat. Not recommended with Overclocking (Unlocked Mode)."
+            "undervolt": "Reduces voltage to save power and reduce heat. Not recommended with Overclocking (Unlocked Mode).",
+            "blockEd3": "Disables Ear Detect Mode 3, which prevents the display from lowering its refresh rate when the virtual proximity sensor is engaged. Also makes the proximity sensor less sensitive.",
+            "gpuClkLock": "When enabled, prevents the GPU min/max frequencies from being changed. Useful for locking GPU clocks to a specific range.",
+            "gpuUnlock": "Enables GPU overclocking immediately. Only works in Superfloppy overclock modes (1, 2, 3). Greyed out if Unlocked Mode is disabled or in non-OC modes."
         }
     },
     "about": {

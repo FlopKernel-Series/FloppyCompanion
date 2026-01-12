@@ -107,6 +107,14 @@
             "unlockConfirmTitle": "¿Desbloquear rango completo?",
             "unlockConfirmBody": "<p>Valores por encima del 15% <strong>no tienen uso práctico</strong> y causarán inestabilidad inmediata.</p><p>¿Estás seguro de que quieres desbloquear el rango completo?</p>"
         },
+        "misc": {
+            "title": "Tweaks Misc Floppy1280",
+            "blockEd3": "Bloquear Ear Detect Modo 3",
+            "gpuClkLock": "Bloqueo de Reloj GPU",
+            "gpuUnlock": "Overclock GPU",
+            "enabled": "Habilitado",
+            "disabled": "Deshabilitado"
+        },
         "platformTweaks": "Ajustes de Plataforma",
         "dismiss": "Descartar",
         "tooltip": {
@@ -115,7 +123,10 @@
             "gpu": "Establece la frecuencia máxima de la GPU. Valores más altos mejoran el rendimiento pero consumen más batería.",
             "ioScheduler": "Algoritmo usado para ordenar y fusionar peticiones de E/S. Afecta el rendimiento y latencia del almacenamiento.",
             "thermal": "Controla el throttling de la CPU del clúster Big. Modo 3 es rendimiento agresivo, Modo 1 es tipo stock, Modo 0 desactiva el throttling (¡peligroso!).",
-            "undervolt": "Reduce el voltaje para ahorrar energía y calor. No recomendado con Overclocking (Modo Unlocked)."
+            "undervolt": "Reduce el voltaje para ahorrar energía y calor. No recomendado con Overclocking (Modo Unlocked).",
+            "blockEd3": "Desactiva Ear Detect Modo 3, que evita que la pantalla baje su tasa de refresco cuando el sensor de proximidad virtual está activo. También hace el sensor de proximidad menos sensible.",
+            "gpuClkLock": "Cuando está habilitado, evita que se cambien las frecuencias min/max de la GPU. Útil para bloquear los relojes de la GPU en un rango específico.",
+            "gpuUnlock": "Habilita el overclocking de la GPU inmediatamente. Solo funciona en modos de Superfloppy con overclock (1, 2, 3). Deshabilitado si el Modo Unlocked está desactivado o en modos no-OC."
         }
     },
     "about": {

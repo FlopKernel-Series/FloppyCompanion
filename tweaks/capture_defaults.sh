@@ -80,6 +80,11 @@ if [ -f "$MODDIR/tweaks/iosched.sh" ]; then
     '
 fi
 )
+    },
+    "misc": {
+      "block_ed3": "$(cat /sys/devices/virtual/sec/tsp/block_ed3 2>/dev/null || echo 0)",
+      "gpu_clklck": "$(cat /sys/kernel/gpu/gpu_clklck 2>/dev/null || echo 0)",
+      "gpu_unlock": "$(cat /sys/kernel/gpu/gpu_unlock 2>/dev/null || echo 0)"
     }
   }
 }

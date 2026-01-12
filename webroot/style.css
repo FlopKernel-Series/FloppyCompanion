@@ -294,6 +294,18 @@ body.theme-light.theme-orange {
     margin-left: -5px;
 }
 
+/* Left-aligned tooltip - extends to the right */
+.status-bubble.left {
+    left: 0;
+    right: auto;
+    transform: none;
+}
+
+.status-bubble.left::after {
+    left: 10px;
+    right: auto;
+}
+
 .status-bubble.hidden {
     display: none;
 }
