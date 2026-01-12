@@ -44,6 +44,11 @@ if [ -f "$MODDIR/tweaks/thermal.sh" ]; then
     sh "$MODDIR/tweaks/thermal.sh" apply_saved
 fi
 
+# Undervolt (Floppy1280 only)
+if [ -f "$MODDIR/tweaks/undervolt.sh" ]; then
+    sh "$MODDIR/tweaks/undervolt.sh" apply_saved
+fi
+
 # Misc Floppy1280 Tweaks
 if [ -f "$MODDIR/tweaks/misc.sh" ]; then
     sh "$MODDIR/tweaks/misc.sh" apply_saved
