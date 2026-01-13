@@ -137,6 +137,14 @@ async function loadFeatures() {
             }
         });
 
+        // Expose Unlocked Mode (superfloppy) for Tweaks gating
+        if (currentFeatures.superfloppy !== undefined) {
+            window.currentSuperfloppyMode = String(currentFeatures.superfloppy);
+            document.dispatchEvent(new CustomEvent('superfloppyModeChanged', {
+                detail: { mode: window.currentSuperfloppyMode, source: 'load' }
+            }));
+        }
+
         renderFeatures(schema, procCmdline);
 
         // Visibility check for Read-Only Patch Toggle
@@ -328,6 +336,14 @@ window.updateFeature = function (key, val, target) {
     }
 
     pendingChanges[key] = val; // Store change
+
+    // Live-update Unlocked Mode for Tweaks availability (even before Apply)
+    if (key === 'superfloppy') {
+        window.currentSuperfloppyMode = String(val);
+        document.dispatchEvent(new CustomEvent('superfloppyModeChanged', {
+            detail: { mode: window.currentSuperfloppyMode, source: 'pending' }
+        }));
+    }
 
     const switchInput = document.getElementById(`switch-${key}`);
     const fabApply = document.getElementById('fab-apply');

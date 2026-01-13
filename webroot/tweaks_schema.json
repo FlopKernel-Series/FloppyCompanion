@@ -1,0 +1,108 @@
+{
+  "version": 2,
+  "sections": [
+    {
+      "id": "platform",
+      "titleKey": "tweaks.platformTweaks",
+      "requires": {
+        "var": "kernelName",
+        "in": ["Floppy1280", "FloppyTrinketMi"]
+      },
+      "tweaks": [
+        {
+          "id": "thermal",
+          "cardId": "thermal-card",
+          "pendingId": "thermal-pending-indicator",
+          "type": "custom",
+          "templateId": "tpl-thermal",
+          "iconKey": "thermal",
+          "titleKey": "tweaks.thermal.title",
+          "tooltipKey": "tweaks.tooltip.thermal",
+          "requires": { "var": "kernelName", "eq": "Floppy1280" }
+        },
+        {
+          "id": "undervolt",
+          "cardId": "undervolt-card",
+          "pendingId": "undervolt-pending-indicator",
+          "type": "custom",
+          "templateId": "tpl-undervolt",
+          "iconKey": "undervolt",
+          "titleKey": "tweaks.undervolt.title",
+          "tooltipKey": "tweaks.tooltip.undervolt",
+          "requires": { "var": "kernelName", "eq": "Floppy1280" }
+        },
+        {
+          "id": "misc",
+          "cardId": "misc-card",
+          "pendingId": "misc-pending-indicator",
+          "type": "custom",
+          "templateId": "tpl-misc",
+          "iconKey": "misc",
+          "titleKey": "tweaks.misc.title",
+          "tooltipKey": null,
+          "controlRules": [
+            {
+              "id": "gpu_unlock",
+              "selector": "#misc-gpuunlock-switch",
+              "mode": "disable",
+              "dimClosest": ".tweak-switch-container",
+              "requires": { "var": "isUnlockedOcMode", "truthy": true }
+            }
+          ],
+          "requires": { "var": "kernelName", "eq": "Floppy1280" }
+        },
+        {
+          "id": "soundcontrol",
+          "cardId": "soundcontrol-card",
+          "pendingId": "soundcontrol-pending-indicator",
+          "type": "custom",
+          "templateId": "tpl-soundcontrol",
+          "iconKey": "soundcontrol",
+          "titleKey": "tweaks.soundcontrol.title",
+          "tooltipKey": "tweaks.tooltip.soundcontrol",
+          "requires": { "var": "kernelName", "eq": "FloppyTrinketMi" }
+        }
+      ]
+    },
+    {
+      "id": "common",
+      "titleKey": "tweaks.commonTweaks",
+      "requires": null,
+      "tweaks": [
+        {
+          "id": "zram",
+          "cardId": "zram-card",
+          "pendingId": "zram-pending-indicator",
+          "type": "custom",
+          "templateId": "tpl-zram",
+          "iconKey": "zram",
+          "titleKey": "tweaks.zram.title",
+          "tooltipKey": "tweaks.tooltip.zram",
+          "requires": null
+        },
+        {
+          "id": "memory",
+          "cardId": "memory-card",
+          "pendingId": "mem-pending-indicator",
+          "type": "custom",
+          "templateId": "tpl-memory",
+          "iconKey": "memory",
+          "titleKey": "tweaks.memory.title",
+          "tooltipKey": "tweaks.tooltip.memory",
+          "requires": null
+        },
+        {
+          "id": "iosched",
+          "cardId": "iosched-card",
+          "pendingId": "iosched-pending-indicator",
+          "type": "custom",
+          "templateId": "tpl-iosched",
+          "iconKey": "iosched",
+          "titleKey": "tweaks.iosched.ioScheduler",
+          "tooltipKey": "tweaks.tooltip.ioScheduler",
+          "requires": null
+        }
+      ]
+    }
+  ]
+}

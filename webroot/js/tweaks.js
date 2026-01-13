@@ -1,5 +1,352 @@
 // tweaks.js - Tweaks Tab Logic
 
+// =========================
+// Schema-driven Tweaks UI
+// =========================
+
+const TWEAKS_SCHEMA_URL = './tweaks_schema.json';
+
+function getTweakVarStore() {
+    if (!window.__tweakVars) window.__tweakVars = {};
+    return window.__tweakVars;
+}
+
+function setTweakVar(name, value) {
+    const vars = getTweakVarStore();
+    const prev = vars[name];
+    vars[name] = value;
+    if (prev !== value) {
+        document.dispatchEvent(new CustomEvent('tweakVarsChanged', { detail: { name, value } }));
+    }
+}
+
+function getTweakVar(name) {
+    return getTweakVarStore()[name];
+}
+
+function truthy(value) {
+    return value === true || value === 'true' || value === 1 || value === '1' || value === 'yes';
+}
+
+function evaluateRequires(requires) {
+    if (!requires) return { ok: true };
+    const rules = Array.isArray(requires) ? requires : [requires];
+
+    for (const rule of rules) {
+        if (!rule) continue;
+
+        // Back-compat with schema rules like { var: "kernelName", eq: "Floppy1280" }
+        if (rule.var && !rule.type) {
+            const v = getTweakVar(rule.var);
+            if (Object.prototype.hasOwnProperty.call(rule, 'eq') && v !== rule.eq) return { ok: false, reasonKey: rule.reasonKey };
+            if (Object.prototype.hasOwnProperty.call(rule, 'truthy') && truthy(v) !== !!rule.truthy) return { ok: false, reasonKey: rule.reasonKey };
+            if (Object.prototype.hasOwnProperty.call(rule, 'in')) {
+                const list = Array.isArray(rule.in) ? rule.in : [];
+                if (!list.includes(v)) return { ok: false, reasonKey: rule.reasonKey };
+            }
+            continue;
+        }
+
+        const type = rule.type || rule.kind || 'eq';
+
+        if (type === 'var') {
+            const v = getTweakVar(rule.name);
+            if (Object.prototype.hasOwnProperty.call(rule, 'eq') && v !== rule.eq) return { ok: false, reasonKey: rule.reasonKey };
+            if (Object.prototype.hasOwnProperty.call(rule, 'truthy') && truthy(v) !== !!rule.truthy) return { ok: false, reasonKey: rule.reasonKey };
+            if (Object.prototype.hasOwnProperty.call(rule, 'in')) {
+                const list = Array.isArray(rule.in) ? rule.in : [];
+                if (!list.includes(v)) return { ok: false, reasonKey: rule.reasonKey };
+            }
+            continue;
+        }
+
+        if (type === 'kernelName') {
+            const kernelName = window.KERNEL_NAME || '';
+            if (rule.eq != null && kernelName !== rule.eq) return { ok: false, reasonKey: rule.reasonKey };
+            if (rule.ne != null && kernelName === rule.ne) return { ok: false, reasonKey: rule.reasonKey };
+            continue;
+        }
+    }
+
+    return { ok: true };
+}
+
+function buildTweakCardShell(card) {
+    const el = document.createElement('div');
+    el.id = card.cardId;
+    el.className = 'card tweak-card';
+
+    const header = document.createElement('div');
+    header.className = 'card-header';
+
+    const iconEl = createTweakIconSvg(card.iconKey);
+    if (iconEl) header.appendChild(iconEl);
+
+    const title = document.createElement('span');
+    title.className = 'card-title';
+    if (card.titleKey) title.setAttribute('data-i18n', card.titleKey);
+    header.appendChild(title);
+
+    if (card.tooltipKey) {
+        const wrapper = document.createElement('div');
+        wrapper.className = 'status-icon-wrapper';
+        wrapper.setAttribute('style', 'position:relative; display:inline-block; vertical-align:middle; margin-left:8px;');
+
+        const bubbleId = `${card.cardId}-bubble`;
+        wrapper.innerHTML = `
+            <svg class="status-icon info" onclick="toggleBubble('${bubbleId}', event)" viewBox="0 0 24 24" style="width:18px;height:18px;cursor:pointer;color:var(--md-sys-color-primary);">
+                <path fill="currentColor" d="M11 7h2v2h-2zm0 4h2v6h-2zm1-9C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z" />
+            </svg>
+            <div id="${bubbleId}" class="status-bubble center hidden" data-i18n="${card.tooltipKey}"></div>
+        `;
+        header.appendChild(wrapper);
+    }
+
+    if (card.pendingId) {
+        const pending = document.createElement('span');
+        pending.id = card.pendingId;
+        pending.className = 'pending-indicator hidden';
+        pending.setAttribute('data-i18n', 'tweaks.unsaved');
+        header.appendChild(pending);
+    }
+
+    el.appendChild(header);
+
+    const tpl = card.templateId ? document.getElementById(card.templateId) : null;
+    if (tpl && tpl.content) {
+        el.appendChild(tpl.content.cloneNode(true));
+    } else {
+        const body = document.createElement('div');
+        body.className = 'card-content';
+        el.appendChild(body);
+    }
+
+    return el;
+}
+
+function createTweakIconSvg(iconKey) {
+    if (!iconKey) return null;
+
+    // These SVGs are copied from the previous hardcoded card headers.
+    // Keep them inline to avoid extra assets and to match existing CSS (`.icon-svg`).
+    const defs = {
+        thermal: {
+            viewBox: '0 -960 960 960',
+            path: 'M480-80q-83 0-141.5-58.5T280-280q0-48 21-89.5t59-70.5v-320q0-50 35-85t85-35q50 0 85 35t35 85v320q38 29 59 70.5t21 89.5q0 83-58.5 141.5T480-80Zm-40-440h80v-40h-40v-40h40v-80h-40v-40h40v-40q0-17-11.5-28.5T480-800q-17 0-28.5 11.5T440-760v240Z'
+        },
+        undervolt: {
+            viewBox: '0 -960 960 960',
+            path: 'm422-232 207-248H469l29-227-185 267h139l-30 208ZM320-80l40-280H160l360-520h80l-40 320h240L400-80h-80Zm151-390Z'
+        },
+        misc: {
+            viewBox: '0 -960 960 960',
+            path: 'M160-120q-33 0-56.5-23.5T80-200v-560q0-33 23.5-56.5T160-840h560q33 0 56.5 23.5T800-760v80h80v80h-80v80h80v80h-80v80h80v80h-80v80q0 33-23.5 56.5T720-120H160Zm0-80h560v-560H160v560Zm80-80h200v-160H240v160Zm240-280h160v-120H480v120Zm-240 80h200v-200H240v200Zm240 200h160v-240H480v240ZM160-760v560-560Z'
+        },
+        soundcontrol: {
+            viewBox: '0 -960 960 960',
+            path: 'M360-120H200q-33 0-56.5-23.5T120-200v-280q0-75 28.5-140.5t77-114q48.5-48.5 114-77T480-840q75 0 140.5 28.5t114 77q48.5 48.5 77 114T840-480v280q0 33-23.5 56.5T760-120H600v-320h160v-40q0-117-81.5-198.5T480-760q-117 0-198.5 81.5T200-480v40h160v320Zm-80-240h-80v160h80v-160Zm400 0v160h80v-160h-80Zm-400 0h-80 80Zm400 0h80-80Z'
+        },
+        zram: {
+            viewBox: '0 0 24 24',
+            path: 'M15 9H9v6h6V9zm-2 4h-2v-2h2v2zm8-2V9h-2V7c0-1.1-.9-2-2-2h-2V3h-2v2h-2V3H9v2H7c-1.1 0-2 .9-2 2v2H3v2h2v2H3v2h2v2c0 1.1.9 2 2 2h2v2h2v-2h2v2h2v-2h2c1.1 0 2-.9 2-2v-2h2v-2h-2v-2h2zm-4 6H7V7h10v10z'
+        },
+        memory: {
+            viewBox: '0 0 24 24',
+            path: 'M15 9H9v6h6V9zm-2 4h-2v-2h2v2zm8-2V9h-2V7c0-1.1-.9-2-2-2h-2V3h-2v2h-2V3H9v2H7c-1.1 0-2 .9-2 2v2H3v2h2v2H3v2h2v2c0 1.1.9 2 2 2h2v2h2v-2h2v2h2v-2h2c1.1 0 2-.9 2-2v-2h2v-2h-2v-2h2zm-4 6H7V7h10v10z'
+        },
+        iosched: {
+            viewBox: '0 0 24 24',
+            path: 'M12 3C7.58 3 4 4.79 4 7v10c0 2.21 3.58 4 8 4s8-1.79 8-4V7c0-2.21-3.58-4-8-4zm0 2c3.87 0 6 1.5 6 2s-2.13 2-6 2-6-1.5-6-2 2.13-2 6-2zm6 12c0 .5-2.13 2-6 2s-6-1.5-6-2v-2.23c1.61.78 3.72 1.23 6 1.23s4.39-.45 6-1.23V17zm0-5c0 .5-2.13 2-6 2s-6-1.5-6-2V9.77c1.61.78 3.72 1.23 6 1.23s4.39-.45 6-1.23V12z'
+        }
+    };
+
+    const def = defs[String(iconKey)];
+    if (!def) return null;
+
+    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    svg.setAttribute('class', 'icon-svg');
+    svg.setAttribute('viewBox', def.viewBox);
+
+    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    path.setAttribute('d', def.path);
+    svg.appendChild(path);
+
+    return svg;
+}
+
+async function loadTweaksSchema() {
+    const res = await fetch(TWEAKS_SCHEMA_URL, { cache: 'no-store' });
+    if (!res.ok) throw new Error(`Failed to load tweaks schema: ${res.status}`);
+    return res.json();
+}
+
+function renderTweaksFromSchemaOnce(schema) {
+    if (window.__tweaksSchemaRendered) return;
+    const root = document.getElementById('tweaks-sections');
+    if (!root) return;
+    root.innerHTML = '';
+
+    const sections = schema?.sections || [];
+    for (const section of sections) {
+        const sectionEl = document.createElement('div');
+        sectionEl.id = `tweaks-section-${section.id || ''}`;
+
+        if (section.titleKey) {
+            const h2 = document.createElement('h2');
+            h2.className = 'section-title';
+            h2.setAttribute('data-i18n', section.titleKey);
+            sectionEl.appendChild(h2);
+        }
+
+        const cards = section.tweaks || section.cards || [];
+        for (const card of cards) {
+            sectionEl.appendChild(buildTweakCardShell(card));
+        }
+
+        root.appendChild(sectionEl);
+    }
+
+    window.__tweaksSchemaRendered = true;
+}
+
+function refreshTweaksAvailability(schema) {
+    const sections = schema?.sections || [];
+    for (const section of sections) {
+        const sectionEl = section.id ? document.getElementById(`tweaks-section-${section.id}`) : null;
+        const sectionOk = evaluateRequires(section.requires).ok;
+        if (sectionEl) {
+            sectionEl.classList.toggle('hidden', !sectionOk);
+        }
+
+        const cards = section.tweaks || section.cards || [];
+        for (const card of cards) {
+            const el = card.cardId ? document.getElementById(card.cardId) : null;
+            if (!el) continue;
+            const requiresEval = evaluateRequires(card.requires);
+            const hide = card.hideWhenUnavailable !== false;
+            el.classList.toggle('hidden', hide && !requiresEval.ok);
+            el.classList.toggle('disabled', !requiresEval.ok && !hide);
+        }
+    }
+
+    if (typeof window.I18N?.applyTranslations === 'function') {
+        window.I18N.applyTranslations();
+    }
+
+    applyControlAvailability(schema);
+}
+
+function findTweakDef(schema, id) {
+    const sections = schema?.sections || [];
+    for (const section of sections) {
+        const cards = section.tweaks || section.cards || [];
+        for (const card of cards) {
+            if (card.id === id) return card;
+        }
+    }
+    return null;
+}
+
+function resolveControlRulesForCard(cardDef) {
+    if (!cardDef) return [];
+    if (Array.isArray(cardDef.controlRules)) return cardDef.controlRules;
+
+    // Back-compat: older drafts used { controlRequires: { name: requiresRule } }.
+    if (cardDef.controlRequires && typeof cardDef.controlRequires === 'object') {
+        const rules = [];
+        for (const [key, requires] of Object.entries(cardDef.controlRequires)) {
+            // Minimal legacy support for known controls.
+            if (cardDef.id === 'misc' && key === 'gpu_unlock') {
+                rules.push({
+                    id: key,
+                    selector: '#misc-gpuunlock-switch',
+                    mode: 'disable',
+                    dimClosest: '.tweak-switch-container',
+                    requires
+                });
+            }
+        }
+        return rules;
+    }
+
+    return [];
+}
+
+function setDisabledOnElement(el, disabled) {
+    if (!el) return;
+    const tag = (el.tagName || '').toLowerCase();
+
+    if (tag === 'input' || tag === 'select' || tag === 'textarea' || tag === 'button') {
+        el.disabled = !!disabled;
+    } else {
+        el.setAttribute('aria-disabled', disabled ? 'true' : 'false');
+        el.style.pointerEvents = disabled ? 'none' : '';
+    }
+}
+
+function applyControlRule(rule, scopeEl) {
+    if (!rule || !rule.selector) return;
+    const root = scopeEl || document;
+    const targets = Array.from(root.querySelectorAll(rule.selector));
+    if (targets.length === 0) return;
+
+    const ok = evaluateRequires(rule.requires).ok;
+    const mode = rule.mode || 'disable';
+
+    for (const target of targets) {
+        if (mode === 'hide') {
+            const container = rule.hideClosest
+                ? target.closest(rule.hideClosest)
+                : (target.closest('.tweak-row') || target.closest('.slider-container') || target);
+            if (container) container.classList.toggle('hidden', !ok);
+            continue;
+        }
+
+        // default: disable
+        setDisabledOnElement(target, !ok);
+
+        if (rule.dimClosest) {
+            const dimEl = target.closest(rule.dimClosest);
+            if (dimEl) dimEl.style.opacity = ok ? '1' : '0.5';
+        }
+    }
+}
+
+function applyControlAvailability(schema) {
+    const sections = schema?.sections || [];
+    for (const section of sections) {
+        const cards = section.tweaks || section.cards || [];
+        for (const card of cards) {
+            const cardEl = card.cardId ? document.getElementById(card.cardId) : null;
+            if (!cardEl) continue;
+
+            const cardDef = findTweakDef(schema, card.id);
+            const rules = resolveControlRulesForCard(cardDef);
+            for (const rule of rules) {
+                applyControlRule(rule, cardEl);
+            }
+        }
+    }
+}
+
+async function initTweaksSchemaUI() {
+    if (window.__tweaksSchema) return;
+    const schema = await loadTweaksSchema();
+    window.__tweaksSchema = schema;
+
+    // Seed variables (some may be unknown until main.js sets them)
+    setTweakVar('kernelName', window.KERNEL_NAME || '');
+    if (window.currentSuperfloppyMode != null) {
+        setTweakVar('superfloppyMode', String(window.currentSuperfloppyMode));
+        setTweakVar('isUnlockedOcMode', ['1', '2', '3'].includes(String(window.currentSuperfloppyMode)));
+    }
+
+    renderTweaksFromSchemaOnce(schema);
+    refreshTweaksAvailability(schema);
+
+    document.addEventListener('tweakVarsChanged', () => refreshTweaksAvailability(schema));
+}
+
 // ZRAM State
 let zramCurrentState = {};
 let zramSavedState = {};
@@ -637,6 +984,9 @@ function initMemoryTweak() {
 
 // Initialize tweaks tab
 async function initTweaksTab() {
+    // Build the tweaks DOM from schema/templates before any tweak init binds event listeners.
+    await initTweaksSchemaUI();
+
     // Initialize preset system first (to load defaults)
     if (typeof window.initPresets === 'function') {
         await window.initPresets();
@@ -1170,10 +1520,18 @@ function updateGpuUnlockAvailability() {
     const gpuUnlockSwitch = document.getElementById('misc-gpuunlock-switch');
     if (!gpuUnlockSwitch) return;
 
-    // Get current superfloppy mode (from features.js)
-    // Modes 1, 2, 3 are OC modes; 4, 5, 0 are not
-    const superfloppyMode = window.currentSuperfloppyMode || '0';
-    const isOcMode = ['1', '2', '3'].includes(superfloppyMode);
+    // If schema-driven control rules are available, let the generic engine handle it.
+    if (window.__tweaksSchema) {
+        applyControlAvailability(window.__tweaksSchema);
+        return;
+    }
+
+    // Prefer schema-declared condition, fallback to derived vars / raw superfloppy mode.
+    let isOcMode = truthy(getTweakVar('isUnlockedOcMode'));
+    if (!isOcMode) {
+        const superfloppyMode = String(getTweakVar('superfloppyMode') ?? window.currentSuperfloppyMode ?? '0');
+        isOcMode = ['1', '2', '3'].includes(superfloppyMode);
+    }
 
     const switchContainer = gpuUnlockSwitch.closest('.tweak-switch-container');
 
@@ -1550,22 +1908,38 @@ function updateSoundControlSliderTicks(slider) {
 
 // Initialize platform tweaks
 function initPlatformTweaks() {
-    const platformSection = document.getElementById('platform-tweaks-section');
-    const kernelName = window.KERNEL_NAME || '';
+    const doInit = () => {
+        setTweakVar('kernelName', window.KERNEL_NAME || '');
+        if (window.__tweaksSchema) refreshTweaksAvailability(window.__tweaksSchema);
 
-    // Check if this kernel has any platform-specific tweaks
-    const hasPlatformTweaks = ['Floppy1280', 'FloppyTrinketMi'].includes(kernelName);
+        // Initialize all platform tweaks - each will show/hide its own card
+        initThermalTweak();
+        initUndervoltTweak();
+        initMiscTweak();
+        initSoundControlTweak();
+    };
 
-    if (hasPlatformTweaks && platformSection) {
-        platformSection.classList.remove('hidden');
+    // Ensure schema is loaded/rendered even if platform init runs before tweaks tab init.
+    if (!window.__tweaksSchemaRendered) {
+        initTweaksSchemaUI().then(doInit).catch(doInit);
+        return;
     }
 
-    // Initialize all platform tweaks - each will show/hide its own card
-    initThermalTweak();
-    initUndervoltTweak();
-    initMiscTweak();
-    initSoundControlTweak();
+    doInit();
 }
+
+// Global: listen for Unlocked Mode changes (emitted from features.js)
+document.addEventListener('superfloppyModeChanged', (e) => {
+    const mode = e?.detail?.mode != null ? String(e.detail.mode) : (window.currentSuperfloppyMode != null ? String(window.currentSuperfloppyMode) : '0');
+    window.currentSuperfloppyMode = mode;
+    setTweakVar('superfloppyMode', mode);
+    setTweakVar('isUnlockedOcMode', ['1', '2', '3'].includes(mode));
+
+    if (typeof updateGpuUnlockAvailability === 'function') {
+        updateGpuUnlockAvailability();
+    }
+    if (window.__tweaksSchema) refreshTweaksAvailability(window.__tweaksSchema);
+});
 
 // --- Undervolt Tweak Logic (Floppy1280 only) ---
 

@@ -314,508 +314,288 @@
                         </div>
                     </div>
 
-                    <!-- Platform Tweaks Section (conditionally shown) -->
-                    <div id="platform-tweaks-section" class="hidden">
-                        <h2 class="section-title" data-i18n="tweaks.platformTweaks">Platform Tweaks</h2>
-
-                        <!-- Thermal Modes Card (Floppy1280 only) -->
-                        <div id="thermal-card" class="card tweak-card hidden">
-                            <div class="card-header">
-                                <!-- thermostat icon (Google Material) -->
-                                <svg class="icon-svg" viewBox="0 -960 960 960">
-                                    <path
-                                        d="M480-80q-83 0-141.5-58.5T280-280q0-48 21-89.5t59-70.5v-320q0-50 35-85t85-35q50 0 85 35t35 85v320q38 29 59 70.5t21 89.5q0 83-58.5 141.5T480-80Zm-40-440h80v-40h-40v-40h40v-80h-40v-40h40v-40q0-17-11.5-28.5T480-800q-17 0-28.5 11.5T440-760v240Z" />
-                                </svg>
-                                <span class="card-title" data-i18n="tweaks.thermal.title">Thermal Modes</span>
-                                <div class="status-icon-wrapper"
-                                    style="position:relative; display:inline-block; vertical-align:middle; margin-left:8px;">
-                                    <svg class="status-icon info" onclick="toggleBubble('bubble-tweak-thermal', event)"
-                                        viewBox="0 0 24 24"
-                                        style="width:18px;height:18px;cursor:pointer;color:var(--md-sys-color-primary);">
-                                        <path fill="currentColor"
-                                            d="M11 7h2v2h-2zm0 4h2v6h-2zm1-9C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z" />
-                                    </svg>
-                                    <div id="bubble-tweak-thermal" class="status-bubble center hidden"
-                                        data-i18n="tweaks.tooltip.thermal"></div>
-                                </div>
-                                <span id="thermal-pending-indicator" class="pending-indicator hidden"
-                                    data-i18n="tweaks.unsaved">Unsaved</span>
-                            </div>
-                            <div class="card-content">
-                                <div class="tweak-row" style="border-bottom: none;">
-                                    <div class="tweak-info-col">
-                                        <span class="tweak-label" data-i18n="tweaks.thermal.activeMode">Active
-                                            mode</span>
-                                        <span class="tweak-val" id="thermal-val-mode">--</span>
-                                    </div>
-                                </div>
-                                <!-- Mode Options -->
-                                <div id="thermal-mode-options" class="option-buttons">
-                                    <button class="option-btn" data-mode="0">Disabled <span
-                                            class="mode-num">0</span></button>
-                                    <button class="option-btn" data-mode="1">Stock <span
-                                            class="mode-num">1</span></button>
-                                    <button class="option-btn" data-mode="3">Performance <span
-                                            class="mode-num">3</span></button>
-                                    <button class="option-btn" data-mode="2">Custom <span
-                                            class="mode-num">2</span></button>
-                                </div>
-
-                                <!-- Mode Description -->
-                                <div id="thermal-mode-description" class="tweak-description"></div>
-
-                                <!-- Custom Frequency (for Mode 2) -->
-                                <div id="thermal-custom-freq-row" class="tweak-row hidden"
-                                    style="border-bottom: none; margin-top: 12px;">
-                                    <div class="tweak-info-col">
-                                        <span class="tweak-label" data-i18n="tweaks.thermal.customFreq">Throttle Freq
-                                            (KHz)</span>
-                                        <span class="tweak-val" id="thermal-val-custom_freq">--</span>
-                                    </div>
-                                    <div class="tweak-input-container">
-                                        <input type="number" id="thermal-custom_freq" class="styled-input"
-                                            placeholder="2288000">
-                                    </div>
-                                </div>
-
-                                <!-- Actions -->
-                                <div class="tweak-actions">
-                                    <button class="tweak-action-btn secondary" id="thermal-btn-save"
-                                        data-i18n="tweaks.save">Save</button>
-                                    <button class="tweak-action-btn secondary" id="thermal-btn-apply"
-                                        data-i18n="tweaks.apply">Apply</button>
-                                    <button class="tweak-action-btn primary" id="thermal-btn-save-apply"
-                                        data-i18n="tweaks.saveApply">Save & Apply</button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Undervolt Card (Floppy1280 only) -->
-                        <div id="undervolt-card" class="card tweak-card hidden">
-                            <div class="card-header">
-                                <!-- bolt icon -->
-                                <svg class="icon-svg" viewBox="0 -960 960 960">
-                                    <path
-                                        d="m422-232 207-248H469l29-227-185 267h139l-30 208ZM320-80l40-280H160l360-520h80l-40 320h240L400-80h-80Zm151-390Z" />
-                                </svg>
-                                <span class="card-title" data-i18n="tweaks.undervolt.title">Undervolt</span>
-                                <div class="status-icon-wrapper"
-                                    style="position:relative; display:inline-block; vertical-align:middle; margin-left:8px;">
-                                    <svg class="status-icon info"
-                                        onclick="toggleBubble('bubble-tweak-undervolt', event)" viewBox="0 0 24 24"
-                                        style="width:18px;height:18px;cursor:pointer;color:var(--md-sys-color-primary);">
-                                        <path fill="currentColor"
-                                            d="M11 7h2v2h-2zm0 4h2v6h-2zm1-9C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z" />
-                                    </svg>
-                                    <div id="bubble-tweak-undervolt" class="status-bubble center hidden"
-                                        data-i18n="tweaks.tooltip.undervolt"></div>
-                                </div>
-                                <span id="undervolt-pending-indicator" class="pending-indicator hidden"
-                                    data-i18n="tweaks.unsaved">Unsaved</span>
-                            </div>
-                            <div class="card-content">
-                                <!-- Incompatibility Notice (shown only after undervolt cleared by mode change) -->
-                                <div id="undervolt-notice" class="info-notice hidden">
-                                    <svg class="notice-icon" viewBox="0 0 24 24">
-                                        <path
-                                            d="M11 15h2v2h-2zm0-8h2v6h-2zm.99-5C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z" />
-                                    </svg>
-                                    <div class="notice-content">
-                                        <span data-i18n="tweaks.undervolt.notice"></span>
-                                        <br>
-                                        <span class="notice-dismiss"
-                                            onclick="document.getElementById('undervolt-notice').classList.add('hidden')"
-                                            data-i18n="tweaks.dismiss">Dismiss</span>
-                                    </div>
-                                </div>
-
-                                <!-- High Value Warning (shown when any value > 10%) -->
-                                <div id="undervolt-high-warning" class="info-notice warning hidden">
-                                    <svg class="notice-icon" viewBox="0 0 24 24">
-                                        <path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z" />
-                                    </svg>
-                                    <div class="notice-content">
-                                        <span data-i18n="tweaks.undervolt.highValueWarning">Values above 10% are almost
-                                            guaranteed to cause an immediate crash. You may enter a bootloop until the
-                                            module is disabled.</span>
-                                    </div>
-                                </div>
-
-                                <!-- Unlock Range Switch -->
-                                <div class="tweak-row" style="border-bottom: none; padding-bottom: 0;">
-                                    <div class="tweak-info-col">
-                                        <span class="tweak-label" data-i18n="tweaks.undervolt.unlockRange">Unlock Full
-                                            Range</span>
-                                    </div>
-                                    <div class="tweak-switch-container">
-                                        <label class="m3-switch" style="display:inline-block; margin:0;">
-                                            <input type="checkbox" id="undervolt-unlock-switch">
-                                            <span class="m3-switch-track">
-                                                <span class="m3-switch-thumb"></span>
-                                            </span>
-                                        </label>
-                                    </div>
-                                </div>
-
-                                <!-- Little Cluster -->
-                                <div class="slider-container tweak-separator"
-                                    style="border-top: 1px solid var(--md-sys-color-outline-variant); padding-top: 2px; margin-top: 20px;">
-                                    <div class="tweak-row" style="border-bottom: none; padding-bottom: 4px;">
-                                        <div class="tweak-info-col">
-                                            <span class="tweak-label" data-i18n="tweaks.undervolt.little">Little
-                                                Cluster</span>
-                                            <span class="tweak-val" id="undervolt-val-little">0%</span>
-                                        </div>
-                                    </div>
-                                    <div class="value-row">
-                                        <input type="range" id="undervolt-slider-little"
-                                            class="styled-slider tweak-slider-locked" min="0" max="15" value="0">
-
-                                        <div class="custom-input-row" style="margin-top: 0;">
-                                            <input type="number" id="undervolt-input-little" value="0" min="0"
-                                                max="100">
-                                            <span class="input-suffix">%</span>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Big Cluster -->
-                                <div class="slider-container tweak-separator">
-                                    <div class="tweak-row" style="border-bottom: none; padding-bottom: 4px;">
-                                        <div class="tweak-info-col">
-                                            <span class="tweak-label" data-i18n="tweaks.undervolt.big">Big
-                                                Cluster</span>
-                                            <span class="tweak-val" id="undervolt-val-big">0%</span>
-                                        </div>
-                                    </div>
-                                    <div class="value-row">
-                                        <input type="range" id="undervolt-slider-big"
-                                            class="styled-slider tweak-slider-locked" min="0" max="15" value="0">
-
-                                        <div class="custom-input-row" style="margin-top: 0;">
-                                            <input type="number" id="undervolt-input-big" value="0" min="0" max="100">
-                                            <span class="input-suffix">%</span>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- GPU -->
-                                <div class="slider-container">
-                                    <div class="tweak-row" style="border-bottom: none; padding-bottom: 4px;">
-                                        <div class="tweak-info-col">
-                                            <span class="tweak-label" data-i18n="tweaks.undervolt.gpu">GPU</span>
-                                            <span class="tweak-val" id="undervolt-val-gpu">0%</span>
-                                        </div>
-                                    </div>
-                                    <div class="value-row">
-                                        <input type="range" id="undervolt-slider-gpu"
-                                            class="styled-slider tweak-slider-locked" min="0" max="15" value="0">
-
-                                        <div class="custom-input-row" style="margin-top: 0;">
-                                            <input type="number" id="undervolt-input-gpu" value="0" min="0" max="100">
-                                            <span class="input-suffix">%</span>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Actions -->
-                                <div class="tweak-actions" style="margin-top: 28px;">
-                                    <button class="tweak-action-btn secondary" id="undervolt-btn-save"
-                                        data-i18n="tweaks.save">Save</button>
-                                    <button class="tweak-action-btn secondary" id="undervolt-btn-apply"
-                                        data-i18n="tweaks.apply">Apply</button>
-                                    <button class="tweak-action-btn primary" id="undervolt-btn-save-apply"
-                                        data-i18n="tweaks.saveApply">Save & Apply</button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Misc Floppy1280 Tweaks Card -->
-                        <div id="misc-card" class="card tweak-card hidden">
-                            <div class="card-header">
-                                <!-- developer_board icon -->
-                                <svg class="icon-svg" viewBox="0 -960 960 960">
-                                    <path
-                                        d="M160-120q-33 0-56.5-23.5T80-200v-560q0-33 23.5-56.5T160-840h560q33 0 56.5 23.5T800-760v80h80v80h-80v80h80v80h-80v80h80v80h-80v80q0 33-23.5 56.5T720-120H160Zm0-80h560v-560H160v560Zm80-80h200v-160H240v160Zm240-280h160v-120H480v120Zm-240 80h200v-200H240v200Zm240 200h160v-240H480v240ZM160-760v560-560Z" />
-                                </svg>
-                                <span class="card-title" data-i18n="tweaks.misc.title">Misc Floppy1280 Tweaks</span>
-                                <span id="misc-pending-indicator" class="pending-indicator hidden"
-                                    data-i18n="tweaks.unsaved">Unsaved</span>
-                            </div>
-                            <div class="card-content">
-                                <!-- Block ED3 -->
-                                <div class="tweak-row">
-                                    <div class="tweak-info-col">
-                                        <span class="tweak-label">
-                                            <span data-i18n="tweaks.misc.blockEd3">Block Ear Detect Mode 3</span>
-                                            <div class="status-icon-wrapper"
-                                                style="position:relative; display:inline-block; vertical-align:middle; margin-left:8px;">
-                                                <svg class="status-icon info"
-                                                    onclick="toggleBubble('bubble-misc-blocked3', event)"
-                                                    viewBox="0 0 24 24"
-                                                    style="width:16px;height:16px;cursor:pointer;color:var(--md-sys-color-primary);">
-                                                    <path fill="currentColor"
-                                                        d="M11 7h2v2h-2zm0 4h2v6h-2zm1-9C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z" />
-                                                </svg>
-                                                <div id="bubble-misc-blocked3" class="status-bubble left hidden"
-                                                    data-i18n="tweaks.tooltip.blockEd3"></div>
-                                            </div>
-                                        </span>
-                                        <span class="tweak-val" id="misc-val-blocked3">--</span>
-                                    </div>
-                                    <div class="tweak-switch-container">
-                                        <label class="m3-switch" style="display:inline-block; margin:0;">
-                                            <input type="checkbox" id="misc-blocked3-switch">
-                                            <span class="m3-switch-track">
-                                                <span class="m3-switch-thumb"></span>
-                                            </span>
-                                        </label>
-                                    </div>
-                                </div>
-
-                                <!-- GPU Clock Lock -->
-                                <div class="tweak-row">
-                                    <div class="tweak-info-col">
-                                        <span class="tweak-label">
-                                            <span data-i18n="tweaks.misc.gpuClkLock">GPU Clock Lock</span>
-                                            <div class="status-icon-wrapper"
-                                                style="position:relative; display:inline-block; vertical-align:middle; margin-left:8px;">
-                                                <svg class="status-icon info"
-                                                    onclick="toggleBubble('bubble-misc-gpuclklck', event)"
-                                                    viewBox="0 0 24 24"
-                                                    style="width:16px;height:16px;cursor:pointer;color:var(--md-sys-color-primary);">
-                                                    <path fill="currentColor"
-                                                        d="M11 7h2v2h-2zm0 4h2v6h-2zm1-9C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z" />
-                                                </svg>
-                                                <div id="bubble-misc-gpuclklck" class="status-bubble left hidden"
-                                                    data-i18n="tweaks.tooltip.gpuClkLock"></div>
-                                            </div>
-                                        </span>
-                                        <span class="tweak-val" id="misc-val-gpuclklck">--</span>
-                                    </div>
-                                    <div class="tweak-switch-container">
-                                        <label class="m3-switch" style="display:inline-block; margin:0;">
-                                            <input type="checkbox" id="misc-gpuclklck-switch">
-                                            <span class="m3-switch-track">
-                                                <span class="m3-switch-thumb"></span>
-                                            </span>
-                                        </label>
-                                    </div>
-                                </div>
-
-                                <!-- GPU Overclock -->
-                                <div class="tweak-row" style="border-bottom: none;">
-                                    <div class="tweak-info-col">
-                                        <span class="tweak-label">
-                                            <span data-i18n="tweaks.misc.gpuUnlock">GPU Overclock</span>
-                                            <div class="status-icon-wrapper"
-                                                style="position:relative; display:inline-block; vertical-align:middle; margin-left:8px;">
-                                                <svg class="status-icon info"
-                                                    onclick="toggleBubble('bubble-misc-gpuunlock', event)"
-                                                    viewBox="0 0 24 24"
-                                                    style="width:16px;height:16px;cursor:pointer;color:var(--md-sys-color-primary);">
-                                                    <path fill="currentColor"
-                                                        d="M11 7h2v2h-2zm0 4h2v6h-2zm1-9C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z" />
-                                                </svg>
-                                                <div id="bubble-misc-gpuunlock" class="status-bubble left hidden"
-                                                    data-i18n="tweaks.tooltip.gpuUnlock"></div>
-                                            </div>
-                                        </span>
-                                        <span class="tweak-val" id="misc-val-gpuunlock">--</span>
-                                    </div>
-                                    <div class="tweak-switch-container">
-                                        <label class="m3-switch" style="display:inline-block; margin:0;">
-                                            <input type="checkbox" id="misc-gpuunlock-switch">
-                                            <span class="m3-switch-track">
-                                                <span class="m3-switch-thumb"></span>
-                                            </span>
-                                        </label>
-                                    </div>
-                                </div>
-
-                                <!-- Actions -->
-                                <div class="tweak-actions">
-                                    <button class="tweak-action-btn secondary" id="misc-btn-save"
-                                        data-i18n="tweaks.save">Save</button>
-                                    <button class="tweak-action-btn secondary" id="misc-btn-apply"
-                                        data-i18n="tweaks.apply">Apply</button>
-                                    <button class="tweak-action-btn primary" id="misc-btn-save-apply"
-                                        data-i18n="tweaks.saveApply">Save & Apply</button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Sound Control Card (FloppyTrinketMi only) -->
-                        <div id="soundcontrol-card" class="card tweak-card hidden">
-                            <div class="card-header">
-                                <!-- headphones icon -->
-                                <svg class="icon-svg" viewBox="0 -960 960 960">
-                                    <path
-                                        d="M360-120H200q-33 0-56.5-23.5T120-200v-280q0-75 28.5-140.5t77-114q48.5-48.5 114-77T480-840q75 0 140.5 28.5t114 77q48.5 48.5 77 114T840-480v280q0 33-23.5 56.5T760-120H600v-320h160v-40q0-117-81.5-198.5T480-760q-117 0-198.5 81.5T200-480v40h160v320Zm-80-240h-80v160h80v-160Zm400 0v160h80v-160h-80Zm-400 0h-80 80Zm400 0h80-80Z" />
-                                </svg>
-                                <span class="card-title" data-i18n="tweaks.soundcontrol.title">Sound Control</span>
-                                <div class="status-icon-wrapper"
-                                    style="position:relative; display:inline-block; vertical-align:middle; margin-left:8px;">
-                                    <svg class="status-icon info"
-                                        onclick="toggleBubble('bubble-tweak-soundcontrol', event)" viewBox="0 0 24 24"
-                                        style="width:18px;height:18px;cursor:pointer;color:var(--md-sys-color-primary);">
-                                        <path fill="currentColor"
-                                            d="M11 7h2v2h-2zm0 4h2v6h-2zm1-9C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z" />
-                                    </svg>
-                                    <div id="bubble-tweak-soundcontrol" class="status-bubble center hidden"
-                                        data-i18n="tweaks.tooltip.soundcontrol"></div>
-                                </div>
-                                <span id="soundcontrol-pending-indicator" class="pending-indicator hidden"
-                                    data-i18n="tweaks.unsaved">Unsaved</span>
-                            </div>
-                            <div class="card-content">
-                                <!-- Split L/R Switch -->
-                                <div class="tweak-row" style="border-bottom: none; padding-bottom: 0;">
-                                    <div class="tweak-info-col">
-                                        <span class="tweak-label" data-i18n="tweaks.soundcontrol.splitChannels">Split
-                                            L/R Channels</span>
-                                    </div>
-                                    <div class="tweak-switch-container">
-                                        <label class="m3-switch" style="display:inline-block; margin:0;">
-                                            <input type="checkbox" id="soundcontrol-split-switch">
-                                            <span class="m3-switch-track">
-                                                <span class="m3-switch-thumb"></span>
-                                            </span>
-                                        </label>
-                                    </div>
-                                </div>
-
-                                <!-- Headphone Combined (shown when not split) -->
-                                <div id="soundcontrol-hp-combined" class="slider-container tweak-separator"
-                                    style="border-top: 1px solid var(--md-sys-color-outline-variant); padding-top: 2px; margin-top: 20px;">
-                                    <div class="tweak-row" style="border-bottom: none; padding-bottom: 4px;">
-                                        <div class="tweak-info-col">
-                                            <span class="tweak-label"
-                                                data-i18n="tweaks.soundcontrol.headphone">Headphone Gain</span>
-                                            <span class="tweak-val" id="soundcontrol-val-hp">0 dB</span>
-                                        </div>
-                                    </div>
-                                    <div class="value-row">
-                                        <input type="range" id="soundcontrol-slider-hp" class="styled-slider" min="0"
-                                            max="20" value="0">
-                                        <div class="custom-input-row" style="margin-top: 0;">
-                                            <input type="number" id="soundcontrol-input-hp" value="0" min="0" max="20">
-                                            <span class="input-suffix">dB</span>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Headphone L (shown when split) -->
-                                <div id="soundcontrol-hp-left" class="slider-container tweak-separator hidden"
-                                    style="border-top: 1px solid var(--md-sys-color-outline-variant); padding-top: 2px; margin-top: 20px;">
-                                    <div class="tweak-row" style="border-bottom: none; padding-bottom: 4px;">
-                                        <div class="tweak-info-col">
-                                            <span class="tweak-label"
-                                                data-i18n="tweaks.soundcontrol.headphoneL">Headphone L</span>
-                                            <span class="tweak-val" id="soundcontrol-val-hp-l">0 dB</span>
-                                        </div>
-                                    </div>
-                                    <div class="value-row">
-                                        <input type="range" id="soundcontrol-slider-hp-l" class="styled-slider" min="0"
-                                            max="20" value="0">
-                                        <div class="custom-input-row" style="margin-top: 0;">
-                                            <input type="number" id="soundcontrol-input-hp-l" value="0" min="0"
-                                                max="20">
-                                            <span class="input-suffix">dB</span>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Headphone R (shown when split) -->
-                                <div id="soundcontrol-hp-right" class="slider-container tweak-separator hidden">
-                                    <div class="tweak-row" style="border-bottom: none; padding-bottom: 4px;">
-                                        <div class="tweak-info-col">
-                                            <span class="tweak-label"
-                                                data-i18n="tweaks.soundcontrol.headphoneR">Headphone R</span>
-                                            <span class="tweak-val" id="soundcontrol-val-hp-r">0 dB</span>
-                                        </div>
-                                    </div>
-                                    <div class="value-row">
-                                        <input type="range" id="soundcontrol-slider-hp-r" class="styled-slider" min="0"
-                                            max="20" value="0">
-                                        <div class="custom-input-row" style="margin-top: 0;">
-                                            <input type="number" id="soundcontrol-input-hp-r" value="0" min="0"
-                                                max="20">
-                                            <span class="input-suffix">dB</span>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Microphone -->
-                                <div class="slider-container">
-                                    <div class="tweak-row" style="border-bottom: none; padding-bottom: 4px;">
-                                        <div class="tweak-info-col">
-                                            <span class="tweak-label" data-i18n="tweaks.soundcontrol.mic">Microphone
-                                                Gain</span>
-                                            <span class="tweak-val" id="soundcontrol-val-mic">0 dB</span>
-                                        </div>
-                                    </div>
-                                    <div class="value-row">
-                                        <input type="range" id="soundcontrol-slider-mic" class="styled-slider" min="0"
-                                            max="20" value="0">
-                                        <div class="custom-input-row" style="margin-top: 0;">
-                                            <input type="number" id="soundcontrol-input-mic" value="0" min="0" max="20">
-                                            <span class="input-suffix">dB</span>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Actions -->
-                                <div class="tweak-actions" style="margin-top: 28px;">
-                                    <button class="tweak-action-btn secondary" id="soundcontrol-btn-save"
-                                        data-i18n="tweaks.save">Save</button>
-                                    <button class="tweak-action-btn secondary" id="soundcontrol-btn-apply"
-                                        data-i18n="tweaks.apply">Apply</button>
-                                    <button class="tweak-action-btn primary" id="soundcontrol-btn-save-apply"
-                                        data-i18n="tweaks.saveApply">Save & Apply</button>
-                                </div>
-                            </div>
-                        </div>
+                    <!-- Schema-driven tweaks renderer target -->
+                    <div id="tweaks-sections">
+                        <div class="loading-spinner"></div>
                     </div>
 
-                    <!-- Common Tweaks Section -->
-                    <h2 class="section-title" data-i18n="tweaks.commonTweaks">Common Tweaks</h2>
-
-                    <!-- ZRAM Card -->
-                    <div id="zram-card" class="card tweak-card">
-                        <div class="card-header">
-                            <svg class="icon-svg" viewBox="0 0 24 24">
-                                <path
-                                    d="M15 9H9v6h6V9zm-2 4h-2v-2h2v2zm8-2V9h-2V7c0-1.1-.9-2-2-2h-2V3h-2v2h-2V3H9v2H7c-1.1 0-2 .9-2 2v2H3v2h2v2H3v2h2v2c0 1.1.9 2 2 2h2v2h2v-2h2v2h2v-2h2c1.1 0 2-.9 2-2v-2h2v-2h-2v-2h2zm-4 6H7V7h10v10z" />
-                            </svg>
-                            <span class="card-title" data-i18n="tweaks.zram.title">ZRAM</span>
-                            <div class="status-icon-wrapper"
-                                style="position:relative; display:inline-block; vertical-align:middle; margin-left:8px;">
-                                <svg class="status-icon info" onclick="toggleBubble('bubble-tweak-zram', event)"
-                                    viewBox="0 0 24 24"
-                                    style="width:18px;height:18px;cursor:pointer;color:var(--md-sys-color-primary);">
-                                    <path fill="currentColor"
-                                        d="M11 7h2v2h-2zm0 4h2v6h-2zm1-9C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z" />
-                                </svg>
-                                <div id="bubble-tweak-zram" class="status-bubble center hidden"
-                                    data-i18n="tweaks.tooltip.zram"></div>
-                            </div>
-                            <span id="zram-pending-indicator" class="pending-indicator hidden"
-                                data-i18n="tweaks.unsaved">Unsaved</span>
-                        </div>
+                    <!-- Card body templates (rendered into a common card shell by tweaks.js) -->
+                    <template id="tpl-thermal">
                         <div class="card-content">
-                            <!-- Enable/Disable Toggle -->
+                            <div class="tweak-row" style="border-bottom: none;">
+                                <div class="tweak-info-col">
+                                    <span class="tweak-label" data-i18n="tweaks.thermal.activeMode">Active mode</span>
+                                    <span class="tweak-val" id="thermal-val-mode">--</span>
+                                </div>
+                            </div>
+                            <div id="thermal-mode-options" class="option-buttons">
+                                <button class="option-btn" data-mode="0">Disabled <span class="mode-num">0</span></button>
+                                <button class="option-btn" data-mode="1">Stock <span class="mode-num">1</span></button>
+                                <button class="option-btn" data-mode="3">Performance <span class="mode-num">3</span></button>
+                                <button class="option-btn" data-mode="2">Custom <span class="mode-num">2</span></button>
+                            </div>
+                            <div id="thermal-mode-description" class="tweak-description"></div>
+                            <div id="thermal-custom-freq-row" class="tweak-row hidden" style="border-bottom: none; margin-top: 12px;">
+                                <div class="tweak-info-col">
+                                    <span class="tweak-label" data-i18n="tweaks.thermal.customFreq">Throttle Freq (KHz)</span>
+                                    <span class="tweak-val" id="thermal-val-custom_freq">--</span>
+                                </div>
+                                <div class="tweak-input-container">
+                                    <input type="number" id="thermal-custom_freq" class="styled-input" placeholder="2288000">
+                                </div>
+                            </div>
+                            <div class="tweak-actions">
+                                <button class="tweak-action-btn secondary" id="thermal-btn-save" data-i18n="tweaks.save">Save</button>
+                                <button class="tweak-action-btn secondary" id="thermal-btn-apply" data-i18n="tweaks.apply">Apply</button>
+                                <button class="tweak-action-btn primary" id="thermal-btn-save-apply" data-i18n="tweaks.saveApply">Save & Apply</button>
+                            </div>
+                        </div>
+                    </template>
+
+                    <template id="tpl-undervolt">
+                        <div class="card-content">
+                            <div id="undervolt-notice" class="info-notice hidden">
+                                <svg class="notice-icon" viewBox="0 0 24 24">
+                                    <path d="M11 15h2v2h-2zm0-8h2v6h-2zm.99-5C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z" />
+                                </svg>
+                                <div class="notice-content">
+                                    <span data-i18n="tweaks.undervolt.notice"></span>
+                                    <br>
+                                    <span class="notice-dismiss" onclick="document.getElementById('undervolt-notice').classList.add('hidden')" data-i18n="tweaks.dismiss">Dismiss</span>
+                                </div>
+                            </div>
+                            <div id="undervolt-high-warning" class="info-notice warning hidden">
+                                <svg class="notice-icon" viewBox="0 0 24 24">
+                                    <path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z" />
+                                </svg>
+                                <div class="notice-content">
+                                    <span data-i18n="tweaks.undervolt.highValueWarning">Values above 10% are almost guaranteed to cause an immediate crash. You may enter a bootloop until the module is disabled.</span>
+                                </div>
+                            </div>
+                            <div class="tweak-row" style="border-bottom: none; padding-bottom: 0;">
+                                <div class="tweak-info-col">
+                                    <span class="tweak-label" data-i18n="tweaks.undervolt.unlockRange">Unlock Full Range</span>
+                                </div>
+                                <div class="tweak-switch-container">
+                                    <label class="m3-switch" style="display:inline-block; margin:0;">
+                                        <input type="checkbox" id="undervolt-unlock-switch">
+                                        <span class="m3-switch-track"><span class="m3-switch-thumb"></span></span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="slider-container tweak-separator" style="border-top: 1px solid var(--md-sys-color-outline-variant); padding-top: 2px; margin-top: 20px;">
+                                <div class="tweak-row" style="border-bottom: none; padding-bottom: 4px;">
+                                    <div class="tweak-info-col">
+                                        <span class="tweak-label" data-i18n="tweaks.undervolt.little">Little Cluster</span>
+                                        <span class="tweak-val" id="undervolt-val-little">0%</span>
+                                    </div>
+                                </div>
+                                <div class="value-row">
+                                    <input type="range" id="undervolt-slider-little" class="styled-slider tweak-slider-locked" min="0" max="15" value="0">
+                                    <div class="custom-input-row" style="margin-top: 0;">
+                                        <input type="number" id="undervolt-input-little" value="0" min="0" max="100">
+                                        <span class="input-suffix">%</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="slider-container tweak-separator">
+                                <div class="tweak-row" style="border-bottom: none; padding-bottom: 4px;">
+                                    <div class="tweak-info-col">
+                                        <span class="tweak-label" data-i18n="tweaks.undervolt.big">Big Cluster</span>
+                                        <span class="tweak-val" id="undervolt-val-big">0%</span>
+                                    </div>
+                                </div>
+                                <div class="value-row">
+                                    <input type="range" id="undervolt-slider-big" class="styled-slider tweak-slider-locked" min="0" max="15" value="0">
+                                    <div class="custom-input-row" style="margin-top: 0;">
+                                        <input type="number" id="undervolt-input-big" value="0" min="0" max="100">
+                                        <span class="input-suffix">%</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="slider-container">
+                                <div class="tweak-row" style="border-bottom: none; padding-bottom: 4px;">
+                                    <div class="tweak-info-col">
+                                        <span class="tweak-label" data-i18n="tweaks.undervolt.gpu">GPU</span>
+                                        <span class="tweak-val" id="undervolt-val-gpu">0%</span>
+                                    </div>
+                                </div>
+                                <div class="value-row">
+                                    <input type="range" id="undervolt-slider-gpu" class="styled-slider tweak-slider-locked" min="0" max="15" value="0">
+                                    <div class="custom-input-row" style="margin-top: 0;">
+                                        <input type="number" id="undervolt-input-gpu" value="0" min="0" max="100">
+                                        <span class="input-suffix">%</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="tweak-actions" style="margin-top: 28px;">
+                                <button class="tweak-action-btn secondary" id="undervolt-btn-save" data-i18n="tweaks.save">Save</button>
+                                <button class="tweak-action-btn secondary" id="undervolt-btn-apply" data-i18n="tweaks.apply">Apply</button>
+                                <button class="tweak-action-btn primary" id="undervolt-btn-save-apply" data-i18n="tweaks.saveApply">Save & Apply</button>
+                            </div>
+                        </div>
+                    </template>
+
+                    <template id="tpl-misc">
+                        <div class="card-content">
+                            <div class="tweak-row">
+                                <div class="tweak-info-col">
+                                    <span class="tweak-label">
+                                        <span data-i18n="tweaks.misc.blockEd3">Block Ear Detect Mode 3</span>
+                                        <div class="status-icon-wrapper" style="position:relative; display:inline-block; vertical-align:middle; margin-left:8px;">
+                                            <svg class="status-icon info" onclick="toggleBubble('bubble-misc-blocked3', event)" viewBox="0 0 24 24" style="width:16px;height:16px;cursor:pointer;color:var(--md-sys-color-primary);">
+                                                <path fill="currentColor" d="M11 7h2v2h-2zm0 4h2v6h-2zm1-9C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z" />
+                                            </svg>
+                                            <div id="bubble-misc-blocked3" class="status-bubble left hidden" data-i18n="tweaks.tooltip.blockEd3"></div>
+                                        </div>
+                                    </span>
+                                    <span class="tweak-val" id="misc-val-blocked3">--</span>
+                                </div>
+                                <div class="tweak-switch-container">
+                                    <label class="m3-switch" style="display:inline-block; margin:0;">
+                                        <input type="checkbox" id="misc-blocked3-switch">
+                                        <span class="m3-switch-track"><span class="m3-switch-thumb"></span></span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="tweak-row">
+                                <div class="tweak-info-col">
+                                    <span class="tweak-label">
+                                        <span data-i18n="tweaks.misc.gpuClkLock">GPU Clock Lock</span>
+                                        <div class="status-icon-wrapper" style="position:relative; display:inline-block; vertical-align:middle; margin-left:8px;">
+                                            <svg class="status-icon info" onclick="toggleBubble('bubble-misc-gpuclklck', event)" viewBox="0 0 24 24" style="width:16px;height:16px;cursor:pointer;color:var(--md-sys-color-primary);">
+                                                <path fill="currentColor" d="M11 7h2v2h-2zm0 4h2v6h-2zm1-9C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z" />
+                                            </svg>
+                                            <div id="bubble-misc-gpuclklck" class="status-bubble left hidden" data-i18n="tweaks.tooltip.gpuClkLock"></div>
+                                        </div>
+                                    </span>
+                                    <span class="tweak-val" id="misc-val-gpuclklck">--</span>
+                                </div>
+                                <div class="tweak-switch-container">
+                                    <label class="m3-switch" style="display:inline-block; margin:0;">
+                                        <input type="checkbox" id="misc-gpuclklck-switch">
+                                        <span class="m3-switch-track"><span class="m3-switch-thumb"></span></span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="tweak-row" style="border-bottom: none;">
+                                <div class="tweak-info-col">
+                                    <span class="tweak-label">
+                                        <span data-i18n="tweaks.misc.gpuUnlock">GPU Overclock</span>
+                                        <div class="status-icon-wrapper" style="position:relative; display:inline-block; vertical-align:middle; margin-left:8px;">
+                                            <svg class="status-icon info" onclick="toggleBubble('bubble-misc-gpuunlock', event)" viewBox="0 0 24 24" style="width:16px;height:16px;cursor:pointer;color:var(--md-sys-color-primary);">
+                                                <path fill="currentColor" d="M11 7h2v2h-2zm0 4h2v6h-2zm1-9C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z" />
+                                            </svg>
+                                            <div id="bubble-misc-gpuunlock" class="status-bubble left hidden" data-i18n="tweaks.tooltip.gpuUnlock"></div>
+                                        </div>
+                                    </span>
+                                    <span class="tweak-val" id="misc-val-gpuunlock">--</span>
+                                </div>
+                                <div class="tweak-switch-container">
+                                    <label class="m3-switch" style="display:inline-block; margin:0;">
+                                        <input type="checkbox" id="misc-gpuunlock-switch">
+                                        <span class="m3-switch-track"><span class="m3-switch-thumb"></span></span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="tweak-actions">
+                                <button class="tweak-action-btn secondary" id="misc-btn-save" data-i18n="tweaks.save">Save</button>
+                                <button class="tweak-action-btn secondary" id="misc-btn-apply" data-i18n="tweaks.apply">Apply</button>
+                                <button class="tweak-action-btn primary" id="misc-btn-save-apply" data-i18n="tweaks.saveApply">Save & Apply</button>
+                            </div>
+                        </div>
+                    </template>
+
+                    <template id="tpl-soundcontrol">
+                        <div class="card-content">
+                            <div class="tweak-row" style="border-bottom: none; padding-bottom: 0;">
+                                <div class="tweak-info-col">
+                                    <span class="tweak-label" data-i18n="tweaks.soundcontrol.splitChannels">Split L/R Channels</span>
+                                </div>
+                                <div class="tweak-switch-container">
+                                    <label class="m3-switch" style="display:inline-block; margin:0;">
+                                        <input type="checkbox" id="soundcontrol-split-switch">
+                                        <span class="m3-switch-track"><span class="m3-switch-thumb"></span></span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div id="soundcontrol-hp-combined" class="slider-container tweak-separator" style="border-top: 1px solid var(--md-sys-color-outline-variant); padding-top: 2px; margin-top: 20px;">
+                                <div class="tweak-row" style="border-bottom: none; padding-bottom: 4px;">
+                                    <div class="tweak-info-col">
+                                        <span class="tweak-label" data-i18n="tweaks.soundcontrol.headphone">Headphone Gain</span>
+                                        <span class="tweak-val" id="soundcontrol-val-hp">0 dB</span>
+                                    </div>
+                                </div>
+                                <div class="value-row">
+                                    <input type="range" id="soundcontrol-slider-hp" class="styled-slider" min="0" max="20" value="0">
+                                    <div class="custom-input-row" style="margin-top: 0;">
+                                        <input type="number" id="soundcontrol-input-hp" value="0" min="0" max="20">
+                                        <span class="input-suffix">dB</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="soundcontrol-hp-left" class="slider-container tweak-separator hidden" style="border-top: 1px solid var(--md-sys-color-outline-variant); padding-top: 2px; margin-top: 20px;">
+                                <div class="tweak-row" style="border-bottom: none; padding-bottom: 4px;">
+                                    <div class="tweak-info-col">
+                                        <span class="tweak-label" data-i18n="tweaks.soundcontrol.headphoneL">Headphone L</span>
+                                        <span class="tweak-val" id="soundcontrol-val-hp-l">0 dB</span>
+                                    </div>
+                                </div>
+                                <div class="value-row">
+                                    <input type="range" id="soundcontrol-slider-hp-l" class="styled-slider" min="0" max="20" value="0">
+                                    <div class="custom-input-row" style="margin-top: 0;">
+                                        <input type="number" id="soundcontrol-input-hp-l" value="0" min="0" max="20">
+                                        <span class="input-suffix">dB</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="soundcontrol-hp-right" class="slider-container tweak-separator hidden">
+                                <div class="tweak-row" style="border-bottom: none; padding-bottom: 4px;">
+                                    <div class="tweak-info-col">
+                                        <span class="tweak-label" data-i18n="tweaks.soundcontrol.headphoneR">Headphone R</span>
+                                        <span class="tweak-val" id="soundcontrol-val-hp-r">0 dB</span>
+                                    </div>
+                                </div>
+                                <div class="value-row">
+                                    <input type="range" id="soundcontrol-slider-hp-r" class="styled-slider" min="0" max="20" value="0">
+                                    <div class="custom-input-row" style="margin-top: 0;">
+                                        <input type="number" id="soundcontrol-input-hp-r" value="0" min="0" max="20">
+                                        <span class="input-suffix">dB</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="slider-container">
+                                <div class="tweak-row" style="border-bottom: none; padding-bottom: 4px;">
+                                    <div class="tweak-info-col">
+                                        <span class="tweak-label" data-i18n="tweaks.soundcontrol.mic">Microphone Gain</span>
+                                        <span class="tweak-val" id="soundcontrol-val-mic">0 dB</span>
+                                    </div>
+                                </div>
+                                <div class="value-row">
+                                    <input type="range" id="soundcontrol-slider-mic" class="styled-slider" min="0" max="20" value="0">
+                                    <div class="custom-input-row" style="margin-top: 0;">
+                                        <input type="number" id="soundcontrol-input-mic" value="0" min="0" max="20">
+                                        <span class="input-suffix">dB</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="tweak-actions" style="margin-top: 28px;">
+                                <button class="tweak-action-btn secondary" id="soundcontrol-btn-save" data-i18n="tweaks.save">Save</button>
+                                <button class="tweak-action-btn secondary" id="soundcontrol-btn-apply" data-i18n="tweaks.apply">Apply</button>
+                                <button class="tweak-action-btn primary" id="soundcontrol-btn-save-apply" data-i18n="tweaks.saveApply">Save & Apply</button>
+                            </div>
+                        </div>
+                    </template>
+
+                    <template id="tpl-zram">
+                        <div class="card-content">
                             <div class="tweak-toggle-row">
                                 <span class="toggle-label" data-i18n="tweaks.zram.enable">Enable ZRAM</span>
                                 <div class="m3-switch">
                                     <input type="checkbox" id="zram-enable-toggle" checked>
-                                    <span class="m3-switch-track">
-                                        <span class="m3-switch-thumb"></span>
-                                    </span>
+                                    <span class="m3-switch-track"><span class="m3-switch-thumb"></span></span>
                                 </div>
                             </div>
-
-                            <!-- Disk Size Section -->
                             <div id="zram-options" class="tweak-section">
                                 <h3 class="tweak-section-title" data-i18n="tweaks.zram.diskSize">Disk Size</h3>
                                 <div class="option-grid" id="zram-size-options">
@@ -825,29 +605,18 @@
                                     <button class="option-btn" data-size="4294967296">4096 MiB</button>
                                     <button class="option-btn" data-size="6442450944">6144 MiB</button>
                                     <button class="option-btn" data-size="8589934592">8192 MiB</button>
-                                    <button class="option-btn" id="zram-size-custom-btn" data-size="custom"
-                                        data-i18n="tweaks.zram.custom">Custom</button>
+                                    <button class="option-btn" id="zram-size-custom-btn" data-size="custom" data-i18n="tweaks.zram.custom">Custom</button>
                                 </div>
-                                <div id="zram-custom-input-row" class="tweak-row hidden"
-                                    style="border-bottom: none; margin-top: 12px;">
+                                <div id="zram-custom-input-row" class="tweak-row hidden" style="border-bottom: none; margin-top: 12px;">
                                     <div class="tweak-info-col">
-                                        <span class="tweak-label" data-i18n="tweaks.zram.customSize">Custom Size
-                                            (MiB)</span>
+                                        <span class="tweak-label" data-i18n="tweaks.zram.customSize">Custom Size (MiB)</span>
                                     </div>
                                     <div class="tweak-input-container">
-                                        <input type="number" id="zram-custom-size" class="styled-input" min="1"
-                                            max="65536">
+                                        <input type="number" id="zram-custom-size" class="styled-input" min="1" max="65536">
                                     </div>
                                 </div>
-
-                                <!-- Algorithm Section -->
-                                <h3 class="tweak-section-title" data-i18n="tweaks.zram.algorithm">Compression Algorithm
-                                </h3>
-                                <div class="option-grid" id="zram-algo-options">
-                                    <!-- Populated dynamically -->
-                                </div>
-
-                                <!-- Active Values -->
+                                <h3 class="tweak-section-title" data-i18n="tweaks.zram.algorithm">Compression Algorithm</h3>
+                                <div class="option-grid" id="zram-algo-options"></div>
                                 <div class="current-values">
                                     <div class="value-row">
                                         <span class="value-label">Active disksize</span>
@@ -858,46 +627,17 @@
                                         <span class="value-data" id="zram-current-algorithm">--</span>
                                     </div>
                                 </div>
-
                             </div>
-
-                            <!-- Action Buttons -->
                             <div class="tweak-actions">
-                                <button class="tweak-action-btn secondary" id="zram-btn-save"
-                                    data-i18n="tweaks.save">Save</button>
-                                <button class="tweak-action-btn secondary" id="zram-btn-apply"
-                                    data-i18n="tweaks.apply">Apply</button>
-                                <button class="tweak-action-btn primary" id="zram-btn-save-apply"
-                                    data-i18n="tweaks.saveApply">Save & Apply</button>
+                                <button class="tweak-action-btn secondary" id="zram-btn-save" data-i18n="tweaks.save">Save</button>
+                                <button class="tweak-action-btn secondary" id="zram-btn-apply" data-i18n="tweaks.apply">Apply</button>
+                                <button class="tweak-action-btn primary" id="zram-btn-save-apply" data-i18n="tweaks.saveApply">Save & Apply</button>
                             </div>
                         </div>
-                    </div>
+                    </template>
 
-                    <!-- Memory Card -->
-                    <div id="memory-card" class="card tweak-card">
-                        <div class="card-header">
-                            <svg class="icon-svg" viewBox="0 0 24 24">
-                                <path
-                                    d="M15 9H9v6h6V9zm-2 4h-2v-2h2v2zm8-2V9h-2V7c0-1.1-.9-2-2-2h-2V3h-2v2h-2V3H9v2H7c-1.1 0-2 .9-2 2v2H3v2h2v2H3v2h2v2c0 1.1.9 2 2 2h2v2h2v-2h2v2h2v-2h2c1.1 0 2-.9 2-2v-2h2v-2h-2v-2h2zm-4 6H7V7h10v10z" />
-                            </svg>
-                            <span class="card-title" data-i18n="tweaks.memory.title">Memory</span>
-                            <div class="status-icon-wrapper"
-                                style="position:relative; display:inline-block; vertical-align:middle; margin-left:8px;">
-                                <svg class="status-icon info" onclick="toggleBubble('bubble-tweak-memory', event)"
-                                    viewBox="0 0 24 24"
-                                    style="width:18px;height:18px;cursor:pointer;color:var(--md-sys-color-primary);">
-                                    <path fill="currentColor"
-                                        d="M11 7h2v2h-2zm0 4h2v6h-2zm1-9C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z" />
-                                </svg>
-                                <div id="bubble-tweak-memory" class="status-bubble center hidden"
-                                    data-i18n="tweaks.tooltip.memory"></div>
-                            </div>
-                            <span id="mem-pending-indicator" class="pending-indicator hidden"
-                                data-i18n="tweaks.unsaved">
-                                Unsaved</span>
-                        </div>
+                    <template id="tpl-memory">
                         <div class="card-content">
-                            <!-- Swappiness -->
                             <div class="tweak-row">
                                 <div class="tweak-info-col">
                                     <span class="tweak-label" data-i18n="tweaks.memory.swappiness">Swappiness</span>
@@ -907,176 +647,113 @@
                                     <input type="number" id="mem-swappiness" class="styled-input" placeholder="60">
                                 </div>
                             </div>
-
-                            <!-- VFS Cache Pressure -->
                             <div class="tweak-row">
                                 <div class="tweak-info-col">
-                                    <span class="tweak-label" data-i18n="tweaks.memory.vfsCachePressure">VFS Cache
-                                        Pressure</span>
+                                    <span class="tweak-label" data-i18n="tweaks.memory.vfsCachePressure">VFS Cache Pressure</span>
                                     <span class="tweak-val" id="mem-val-vfs_cache_pressure">--</span>
                                 </div>
                                 <div class="tweak-input-container">
-                                    <input type="number" id="mem-vfs_cache_pressure" class="styled-input"
-                                        placeholder="100">
+                                    <input type="number" id="mem-vfs_cache_pressure" class="styled-input" placeholder="100">
                                 </div>
                             </div>
-
-                            <!-- Dirty Mode Toggle -->
                             <div class="tweak-subsection">
                                 <div class="tweak-section-header">
-                                    <span class="tweak-label" data-i18n="tweaks.memory.dirtyPages">Dirty Pages
-                                        Mode</span>
+                                    <span class="tweak-label" data-i18n="tweaks.memory.dirtyPages">Dirty Pages Mode</span>
                                 </div>
                                 <div class="mode-toggle-row">
                                     <div class="segmented-control">
-                                        <input type="radio" name="mem-dirty-mode" id="mem-mode-ratio" value="ratio"
-                                            checked>
+                                        <input type="radio" name="mem-dirty-mode" id="mem-mode-ratio" value="ratio" checked>
                                         <label for="mem-mode-ratio">Ratio</label>
                                         <input type="radio" name="mem-dirty-mode" id="mem-mode-bytes" value="bytes">
                                         <label for="mem-mode-bytes">Bytes</label>
                                     </div>
                                 </div>
-
-                                <!-- Group Ratio -->
                                 <div id="mem-group-ratio">
                                     <div class="tweak-row">
                                         <div class="tweak-info-col">
-                                            <span class="tweak-label" data-i18n="tweaks.memory.dirtyRatio">Dirty
-                                                Ratio</span>
+                                            <span class="tweak-label" data-i18n="tweaks.memory.dirtyRatio">Dirty Ratio</span>
                                             <span class="tweak-val" id="mem-val-dirty_ratio">--</span>
                                         </div>
                                         <div class="tweak-input-container">
-                                            <input type="number" id="mem-dirty_ratio" class="styled-input"
-                                                placeholder="20">
+                                            <input type="number" id="mem-dirty_ratio" class="styled-input" placeholder="20">
                                         </div>
                                     </div>
                                     <div class="tweak-row">
                                         <div class="tweak-info-col">
-                                            <span class="tweak-label"
-                                                data-i18n="tweaks.memory.dirtyBackgroundRatio">Dirty
-                                                Background
-                                                Ratio</span>
+                                            <span class="tweak-label" data-i18n="tweaks.memory.dirtyBackgroundRatio">Dirty Background Ratio</span>
                                             <span class="tweak-val" id="mem-val-dirty_background_ratio">--</span>
                                         </div>
                                         <div class="tweak-input-container">
-                                            <input type="number" id="mem-dirty_background_ratio" class="styled-input"
-                                                placeholder="10">
+                                            <input type="number" id="mem-dirty_background_ratio" class="styled-input" placeholder="10">
                                         </div>
                                     </div>
                                 </div>
-
-                                <!-- Group Bytes -->
                                 <div id="mem-group-bytes" class="hidden">
                                     <div class="tweak-row">
                                         <div class="tweak-info-col">
-                                            <span class="tweak-label" data-i18n="tweaks.memory.dirtyBytes">Dirty
-                                                Bytes</span>
+                                            <span class="tweak-label" data-i18n="tweaks.memory.dirtyBytes">Dirty Bytes</span>
                                             <span class="tweak-val" id="mem-val-dirty_bytes">--</span>
                                         </div>
                                         <div class="tweak-input-container">
-                                            <input type="number" id="mem-dirty_bytes" class="styled-input"
-                                                placeholder="0">
+                                            <input type="number" id="mem-dirty_bytes" class="styled-input" placeholder="0">
                                         </div>
                                     </div>
                                     <div class="tweak-row">
                                         <div class="tweak-info-col">
-                                            <span class="tweak-label"
-                                                data-i18n="tweaks.memory.dirtyBackgroundBytes">Dirty
-                                                Background
-                                                Bytes</span>
+                                            <span class="tweak-label" data-i18n="tweaks.memory.dirtyBackgroundBytes">Dirty Background Bytes</span>
                                             <span class="tweak-val" id="mem-val-dirty_background_bytes">--</span>
                                         </div>
                                         <div class="tweak-input-container">
-                                            <input type="number" id="mem-dirty_background_bytes" class="styled-input"
-                                                placeholder="0">
+                                            <input type="number" id="mem-dirty_background_bytes" class="styled-input" placeholder="0">
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="tweak-row">
-                            <div class="tweak-info-col">
-                                <span class="tweak-label" data-i18n="tweaks.memory.dirtyExpire">Dirty Expire
-                                    (cs)</span>
-                                <span class="tweak-val" id="mem-val-dirty_expire_centisecs">--</span>
+                            <div class="tweak-row">
+                                <div class="tweak-info-col">
+                                    <span class="tweak-label" data-i18n="tweaks.memory.dirtyExpire">Dirty Expire (cs)</span>
+                                    <span class="tweak-val" id="mem-val-dirty_expire_centisecs">--</span>
+                                </div>
+                                <div class="tweak-input-container">
+                                    <input type="number" id="mem-dirty_expire_centisecs" class="styled-input" placeholder="3000">
+                                </div>
                             </div>
-                            <div class="tweak-input-container">
-                                <input type="number" id="mem-dirty_expire_centisecs" class="styled-input"
-                                    placeholder="3000">
+                            <div class="tweak-row">
+                                <div class="tweak-info-col">
+                                    <span class="tweak-label" data-i18n="tweaks.memory.statInterval">Stat Interval</span>
+                                    <span class="tweak-val" id="mem-val-stat_interval">--</span>
+                                </div>
+                                <div class="tweak-input-container">
+                                    <input type="number" id="mem-stat_interval" class="styled-input" placeholder="1">
+                                </div>
                             </div>
-                        </div>
-
-                        <!-- Other -->
-                        <div class="tweak-row">
-                            <div class="tweak-info-col">
-                                <span class="tweak-label" data-i18n="tweaks.memory.statInterval">Stat
-                                    Interval</span>
-                                <span class="tweak-val" id="mem-val-stat_interval">--</span>
+                            <div class="tweak-row">
+                                <div class="tweak-info-col">
+                                    <span class="tweak-label" data-i18n="tweaks.memory.watermarkScale">Watermark Scale</span>
+                                    <span class="tweak-val" id="mem-val-watermark_scale_factor">--</span>
+                                </div>
+                                <div class="tweak-input-container">
+                                    <input type="number" id="mem-watermark_scale_factor" class="styled-input" placeholder="10">
+                                </div>
                             </div>
-                            <div class="tweak-input-container">
-                                <input type="number" id="mem-stat_interval" class="styled-input" placeholder="1">
-                            </div>
-                        </div>
-                        <div class="tweak-row">
-                            <div class="tweak-info-col">
-                                <span class="tweak-label" data-i18n="tweaks.memory.watermarkScale">Watermark
-                                    Scale</span>
-                                <span class="tweak-val" id="mem-val-watermark_scale_factor">--</span>
-                            </div>
-                            <div class="tweak-input-container">
-                                <input type="number" id="mem-watermark_scale_factor" class="styled-input"
-                                    placeholder="10">
-                            </div>
-                        </div>
-
-                        <!-- Actions -->
-                        <div class="tweak-actions">
-                            <button class="tweak-action-btn secondary" id="mem-btn-save"
-                                data-i18n="tweaks.save">Save</button>
-                            <button class="tweak-action-btn secondary" id="mem-btn-apply"
-                                data-i18n="tweaks.apply">Apply</button>
-                            <button class="tweak-action-btn primary" id="mem-btn-save-apply"
-                                data-i18n="tweaks.saveApply">Save & Apply</button>
-                        </div>
-                    </div>
-                    <!-- I/O Scheduler Card -->
-                    <div id="iosched-card" class="card tweak-card">
-                        <div class="card-header">
-                            <svg class="icon-svg" viewBox="0 0 24 24">
-                                <path
-                                    d="M12 3C7.58 3 4 4.79 4 7v10c0 2.21 3.58 4 8 4s8-1.79 8-4V7c0-2.21-3.58-4-8-4zm0 2c3.87 0 6 1.5 6 2s-2.13 2-6 2-6-1.5-6-2 2.13-2 6-2zm6 12c0 .5-2.13 2-6 2s-6-1.5-6-2v-2.23c1.61.78 3.72 1.23 6 1.23s4.39-.45 6-1.23V17zm0-5c0 .5-2.13 2-6 2s-6-1.5-6-2V9.77c1.61.78 3.72 1.23 6 1.23s4.39-.45 6-1.23V12z" />
-                            </svg>
-                            <span class="card-title" data-i18n="tweaks.iosched.ioScheduler">I/O Scheduler</span>
-                            <div class="status-icon-wrapper"
-                                style="position:relative; display:inline-block; vertical-align:middle; margin-left:8px;">
-                                <svg class="status-icon info" onclick="toggleBubble('bubble-tweak-iosched', event)"
-                                    viewBox="0 0 24 24"
-                                    style="width:18px;height:18px;cursor:pointer;color:var(--md-sys-color-primary);">
-                                    <path fill="currentColor"
-                                        d="M11 7h2v2h-2zm0 4h2v6h-2zm1-9C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z" />
-                                </svg>
-                                <div id="bubble-tweak-iosched" class="status-bubble center hidden"
-                                    data-i18n="tweaks.tooltip.ioScheduler"></div>
-                            </div>
-                            <span id="iosched-pending-indicator" class="pending-indicator hidden"
-                                data-i18n="tweaks.unsaved">Unsaved</span>
-                        </div>
-                        <div class="card-content">
-                            <div id="iosched-devices-container" class="tweak-container">
-                                <!-- Populated dynamically -->
-                            </div>
-
-                            <!-- Actions -->
                             <div class="tweak-actions">
-                                <button class="tweak-action-btn secondary" id="iosched-btn-save"
-                                    data-i18n="tweaks.save">Save</button>
-                                <button class="tweak-action-btn secondary" id="iosched-btn-apply"
-                                    data-i18n="tweaks.apply">Apply</button>
-                                <button class="tweak-action-btn primary" id="iosched-btn-save-apply"
-                                    data-i18n="tweaks.saveApply">Save & Apply</button>
+                                <button class="tweak-action-btn secondary" id="mem-btn-save" data-i18n="tweaks.save">Save</button>
+                                <button class="tweak-action-btn secondary" id="mem-btn-apply" data-i18n="tweaks.apply">Apply</button>
+                                <button class="tweak-action-btn primary" id="mem-btn-save-apply" data-i18n="tweaks.saveApply">Save & Apply</button>
                             </div>
                         </div>
-                    </div>
+                    </template>
+
+                    <template id="tpl-iosched">
+                        <div class="card-content">
+                            <div id="iosched-devices-container" class="tweak-container"></div>
+                            <div class="tweak-actions">
+                                <button class="tweak-action-btn secondary" id="iosched-btn-save" data-i18n="tweaks.save">Save</button>
+                                <button class="tweak-action-btn secondary" id="iosched-btn-apply" data-i18n="tweaks.apply">Apply</button>
+                                <button class="tweak-action-btn primary" id="iosched-btn-save-apply" data-i18n="tweaks.saveApply">Save & Apply</button>
+                            </div>
+                        </div>
+                    </template>
                 </div> <!-- End Inner Container -->
             </div> <!-- End Tab Tweaks -->
 
