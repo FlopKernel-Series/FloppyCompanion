@@ -189,6 +189,78 @@ async function init() {
     const ghLink = document.getElementById('github-link');
 
     // 2. Detection & Status
+    const deviceNameEl = document.getElementById('managed-device-name');
+
+    const tHome = (key, fallback) => {
+        try {
+            if (window.I18N && typeof window.I18N.t === 'function') {
+                const val = window.I18N.t(`home.${key}`);
+                if (val && !String(val).startsWith('home.')) return String(val);
+            }
+        } catch {
+            // ignore
+        }
+        return fallback;
+    };
+
+    const detectingText = () => tHome('detecting', 'Detecting...');
+    const unknownText = () => tHome('unknown', 'Unknown');
+
+    const applyDeviceValueI18nKey = (keyOrNull) => {
+        if (!deviceEl) return;
+        if (keyOrNull) deviceEl.setAttribute('data-i18n', `home.${keyOrNull}`);
+        else deviceEl.removeAttribute('data-i18n');
+    };
+
+    const applyManagedNameI18nKey = (keyOrNull) => {
+        if (!deviceNameEl) return;
+        if (keyOrNull) deviceNameEl.setAttribute('data-i18n', `home.${keyOrNull}`);
+        else deviceNameEl.removeAttribute('data-i18n');
+    };
+
+    const swapManagedDeviceName = (nextText, opts = {}) => {
+        if (!deviceNameEl) return;
+        const next = String(nextText);
+        if (deviceNameEl.textContent === next) return;
+
+        if (Object.prototype.hasOwnProperty.call(opts, 'i18nKey')) {
+            applyManagedNameI18nKey(opts.i18nKey);
+        }
+
+        deviceNameEl.classList.add('text-fade');
+
+        let swapped = false;
+        const doSwap = () => {
+            if (swapped) return;
+            swapped = true;
+            deviceNameEl.textContent = next;
+            requestAnimationFrame(() => deviceNameEl.classList.remove('text-fade'));
+        };
+
+        const onEnd = (e) => {
+            if (e.propertyName !== 'opacity') return;
+            deviceNameEl.removeEventListener('transitionend', onEnd);
+            doSwap();
+        };
+
+        deviceNameEl.addEventListener('transitionend', onEnd);
+        setTimeout(() => {
+            deviceNameEl.removeEventListener('transitionend', onEnd);
+            doSwap();
+        }, 500);
+    };
+
+    // Default UI state while detection runs
+    if (deviceNameEl) {
+        applyManagedNameI18nKey('detecting');
+        deviceNameEl.textContent = detectingText();
+    }
+
+    if (deviceEl) {
+        applyDeviceValueI18nKey('unknown');
+        deviceEl.textContent = unknownText();
+    }
+
     const device = await getDevice();
     const props = await getModuleProps();
     // Pass detected uname directly to resolveDeviceInfo
@@ -206,6 +278,7 @@ async function init() {
     if (!uname) {
         if (statusCard) statusCard.classList.add('hidden');
         if (errorCard) errorCard.classList.remove('hidden');
+        swapManagedDeviceName(unknownText(), { i18nKey: 'unknown' });
         return;
     }
 
@@ -214,21 +287,34 @@ async function init() {
         window.setDeviceContext(devInfo.isTrinketMi);
     }
 
-    if (deviceEl) deviceEl.textContent = devInfo.displayName;
+    if (deviceEl) {
+        const displayName = (devInfo && devInfo.displayName != null) ? String(devInfo.displayName).trim() : '';
+        if (!displayName || displayName.toLowerCase() === 'unknown') {
+            applyDeviceValueI18nKey('unknown');
+            deviceEl.textContent = unknownText();
+        } else {
+            applyDeviceValueI18nKey(null);
+            deviceEl.textContent = displayName;
+        }
+    }
 
     // Theme & Device Name Chip
-    const deviceNameEl = document.getElementById('managed-device-name');
+    const shouldAnimateDetectionTheme = devInfo.isTrinketMi || devInfo.is1280;
+    if (shouldAnimateDetectionTheme) {
+        document.body.classList.add('theme-detect-anim');
+        setTimeout(() => document.body.classList.remove('theme-detect-anim'), 1700);
+    }
 
     if (devInfo.isTrinketMi) {
-        document.body.classList.add('theme-orange');
-        if (deviceNameEl) deviceNameEl.textContent = "FloppyTrinketMi";
+        requestAnimationFrame(() => document.body.classList.add('theme-orange'));
+        swapManagedDeviceName('FloppyTrinketMi', { i18nKey: null });
         window.KERNEL_NAME = 'FloppyTrinketMi';
     } else if (devInfo.is1280) {
-        document.body.classList.add('theme-exynos-blue');
-        if (deviceNameEl) deviceNameEl.textContent = 'Floppy1280';
+        requestAnimationFrame(() => document.body.classList.add('theme-exynos-blue'));
+        swapManagedDeviceName('Floppy1280', { i18nKey: null });
         window.KERNEL_NAME = 'Floppy1280';
     } else {
-        if (deviceNameEl) deviceNameEl.textContent = 'FloppyKernel';
+        swapManagedDeviceName(unknownText(), { i18nKey: 'unknown' });
         window.KERNEL_NAME = 'FloppyKernel';
     }
 

@@ -8,6 +8,8 @@
     "home": {
         "title": "Inicio",
         "welcome": "¡Bienvenido a FloppyKernel Companion!",
+        "detecting": "Detectando...",
+        "unknown": "Desconocido",
         "kernelStatus": "Estado del Kernel",
         "device": "Dispositivo",
         "linux": "Linux",

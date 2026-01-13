@@ -1,15 +1,14 @@
 /* --- Theme Variables --- */
 
-/* Base Light Theme (Default) */
+/* Base Light Theme (Default) - Neutral (pre-detection / unknown device) */
 :root {
-    --md-sys-color-primary: #0d47a1;
-    /* Darker Exynos Blue */
+    --md-sys-color-primary: #5f6368;
+    --md-sys-color-primary-rgb: 95, 99, 104;
     --md-sys-color-on-primary: #ffffff;
-    --md-sys-color-primary-container: #dce1ff;
-    --md-sys-color-on-primary-container: #00164d;
-    --md-sys-color-secondary-container: #dce1ff;
-    /* Reuse similar tone for cohesion */
-    --md-sys-color-on-secondary-container: #00164d;
+    --md-sys-color-primary-container: #e8eaed;
+    --md-sys-color-on-primary-container: #1f1f1f;
+    --md-sys-color-secondary-container: #e8eaed;
+    --md-sys-color-on-secondary-container: #1f1f1f;
     --md-sys-color-surface: #fbfdf9;
     --md-sys-color-on-surface: #191c1a;
     --md-sys-color-surface-variant: #e1e3de;
@@ -18,33 +17,41 @@
     --md-sys-color-outline-variant: #c4c7c5;
     --md-sys-shape-corner-large: 16px;
     --md-sys-shape-corner-medium: 12px;
-    --md-sys-color-surface-container: #f0f4ff;
-    /* Light bluish tint */
+    --md-sys-color-surface-container: #f3f3f3;
     --md-sys-color-surface-container-high: #ffffff;
     --terminal-bg: #eeeeee;
     --terminal-text: #1b5e20;
     /* Dark Green */
+
+    /* Theme transition (used for smooth device-detection theme switch) */
+    --fc-theme-transition-duration: 0ms;
+    --fc-theme-transition-easing: cubic-bezier(0.2, 0, 0, 1);
+    --fc-theme-transition-delay: 0ms;
 }
 
-/* Base Dark Theme (Media Query) */
+/* Enable theme transitions only during detection-to-accent switch */
+body.theme-detect-anim {
+    --fc-theme-transition-duration: 1200ms;
+    --fc-theme-transition-delay: 80ms;
+}
+
+/* Base Dark Theme (Media Query) - Neutral (pre-detection / unknown device) */
 @media (prefers-color-scheme: dark) {
     :root {
-        --md-sys-color-primary: #b6c4ff;
-        --md-sys-color-on-primary: #00287d;
-        --md-sys-color-primary-container: #003db2;
-        --md-sys-color-on-primary-container: #dce1ff;
-        --md-sys-color-secondary-container: #b6c4ff;
-        /* Light blue pill background */
-        --md-sys-color-on-secondary-container: #00287d;
-        /* Deep blue for pill text */
+        --md-sys-color-primary: #c7cacf;
+        --md-sys-color-primary-rgb: 199, 202, 207;
+        --md-sys-color-on-primary: #1f1f1f;
+        --md-sys-color-primary-container: #3a3d41;
+        --md-sys-color-on-primary-container: #e8eaed;
+        --md-sys-color-secondary-container: #3a3d41;
+        --md-sys-color-on-secondary-container: #e8eaed;
         --md-sys-color-surface: #191c1a;
         --md-sys-color-on-surface: #e1e3e0;
         --md-sys-color-surface-variant: #444745;
         --md-sys-color-on-surface-variant: #c4c7c5;
         --md-sys-color-outline: #8e918f;
         --md-sys-color-outline-variant: #444745;
-        --md-sys-color-surface-container: #1b2029;
-        /* Dark bluish grey */
+        --md-sys-color-surface-container: #202124;
         --md-sys-color-surface-container-high: #2b2b2f;
         --terminal-bg: #1e1e1e;
         --terminal-text: #00e676;
@@ -53,44 +60,72 @@
 
 /* Manual Overrides (Persistent) */
 body.theme-light {
-    --md-sys-color-primary: #0d47a1;
+    --md-sys-color-primary: #5f6368;
+    --md-sys-color-primary-rgb: 95, 99, 104;
     --md-sys-color-on-primary: #ffffff;
-    --md-sys-color-primary-container: #dce1ff;
-    --md-sys-color-on-primary-container: #00164d;
-    --md-sys-color-secondary-container: #dce1ff;
-    --md-sys-color-on-secondary-container: #00164d;
+    --md-sys-color-primary-container: #e8eaed;
+    --md-sys-color-on-primary-container: #1f1f1f;
+    --md-sys-color-secondary-container: #e8eaed;
+    --md-sys-color-on-secondary-container: #1f1f1f;
     --md-sys-color-surface: #fbfdf9;
     --md-sys-color-on-surface: #191c1a;
     --md-sys-color-surface-variant: #e1e3de;
     --md-sys-color-on-surface-variant: #444745;
     --md-sys-color-outline: #747775;
-    --md-sys-color-surface-container: #f0f4ff;
+    --md-sys-color-surface-container: #f3f3f3;
     --md-sys-color-surface-container-high: #ffffff;
     --terminal-bg: #eeeeee;
     --terminal-text: #1b5e20;
 }
 
 body.theme-dark {
-    --md-sys-color-primary: #b6c4ff;
-    --md-sys-color-on-primary: #00287d;
-    --md-sys-color-primary-container: #003db2;
-    --md-sys-color-on-primary-container: #dce1ff;
-    --md-sys-color-secondary-container: #b6c4ff;
-    --md-sys-color-on-secondary-container: #00287d;
+    --md-sys-color-primary: #c7cacf;
+    --md-sys-color-primary-rgb: 199, 202, 207;
+    --md-sys-color-on-primary: #1f1f1f;
+    --md-sys-color-primary-container: #3a3d41;
+    --md-sys-color-on-primary-container: #e8eaed;
+    --md-sys-color-secondary-container: #3a3d41;
+    --md-sys-color-on-secondary-container: #e8eaed;
     --md-sys-color-surface: #191c1a;
     --md-sys-color-on-surface: #e1e3e0;
     --md-sys-color-surface-variant: #444745;
     --md-sys-color-on-surface-variant: #c4c7c5;
     --md-sys-color-outline: #8e918f;
-    --md-sys-color-surface-container: #1b2029;
+    --md-sys-color-surface-container: #202124;
     --md-sys-color-surface-container-high: #2b2b2f;
     --terminal-bg: #1e1e1e;
     --terminal-text: #00e676;
 }
 
+/* Exynos Blue Theme Overrides (1280) - Works on top of Light/Dark */
+body.theme-exynos-blue {
+    --md-sys-color-primary: #0d47a1;
+    --md-sys-color-primary-rgb: 13, 71, 161;
+    --md-sys-color-on-primary: #ffffff;
+    --md-sys-color-primary-container: #dce1ff;
+    --md-sys-color-on-primary-container: #00164d;
+    --md-sys-color-secondary-container: #dce1ff;
+    --md-sys-color-on-secondary-container: #00164d;
+    --md-sys-color-surface-container: #f0f4ff;
+}
+
+@media (prefers-color-scheme: dark) {
+    body.theme-exynos-blue {
+        --md-sys-color-primary: #b6c4ff;
+        --md-sys-color-primary-rgb: 182, 196, 255;
+        --md-sys-color-on-primary: #00287d;
+        --md-sys-color-primary-container: #003db2;
+        --md-sys-color-on-primary-container: #dce1ff;
+        --md-sys-color-secondary-container: #b6c4ff;
+        --md-sys-color-on-secondary-container: #00287d;
+        --md-sys-color-surface-container: #1b2029;
+    }
+}
+
 /* Orange Theme Overrides (Trinket) - Works on top of Light/Dark */
 body.theme-orange {
     --md-sys-color-primary: #9c4100;
+    --md-sys-color-primary-rgb: 156, 65, 0;
     --md-sys-color-on-primary: #ffffff;
     --md-sys-color-primary-container: #ffdbcc;
     --md-sys-color-on-primary-container: #351000;
@@ -104,6 +139,7 @@ body.theme-orange {
 @media (prefers-color-scheme: dark) {
     body.theme-orange {
         --md-sys-color-primary: #ffb68f;
+        --md-sys-color-primary-rgb: 255, 182, 143;
         --md-sys-color-on-primary: #532200;
         --md-sys-color-primary-container: #763300;
         --md-sys-color-on-primary-container: #ffdbcc;
@@ -140,6 +176,54 @@ body.theme-light.theme-orange {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    :root {
+        --fc-theme-transition-duration: 0ms;
+        --fc-theme-transition-delay: 0ms;
+    }
+
+    body.theme-detect-anim {
+        --fc-theme-transition-duration: 0ms;
+        --fc-theme-transition-delay: 0ms;
+    }
+}
+
+/* Smoothly animate the palette change when theme classes are applied after detection */
+body,
+.card,
+.feature-card,
+.tweak-card,
+.hero-chip,
+.bottom-nav,
+.nav-item,
+.nav-item .icon,
+.chip-btn,
+.fab,
+.tweak-action-btn,
+input,
+select,
+textarea {
+    transition:
+        background-color var(--fc-theme-transition-duration) var(--fc-theme-transition-easing) var(--fc-theme-transition-delay),
+        color var(--fc-theme-transition-duration) var(--fc-theme-transition-easing) var(--fc-theme-transition-delay),
+        border-color var(--fc-theme-transition-duration) var(--fc-theme-transition-easing) var(--fc-theme-transition-delay),
+        box-shadow var(--fc-theme-transition-duration) var(--fc-theme-transition-easing) var(--fc-theme-transition-delay);
+}
+
+svg,
+svg * {
+    transition:
+        fill var(--fc-theme-transition-duration) var(--fc-theme-transition-easing) var(--fc-theme-transition-delay),
+        stroke var(--fc-theme-transition-duration) var(--fc-theme-transition-easing) var(--fc-theme-transition-delay);
+}
+
+/* Override fast nav icon transitions during detection so the long fade is visible */
+body.theme-detect-anim .nav-item .icon {
+    transition:
+        background-color var(--fc-theme-transition-duration) var(--fc-theme-transition-easing) var(--fc-theme-transition-delay),
+        color var(--fc-theme-transition-duration) var(--fc-theme-transition-easing) var(--fc-theme-transition-delay);
 }
 
 
@@ -1176,6 +1260,15 @@ body {
     border-radius: 100px;
     font-size: 14px;
     font-weight: 500;
+}
+
+#managed-device-name {
+    opacity: 1;
+    transition: opacity 420ms var(--fc-theme-transition-easing);
+}
+
+#managed-device-name.text-fade {
+    opacity: 0;
 }
 
 .chip-icon {

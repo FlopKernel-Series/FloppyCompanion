@@ -8,6 +8,8 @@
     "home": {
         "title": "Home",
         "welcome": "Welcome to FloppyKernel Companion!",
+        "detecting": "Detecting...",
+        "unknown": "Unknown",
         "kernelStatus": "Kernel Status",
         "device": "Device",
         "linux": "Linux",
