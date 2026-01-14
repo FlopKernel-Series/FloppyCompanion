@@ -5,6 +5,7 @@
     const REQUIRED_TAPS = 3;
 
     const MUSIC_GAIN = 0.8;
+    const MUSIC_START_DELAY_MS = 500;
 
     const REMOTE_MOD_URL = 'https://modland.com/pub/modules/Protracker/MC%20Spicy/betty.mod';
 
@@ -26,6 +27,8 @@
     let audioPlayer = null;
     let micromod = null;
     let currentModule = null;
+
+    let musicStartTimer = null;
 
     let closeTimer = null;
 
@@ -108,7 +111,7 @@
         const cy = h / 2;
 
         const speedScale = Math.max(0.25, Math.min(2, (dtMs || TARGET_FRAME_MS) / 16.67));
-        const speed = 0.0020 * speedScale;
+        const speed = 0.0013 * speedScale;
 
         ctx.fillStyle = 'rgba(255,255,255,0.9)';
 
@@ -145,6 +148,13 @@
         }
 
         rafId = requestAnimationFrame(tick);
+    }
+
+    function cancelMusicTimers() {
+        if (musicStartTimer) {
+            clearTimeout(musicStartTimer);
+            musicStartTimer = null;
+        }
     }
 
     function stopAnim() {
@@ -248,6 +258,7 @@
     }
 
     function stopMusic() {
+        cancelMusicTimers();
         try {
             if (audioPlayer) audioPlayer.stop();
         } catch {
@@ -274,12 +285,19 @@
         void modalEl.offsetWidth;
         modalEl.classList.add('is-open');
 
-        resizeCanvas();
-        initStars();
+        // Start the visuals on the next frame so the opening transition stays smooth.
         stopAnim();
-        rafId = requestAnimationFrame(tick);
+        requestAnimationFrame(() => {
+            resizeCanvas();
+            initStars();
+            rafId = requestAnimationFrame(tick);
+        });
 
-        startMusic();
+        // Delay music slightly so the user can see the animation.
+        cancelMusicTimers();
+        musicStartTimer = setTimeout(() => {
+            startMusic();
+        }, MUSIC_START_DELAY_MS);
     }
 
     function closeModal() {
