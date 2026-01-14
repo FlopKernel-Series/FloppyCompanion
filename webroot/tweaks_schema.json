@@ -97,7 +97,7 @@
           "pendingId": "iosched-pending-indicator",
           "type": "custom",
           "templateId": "tpl-iosched",
-          "iconKey": "iosched",
+          "iconKey": "storage",
           "titleKey": "tweaks.iosched.ioScheduler",
           "tooltipKey": "tweaks.tooltip.ioScheduler",
           "requires": null

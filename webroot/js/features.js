@@ -169,25 +169,29 @@ function renderFeatures(schema, procCmdline) {
 
     featuresContainer.innerHTML = '';
 
-    const getIconPath = function (name, fallback) {
+    const getIconData = function (name, fallback) {
         const def = window.FC && window.FC.icons && window.FC.icons.get ? window.FC.icons.get(name) : null;
         const p = def && def.paths && def.paths[0] ? def.paths[0] : null;
         const d = typeof p === 'string' ? p : (p && p.d ? p.d : '');
-        return d || fallback || '';
+
+        return {
+            viewBox: (def && def.viewBox) || (fallback && fallback.viewBox) || '0 0 24 24',
+            d: d || (fallback && fallback.d) || ''
+        };
     };
 
-    const rebootIconPath = getIconPath(
-        'reboot',
-        'M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z'
-    );
-    const infoIconPath = getIconPath(
-        'info',
-        'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z'
-    );
-    const warningTrianglePath = getIconPath(
-        'warning',
-        'M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z'
-    );
+    const rebootIcon = getIconData('restart_alt', {
+        viewBox: '0 0 24 24',
+        d: 'M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z'
+    });
+    const infoIcon = getIconData('info', {
+        viewBox: '0 0 24 24',
+        d: 'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z'
+    });
+    const warningIcon = getIconData('warning', {
+        viewBox: '0 0 24 24',
+        d: 'M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z'
+    });
 
     if (!schema || schema.length === 0) {
         featuresContainer.innerHTML = '<p class="text-center p-4">No features defined for this device.</p>';
@@ -228,8 +232,8 @@ function renderFeatures(schema, procCmdline) {
             const bubbleId = `bubble-reboot-${item.key}`;
             statusIconsHtml += `
                 <div class="status-icon-wrapper" style="position:relative;">
-                    <svg class="status-icon reboot" onclick="toggleBubble('${bubbleId}', event)" viewBox="0 0 24 24">
-                        <path fill="currentColor" d="${rebootIconPath}"/>
+                    <svg class="status-icon reboot" onclick="toggleBubble('${bubbleId}', event)" viewBox="${rebootIcon.viewBox}">
+                        <path fill="currentColor" d="${rebootIcon.d}"/>
                     </svg>
                     <div id="${bubbleId}" class="status-bubble hidden">
                         ${t('features.tooltipReboot')}
@@ -246,8 +250,8 @@ function renderFeatures(schema, procCmdline) {
                 : t('features.tooltipReadOnlyBlocked') || "This feature's state cannot be changed from the UI normally (read-only).";
             statusIconsHtml += `
                 <div class="status-icon-wrapper" style="position:relative;">
-                    <svg class="status-icon warning" onclick="toggleBubble('${bubbleId}', event)" viewBox="0 0 24 24">
-                        <path fill="currentColor" d="${infoIconPath}"/>
+                    <svg class="status-icon warning" onclick="toggleBubble('${bubbleId}', event)" viewBox="${infoIcon.viewBox}">
+                        <path fill="currentColor" d="${infoIcon.d}"/>
                     </svg>
                     <div id="${bubbleId}" class="status-bubble hidden">
                         ${bubbleText}
@@ -291,7 +295,7 @@ function renderFeatures(schema, procCmdline) {
             const optionsHtml = visibleOptions.map(opt => {
                 const isSelected = (currentVal === opt.val);
                 const selectedClass = isSelected ? 'selected' : '';
-                const expBadge = opt.experimental ? `<span class="experimental-badge" title="${t('features.tooltipExperimental') || 'Experimental'}"><svg viewBox="0 0 24 24" width="16" height="16"><path fill="#F44336" d="${warningTrianglePath}"/></svg></span>` : '';
+                const expBadge = opt.experimental ? `<span class="experimental-badge" title="${t('features.tooltipExperimental') || 'Experimental'}"><svg viewBox="${warningIcon.viewBox}" width="16" height="16"><path fill="#F44336" d="${warningIcon.d}"/></svg></span>` : '';
 
                 return `
                 <div class="option-item ${selectedClass}" 
@@ -320,7 +324,7 @@ function renderFeatures(schema, procCmdline) {
         const currentValueHtml = `<div class="current-value-display">Current: ${displayValText}</div>`;
 
         // Feature-level experimental badge
-        const featureExpBadge = item.experimental ? `<span class="experimental-badge" title="${t('features.tooltipExperimental') || 'Experimental'}"><svg viewBox="0 0 24 24" width="18" height="18"><path fill="#F44336" d="${warningTrianglePath}"/></svg></span>` : '';
+        const featureExpBadge = item.experimental ? `<span class="experimental-badge" title="${t('features.tooltipExperimental') || 'Experimental'}"><svg viewBox="${warningIcon.viewBox}" width="18" height="18"><path fill="#F44336" d="${warningIcon.d}"/></svg></span>` : '';
 
         // Render
         el.innerHTML = `
