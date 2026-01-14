@@ -541,6 +541,28 @@
                         </div>
                     </template>
 
+                    <template id="tpl-bypass-charging">
+                        <div class="card-content">
+                            <div class="tweak-row" style="border-bottom: none;">
+                                <div class="tweak-info-col">
+                                    <span class="tweak-label" data-i18n="tweaks.bypassCharging.label">Bypass Charging</span>
+                                    <span class="tweak-val" id="bypass-charging-val">--</span>
+                                </div>
+                                <div class="tweak-switch-container">
+                                    <label class="m3-switch" style="display:inline-block; margin:0;">
+                                        <input type="checkbox" id="bypass-charging-switch">
+                                        <span class="m3-switch-track"><span class="m3-switch-thumb"></span></span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="tweak-actions">
+                                <button class="tweak-action-btn secondary" id="bypass-charging-btn-save" data-i18n="tweaks.save">Save</button>
+                                <button class="tweak-action-btn secondary" id="bypass-charging-btn-apply" data-i18n="tweaks.apply">Apply</button>
+                                <button class="tweak-action-btn primary" id="bypass-charging-btn-save-apply" data-i18n="tweaks.saveApply">Save & Apply</button>
+                            </div>
+                        </div>
+                    </template>
+
                     <template id="tpl-zram">
                         <div class="card-content">
                             <div class="tweak-toggle-row">

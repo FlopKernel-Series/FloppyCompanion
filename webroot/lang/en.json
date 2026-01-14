@@ -126,6 +126,13 @@
             "headphoneR": "Headphone R",
             "mic": "Microphone Gain"
         },
+        "bypassCharging": {
+            "title": "Bypass Charging",
+            "label": "Bypass Charging",
+            "desc": "Attempts to power the phone directly from the charger instead of charging the battery.",
+            "enabled": "Enabled",
+            "disabled": "Disabled"
+        },
         "platformTweaks": "Platform Tweaks",
         "dismiss": "Dismiss",
         "tooltip": {
@@ -138,7 +145,8 @@
             "blockEd3": "Disables Ear Detect Mode 3, which prevents the display from lowering its refresh rate when the virtual proximity sensor is engaged. Also makes the proximity sensor less sensitive.",
             "gpuClkLock": "When enabled, prevents the GPU min/max frequencies from being changed. Useful for locking GPU clocks to a specific range.",
             "gpuUnlock": "Enables GPU overclocking immediately. Only works in Superfloppy overclock modes (1, 2, 3). Greyed out if Unlocked Mode is disabled or in non-OC modes.",
-            "soundcontrol": "Adjust headphone and microphone gain in decibels. Higher values increase volume. Use Split L/R to control left and right channels independently."
+            "soundcontrol": "Adjust headphone and microphone gain in decibels. Higher values increase volume. Use Split L/R to control left and right channels independently.",
+            "bypassCharging": "Attempts to bypass battery charging by suspending input charge and powering the device directly. Experimental."
         }
     },
     "about": {

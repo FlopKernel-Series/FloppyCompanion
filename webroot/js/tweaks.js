@@ -82,10 +82,13 @@ function buildTweakCardShell(card) {
     const iconEl = createTweakIconSvg(card.iconKey);
     if (iconEl) header.appendChild(iconEl);
 
+    const titleWrap = document.createElement('div');
+    titleWrap.className = 'card-title-wrap';
+
     const title = document.createElement('span');
     title.className = 'card-title';
     if (card.titleKey) title.setAttribute('data-i18n', card.titleKey);
-    header.appendChild(title);
+    titleWrap.appendChild(title);
 
     if (card.tooltipKey) {
         const wrapper = document.createElement('div');
@@ -98,8 +101,10 @@ function buildTweakCardShell(card) {
             </svg>
             <div id="${bubbleId}" class="status-bubble center hidden" data-i18n="${card.tooltipKey}"></div>
         `;
-        header.appendChild(wrapper);
+        titleWrap.appendChild(wrapper);
     }
+
+    header.appendChild(titleWrap);
 
     if (card.pendingId) {
         const pending = document.createElement('span');
@@ -1872,6 +1877,128 @@ function initSoundControlTweak() {
     });
 }
 
+// --- Bypass Charging Tweak Logic (FloppyTrinketMi only) ---
+
+const BYPASS_CHARGING_ENABLED = '2';
+const BYPASS_CHARGING_DISABLED = '0';
+
+let bypassChargingCurrentState = BYPASS_CHARGING_DISABLED;
+let bypassChargingSavedState = BYPASS_CHARGING_DISABLED;
+let bypassChargingPendingState = BYPASS_CHARGING_DISABLED;
+
+async function runBypassChargingBackend(action, ...args) {
+    const cmd = `sh ${DATA_DIR}/tweaks/bypass_charging.sh ${action} ${args.join(' ')}`;
+    try {
+        const result = await exec(cmd);
+        return result.trim();
+    } catch (error) {
+        console.error(`Bypass Charging backend error (${action}):`, error);
+        return '';
+    }
+}
+
+function getBypassChargingText(enabled) {
+    if (enabled) return window.t ? window.t('tweaks.bypassCharging.enabled') : 'Enabled';
+    return window.t ? window.t('tweaks.bypassCharging.disabled') : 'Disabled';
+}
+
+function renderBypassChargingCard() {
+    const valEl = document.getElementById('bypass-charging-val');
+    const toggle = document.getElementById('bypass-charging-switch');
+    const isEnabled = bypassChargingCurrentState === BYPASS_CHARGING_ENABLED;
+
+    if (valEl) valEl.textContent = getBypassChargingText(isEnabled);
+    if (toggle) toggle.checked = bypassChargingPendingState === BYPASS_CHARGING_ENABLED;
+    updateBypassChargingPendingIndicator();
+}
+
+async function readBypassChargingState() {
+    const out = await runBypassChargingBackend('get_current');
+    const parsed = parseKeyValue(out);
+    return parsed.enabled || '';
+}
+
+function updateBypassChargingPendingIndicator() {
+    const indicator = document.getElementById('bypass-charging-pending-indicator');
+    if (!indicator) return;
+
+    const hasChanges = bypassChargingPendingState !== bypassChargingSavedState;
+    indicator.classList.toggle('hidden', !hasChanges);
+}
+
+async function loadBypassChargingState() {
+    const currentOutput = await runBypassChargingBackend('get_current');
+    const current = parseKeyValue(currentOutput);
+    bypassChargingCurrentState = current.enabled || BYPASS_CHARGING_DISABLED;
+
+    const savedOutput = await runBypassChargingBackend('get_saved');
+    const saved = parseKeyValue(savedOutput);
+    bypassChargingSavedState = saved.enabled || bypassChargingCurrentState || BYPASS_CHARGING_DISABLED;
+
+    bypassChargingPendingState = bypassChargingSavedState;
+    renderBypassChargingCard();
+}
+
+async function saveBypassCharging() {
+    await runBypassChargingBackend('save', bypassChargingPendingState);
+    bypassChargingSavedState = bypassChargingPendingState;
+    updateBypassChargingPendingIndicator();
+    showToast(window.t ? window.t('toast.settingsSaved') : 'Saved');
+}
+
+async function applyBypassCharging() {
+    await runBypassChargingBackend('apply', bypassChargingPendingState);
+
+    const currentOutput = await runBypassChargingBackend('get_current');
+    if (!currentOutput) {
+        showToast(window.t ? window.t('toast.settingsFailed') : 'Failed to apply settings', true);
+        return;
+    }
+
+    const current = parseKeyValue(currentOutput);
+    bypassChargingCurrentState = current.enabled || BYPASS_CHARGING_DISABLED;
+    renderBypassChargingCard();
+    showToast(window.t ? window.t('toast.settingsApplied') : 'Applied');
+}
+
+async function initBypassChargingTweak() {
+    const card = document.getElementById('bypass-charging-card');
+    if (!card) return;
+
+    // Only show on FloppyTrinketMi
+    if (window.KERNEL_NAME !== 'FloppyTrinketMi') {
+        card.classList.add('hidden');
+        return;
+    }
+
+    // Check availability via backend
+    const availability = await runBypassChargingBackend('is_available');
+    const available = parseKeyValue(availability).available === '1';
+    if (!available) {
+        card.classList.add('hidden');
+        return;
+    }
+
+    card.classList.remove('hidden');
+
+    await loadBypassChargingState();
+
+    const toggle = document.getElementById('bypass-charging-switch');
+    if (toggle) {
+        toggle.addEventListener('change', (e) => {
+            bypassChargingPendingState = e.target.checked ? BYPASS_CHARGING_ENABLED : BYPASS_CHARGING_DISABLED;
+            updateBypassChargingPendingIndicator();
+        });
+    }
+
+    document.getElementById('bypass-charging-btn-save')?.addEventListener('click', saveBypassCharging);
+    document.getElementById('bypass-charging-btn-apply')?.addEventListener('click', applyBypassCharging);
+    document.getElementById('bypass-charging-btn-save-apply')?.addEventListener('click', async () => {
+        await saveBypassCharging();
+        await applyBypassCharging();
+    });
+}
+
 function updateSoundControlSliderTicks(slider) {
     if (!slider) return;
     const color = getComputedStyle(document.body).getPropertyValue('--md-sys-color-outline').trim() || '#747775';
@@ -1901,6 +2028,7 @@ function initPlatformTweaks() {
         initThermalTweak();
         initUndervoltTweak();
         initMiscTweak();
+        initBypassChargingTweak();
         initSoundControlTweak();
     };
 

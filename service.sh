@@ -59,6 +59,11 @@ if [ -f "$MODDIR/tweaks/soundcontrol.sh" ]; then
     sh "$MODDIR/tweaks/soundcontrol.sh" apply_saved
 fi
 
+# Bypass Charging (FloppyTrinketMi only)
+if [ -f "$MODDIR/tweaks/bypass_charging.sh" ]; then
+    sh "$MODDIR/tweaks/bypass_charging.sh" apply_saved
+fi
+
 # --- Update Module Description ---
 KERN_VER=$(uname -r)
 DESCRIPTION="Companion module to tweak FloppyKernel."

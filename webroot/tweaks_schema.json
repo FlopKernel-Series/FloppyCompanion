@@ -61,6 +61,17 @@
           "titleKey": "tweaks.soundcontrol.title",
           "tooltipKey": "tweaks.tooltip.soundcontrol",
           "requires": { "var": "kernelName", "eq": "FloppyTrinketMi" }
+        },
+        {
+          "id": "bypass_charging",
+          "cardId": "bypass-charging-card",
+          "pendingId": "bypass-charging-pending-indicator",
+          "type": "custom",
+          "templateId": "tpl-bypass-charging",
+          "iconKey": "battery_android_share",
+          "titleKey": "tweaks.bypassCharging.title",
+          "tooltipKey": "tweaks.tooltip.bypassCharging",
+          "requires": { "var": "kernelName", "eq": "FloppyTrinketMi" }
         }
       ]
     },
