@@ -304,6 +304,7 @@ body.theme-detect-anim .nav-item .icon {
     align-items: center;
     justify-content: center;
     line-height: 0;
+    vertical-align: middle;
 }
 
 .status-icon {
@@ -2144,6 +2145,9 @@ body {
     font-size: 14px;
     font-weight: 500;
     color: var(--md-sys-color-on-surface);
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
 }
 
 .tweak-val {
