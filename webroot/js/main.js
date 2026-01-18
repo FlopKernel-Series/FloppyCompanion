@@ -423,8 +423,8 @@ async function init() {
     if (linuxVerEl) linuxVerEl.textContent = linuxVer;
 
     if (uname.includes('Floppy')) {
-        // Parse Version (including suffix like "v2.0b")
-        const versionMatch = uname.match(/-v(\d+\.\d+[a-z]*)/);
+        // Parse Version (including suffix like "v2.0b" or patch v6.2.1)
+        const versionMatch = uname.match(/-v(\d+\.\d+(?:\.\d+)?[a-z]*)/);
         if (versionMatch && versionEl) {
             versionEl.textContent = `v${versionMatch[1]}`;
         } else if (versionEl) {

@@ -89,8 +89,8 @@ if echo "$KERN_VER" | grep -q "Floppy"; then
     # Parse kernel name (Floppy1280, FloppyTrinketMi, etc)
     KERN_NAME=$(echo "$KERN_VER" | grep -o 'Floppy[A-Za-z0-9]*')
     
-    # Parse version (including suffix like "v2.0b")
-    VERSION=$(echo "$KERN_VER" | grep -o '\-v[0-9]*\.[0-9]*[a-z]*' | tr -d '-')
+    # Parse version (including suffix like "v2.0b" or patch v6.2.1)
+    VERSION=$(echo "$KERN_VER" | grep -o -E '\-v[0-9]+\.[0-9]+(\.[0-9]+)?[a-z]*' | tr -d '-')
     
     # Parse variant
     VARIANT=""
