@@ -141,6 +141,7 @@ For FloppyCompanion **v1.0**:
 
 - [ ] Monitor tab to see system resources
 - [ ] Make presets system less janky
+- [ ] "Create shortcut" support for compatible managers
 
 ## Contributing
 
