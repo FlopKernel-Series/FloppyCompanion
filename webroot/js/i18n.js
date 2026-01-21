@@ -37,6 +37,9 @@ const I18N = {
         }
 
         this.applyTranslations();
+
+        // Dispatch event so components can update with the loaded language
+        document.dispatchEvent(new CustomEvent('languageChanged', { detail: { lang: this.currentLang } }));
     },
 
     // Load a language file

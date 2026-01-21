@@ -28,8 +28,9 @@ let defaultPresetData = null; // Captured from kernel
 async function loadAvailablePresets() {
     availablePresets = [];
 
-    // Add Default (always first)
-    availablePresets.push({ name: 'Default', builtIn: true, path: null });
+    // Add Default (always first) — label is localized
+    const defaultLabel = (window.t ? t('tweaks.presetDefaultName') : 'Default');
+    availablePresets.push({ name: 'Default', label: defaultLabel, builtIn: true, path: null });
 
     // Load user presets from persistent directory
     const presetDir = '/data/adb/floppy_companion/presets';
@@ -132,16 +133,16 @@ async function saveAllTweaks() {
 async function showLoadPresetModal() {
     const isDefault = currentPresetName === 'Default';
     const message = isDefault
-        ? 'This will load the default tweak values from your kernel.'
-        : `This will load the values from "${currentPresetName}".`;
+        ? (t('tweaks.loadDefaultDesc') || 'This will load the default tweak values from your kernel.')
+        : (t('tweaks.loadPresetDesc') || 'This will load the values from \"{name}\".').replace('{name}', currentPresetName);
 
     const result = await showConfirmModal({
-        title: 'Load Preset',
-        body: `<p>${message}</p><p>This will override and <strong>save</strong> your current settings.</p>`,
+        title: t('tweaks.loadPresetTitle') || 'Load Preset',
+        body: `<p>${message}</p><p>${t('tweaks.loadPresetWarning') || 'This will override and <strong>save</strong> your current settings.'}</p>`,
         iconClass: 'info',
-        confirmText: 'Apply Now',
-        cancelText: 'Cancel',
-        extraButton: { text: 'Load Only', value: 'load' }
+        confirmText: t('tweaks.applyNow') || 'Apply Now',
+        cancelText: t('modal.cancel') || 'Cancel',
+        extraButton: { text: t('tweaks.loadOnly') || 'Load Only', value: 'load' }
     });
 
     if (result === true) return 'apply';
@@ -355,7 +356,7 @@ async function showOverwritePrompt() {
         body: `<p>Do you want to overwrite "${currentPresetName}" or save as a new preset?</p>`,
         iconClass: 'info',
         confirmText: 'Overwrite',
-        cancelText: 'Cancel',
+        cancelText: t('modal.cancel') || 'Cancel',
         extraButton: { text: 'Save as New', value: 'new' }
     });
 
@@ -377,7 +378,8 @@ function renderPresetSelector() {
     for (const preset of availablePresets) {
         const option = document.createElement('option');
         option.value = preset.name;
-        option.textContent = preset.name + (preset.builtIn ? '' : ' ★');
+        const label = (preset.name === 'Default') ? (t('tweaks.presetDefaultName') || 'Default') : (preset.label || preset.name);
+        option.textContent = label + (preset.builtIn ? '' : ' ★');
         if (preset.name === currentPresetName) {
             option.selected = true;
         }
@@ -425,6 +427,9 @@ async function initPresets() {
     if (saveBtn) saveBtn.addEventListener('click', handleSavePreset);
     if (importBtn) importBtn.addEventListener('click', handleImportPreset);
     if (exportBtn) exportBtn.addEventListener('click', handleExportPreset);
+
+    // Re-render preset selector when language changes
+    document.addEventListener('languageChanged', renderPresetSelector);
 }
 
 // Make functions available globally
