@@ -1,0 +1,72 @@
+{
+    "1280": {
+        "superfloppy": {
+            "title": "Kilitsiz Mod",
+            "desc": "FloppyKernel için CPU ve GPU saat ayarları.",
+            "options": {
+                "1": {
+                    "label": "Etkin (Hız Aşırtma)",
+                    "desc": "CL0 = 2.2 GHz (OC), CL1 = 2.496 GHz (OC), GPU = 1.209 GHz (OC), UV devre dışı."
+                },
+                "2": {
+                    "label": "MegaFloppy (Hız Aşırtma, riskli)",
+                    "desc": "CL0 = 2.2 GHz (OC), CL1 = 2.6 GHz (OC), GPU = 1.209 GHz (OC), UV devre dışı."
+                },
+                "3": {
+                    "label": "UltraFloppy (Hız Aşırtma, riskli)",
+                    "desc": "CL0 = 2.2 GHz (OC), CL1 = 2.704 GHz (OC), GPU = 1.209 GHz (OC), UV devre dışı."
+                },
+                "4": {
+                    "label": "CoolFloppy (Hız Düşürme)",
+                    "desc": "CL0 = 2.0 GHz (stok), CL1 = 2.112 GHz (UC), GPU = 897 MHz (stok), UV etkin."
+                },
+                "5": {
+                    "label": "BalancedFloppy (Hız Aşırtma)",
+                    "desc": "CL0 = 2.2 GHz (OC), CL1 = 2.4 GHz (stok), GPU = 897 MHz (stok), UV devre dışı."
+                }
+            }
+        }
+    },
+    "force_perm": {
+        "title": "Permissive'e Zorla",
+        "desc": "SELinux Permissive modunu zorla. Geliştiriciler içindir."
+    },
+    "ems_efficient": {
+        "title": "EMS Verimli Modu",
+        "desc": "EMS verimli zamanlayıcı modunu etkinleştir. Performansı düşürür ve pil ömrünü artırır."
+    },
+    "aosp_mode": {
+        "title": "AOSP Modu",
+        "desc": "AOSP'ye özgü yamaları etkinleştir."
+    },
+    "no_init_protection": {
+        "title": "Init Korumasını Kaldır",
+        "desc": "Power HAL'lerin ve init betiklerinin kernel ayarlarını değiştirmesine izin ver. Performansı ROM'un kontrol etmesini istiyorsanız etkinleştirin."
+    },
+    "legacy_timestamp_source": {
+        "title": "Eski Zaman Damgası",
+        "desc": "Eski kamera HAL'lerine sahip ROM'larda video kayıt uzunluğu sorunlarını düzeltir."
+    },
+    "no_msm_perf_boost": {
+        "title": "MSM Boost'u Devre Dışı Bırak",
+        "desc": "MSM Performance'ın CPU min/maks frekanslarının üzerine yazmasını engeller. Tepkiselliği azaltabilir."
+    },
+    "warm_reboot": {
+        "title": "Sıcak Yeniden Başlatmayı Zorla (Warm Reboot)",
+        "desc": "Günlükleri daha kolay toplamak için yeniden başlatmada RAM'i korur. Yalnızca hata ayıklama için önerilir, WiFi'nin bozulmasına neden olabilir."
+    },
+    "uname_bpf_spoof": {
+        "title": "BPF Spoofing",
+        "desc": "BPF desteği için Linux sürümünü sahte gösterir (spoof). Harici olarak yönetilir; bunu manuel olarak değiştirmek önyükleme döngülerine (bootloop) neden olabilir.",
+        "options": {
+            "1": {
+                "label": "Kısmi sahtecilik",
+                "desc": "Sadece netbpfload için uname'i sahte gösterir."
+            },
+            "5": {
+                "label": "Tam sahtecilik",
+                "desc": "Birkaç bpf ile ilgili servis için uname'i sahte gösterir."
+            }
+        }
+    }
+}

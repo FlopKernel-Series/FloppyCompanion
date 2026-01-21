@@ -9,7 +9,8 @@ const I18N = {
     fallbackFeatureStrings: {},
     availableLanguages: [
         { code: 'en', name: 'English' },
-        { code: 'es', name: 'Español' }
+        { code: 'es', name: 'Español' },
+        { code: 'tr', name: 'Türkçe' }
     ],
 
     // Initialize i18n system
