@@ -24,6 +24,15 @@
                     "url": "https://github.com/Flopster101"
                 }
             ]
+        },
+        "tr": {
+            "name": "Türkçe",
+            "contributors": [
+                {
+                    "name": "NotZezu",
+                    "url": "https://github.com/NotZezu"
+                }
+            ]
         }
     }
 }
