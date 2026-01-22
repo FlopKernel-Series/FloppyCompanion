@@ -241,10 +241,10 @@ function initUndervoltTweak() {
             if (e.target.checked) {
                 // Show MD3 confirmation modal
                 const confirmed = await showConfirmModal({
-                    title: t('tweaks.undervolt.unlockConfirmTitle') || 'Unlock Full Range?',
-                    body: t('tweaks.undervolt.unlockConfirmBody') || 'Values beyond 15% have no practical use and may cause severe system instability. Are you sure you want to unlock the full range?',
-                    confirmText: t('modal.unlock') || 'Unlock',
-                    cancelText: t('modal.cancel') || 'Cancel',
+                    title: t('tweaks.undervolt.unlockConfirmTitle'),
+                    body: t('tweaks.undervolt.unlockConfirmBody'),
+                    confirmText: t('modal.unlock'),
+                    cancelText: t('modal.cancel'),
                     iconClass: 'warning'
                 });
                 if (!confirmed) {

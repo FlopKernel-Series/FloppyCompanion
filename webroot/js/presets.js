@@ -133,16 +133,16 @@ async function saveAllTweaks() {
 async function showLoadPresetModal() {
     const isDefault = currentPresetName === 'Default';
     const message = isDefault
-        ? (t('tweaks.loadDefaultDesc') || 'This will load the default tweak values from your kernel.')
-        : (t('tweaks.loadPresetDesc') || 'This will load the values from \"{name}\".').replace('{name}', currentPresetName);
+        ? (t('tweaks.loadDefaultDesc'))
+        : t('tweaks.loadPresetDesc').replace('{name}', currentPresetName);
 
     const result = await showConfirmModal({
-        title: t('tweaks.loadPresetTitle') || 'Load Preset',
-        body: `<p>${message}</p><p>${t('tweaks.loadPresetWarning') || 'This will override and <strong>save</strong> your current settings.'}</p>`,
+        title: t('tweaks.loadPresetTitle'),
+        body: `<p>${message}</p><p>${t('tweaks.loadPresetWarning')}</p>`,
         iconClass: 'info',
-        confirmText: t('tweaks.applyNow') || 'Apply Now',
-        cancelText: t('modal.cancel') || 'Cancel',
-        extraButton: { text: t('tweaks.loadOnly') || 'Load Only', value: 'load' }
+        confirmText: t('tweaks.applyNow'),
+        cancelText: t('modal.cancel'),
+        extraButton: { text: t('tweaks.loadOnly'), value: 'load' }
     });
 
     if (result === true) return 'apply';
@@ -356,7 +356,7 @@ async function showOverwritePrompt() {
         body: `<p>Do you want to overwrite "${currentPresetName}" or save as a new preset?</p>`,
         iconClass: 'info',
         confirmText: 'Overwrite',
-        cancelText: t('modal.cancel') || 'Cancel',
+        cancelText: t('modal.cancel'),
         extraButton: { text: 'Save as New', value: 'new' }
     });
 
@@ -378,7 +378,7 @@ function renderPresetSelector() {
     for (const preset of availablePresets) {
         const option = document.createElement('option');
         option.value = preset.name;
-        const label = (preset.name === 'Default') ? (t('tweaks.presetDefaultName') || 'Default') : (preset.label || preset.name);
+        const label = (preset.name === 'Default') ? (t('tweaks.presetDefaultName')) : (preset.label || preset.name);
         option.textContent = label + (preset.builtIn ? '' : ' ★');
         if (preset.name === currentPresetName) {
             option.selected = true;

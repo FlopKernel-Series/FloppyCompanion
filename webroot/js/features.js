@@ -248,8 +248,8 @@ function renderFeatures(schema, procCmdline) {
         if (item.type === 'info' || item.readOnly) {
             const bubbleId = `bubble-readonly-${item.key}`;
             const bubbleText = allowReadonlyPatch
-                ? t('features.tooltipReadOnlyAllowed') || "Changing this feature's state is temporarily allowed, but will not be saved."
-                : t('features.tooltipReadOnlyBlocked') || "This feature's state cannot be changed from the UI normally (read-only).";
+                ? t('features.tooltipReadOnlyAllowed')
+                : t('features.tooltipReadOnlyBlocked');
             statusIconsHtml += `
                 <div class="status-icon-wrapper" style="position:relative;">
                     <svg class="status-icon warning" onclick="toggleBubble('${bubbleId}', event)" viewBox="${infoIcon.viewBox}">
@@ -282,8 +282,8 @@ function renderFeatures(schema, procCmdline) {
 
         if (item.type === 'select') {
             // Add "Disabled" option with translated strings
-            const disabledLabel = t('features.optionDisabled') || 'Disabled';
-            const disabledDesc = t('features.disabledDesc') || 'Disable this feature.';
+            const disabledLabel = t('features.optionDisabled');
+            const disabledDesc = t('features.disabledDesc');
             const optionsWithDisabled = [
                 { val: '0', label: disabledLabel, desc: disabledDesc, experimental: false, isDisabledOption: true },
                 ...item.options
@@ -297,7 +297,7 @@ function renderFeatures(schema, procCmdline) {
             const optionsHtml = visibleOptions.map(opt => {
                 const isSelected = (currentVal === opt.val);
                 const selectedClass = isSelected ? 'selected' : '';
-                const expBadge = opt.experimental ? `<span class="experimental-badge" title="${t('features.tooltipExperimental') || 'Experimental'}"><svg viewBox="${warningIcon.viewBox}" width="16" height="16"><path fill="#F44336" d="${warningIcon.d}"/></svg></span>` : '';
+                const expBadge = opt.experimental ? `<span class="experimental-badge" title="${t('features.tooltipExperimental')}"><svg viewBox="${warningIcon.viewBox}" width="16" height="16"><path fill="#F44336" d="${warningIcon.d}"/></svg></span>` : '';
 
                 return `
                 <div class="option-item ${selectedClass} ${isReadOnly ? 'readonly' : ''}"
@@ -321,12 +321,12 @@ function renderFeatures(schema, procCmdline) {
         // Current Value Display
         let displayValText = currentVal;
         if (currentVal === '0') {
-            displayValText += ' (' + (t('features.optionDisabled') || 'Disabled') + ')';
+            displayValText += ' (' + (t('features.optionDisabled')) + ')';
         }
-        const currentValueHtml = `<div class="current-value-display">${t('features.currentLabel') || 'Current:'} ${displayValText}</div>`;
+        const currentValueHtml = `<div class="current-value-display">${t('features.currentLabel')} ${displayValText}</div>`;
 
         // Feature-level experimental badge
-        const featureExpBadge = item.experimental ? `<span class="experimental-badge" title="${t('features.tooltipExperimental') || 'Experimental'}"><svg viewBox="${warningIcon.viewBox}" width="18" height="18"><path fill="#F44336" d="${warningIcon.d}"/></svg></span>` : '';
+        const featureExpBadge = item.experimental ? `<span class="experimental-badge" title="${t('features.tooltipExperimental')}"><svg viewBox="${warningIcon.viewBox}" width="18" height="18"><path fill="#F44336" d="${warningIcon.d}"/></svg></span>` : '';
 
         // Render
         el.innerHTML = `

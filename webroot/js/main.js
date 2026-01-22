@@ -9,7 +9,7 @@ function updateTranslatableHomeStrings() {
     const buildTypeEl = document.getElementById('build-type');
 
     // Update Variant
-    let variantFound = t('about.variantStandard') || 'Standard';
+    let variantFound = t('about.variantStandard');
     if (window.VARIANTS) {
         for (const [code, name] of Object.entries(window.VARIANTS)) {
             const regex = new RegExp(`-${code}(-|$)`);
@@ -24,10 +24,10 @@ function updateTranslatableHomeStrings() {
     // Update Build Type
     if (buildTypeEl) {
         if (uname.includes('-release')) {
-            buildTypeEl.textContent = t('about.build.release') || 'Release Build';
+            buildTypeEl.textContent = t('about.build.release');
             buildTypeEl.style.color = 'var(--md-sys-color-primary)';
         } else {
-            let label = t('about.build.testing') || 'Testing';
+            let label = t('about.build.testing');
             const hashMatch = uname.match(/-g([0-9a-f]+)/);
             if (hashMatch) {
                 label += ` (${hashMatch[1]})`;
@@ -35,7 +35,7 @@ function updateTranslatableHomeStrings() {
                 label += ` (${'Git'})`;
             }
             if (uname.includes('dirty')) {
-                label += ` (${t('about.build.dirty') || 'Dirty'})`;
+                label += ` (${t('about.build.dirty')})`;
                 buildTypeEl.style.color = '#e2b349';
             }
             buildTypeEl.textContent = label;
@@ -476,7 +476,7 @@ async function init() {
 
         window._cachedUname = uname; // Cache for language change handler
         // Parse Variant
-        let variantFound = t('about.variantStandard') || 'Standard';
+        let variantFound = t('about.variantStandard');
         if (window.VARIANTS) {
             for (const [code, name] of Object.entries(window.VARIANTS)) {
                 const regex = new RegExp(`-${code}(-|$)`);
@@ -491,10 +491,10 @@ async function init() {
         // Parse Release Status
         if (buildTypeEl) {
             if (uname.includes('-release')) {
-                buildTypeEl.textContent = t('about.build.release') || 'Release Build';
+                buildTypeEl.textContent = t('about.build.release');
                 buildTypeEl.style.color = 'var(--md-sys-color-primary)';
             } else {
-                let label = t('about.build.testing') || 'Testing';
+                let label = t('about.build.testing');
                 const hashMatch = uname.match(/-g([0-9a-f]+)/);
                 if (hashMatch) {
                     label += ` (${hashMatch[1]})`;
@@ -502,7 +502,7 @@ async function init() {
                     label += ` (${'Git'})`;
                 }
                 if (uname.includes('dirty')) {
-                    label += ` (${t('about.build.dirty') || 'Dirty'})`;
+                    label += ` (${t('about.build.dirty')})`;
                     buildTypeEl.style.color = '#e2b349';
                 }
                 buildTypeEl.textContent = label;
