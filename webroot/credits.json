@@ -33,6 +33,15 @@
                     "url": "https://github.com/NotZezu"
                 }
             ]
+        },
+        "uk": {
+            "name": "Українська",
+            "contributors": [
+                {
+                    "name": "NiFate",
+                    "url": "https://github.com/NiFate"
+                }
+            ]
         }
     }
 }
