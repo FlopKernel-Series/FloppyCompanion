@@ -44,11 +44,20 @@
         "tooltipReboot": "Çalışan kernel değeri ile önyükleme bölümünün değeri eşleşmiyor! Değişiklikleri uygulamak için yeniden başlatma gerekebilir.",
         "tooltipReadOnlyAllowed": "Bu özelliğin durumunu değiştirmeye geçici olarak izin verilir, ancak kaydedilmeyecektir.",
         "tooltipReadOnlyBlocked": "Bu özelliğin durumu normalde arayüzden değiştirilemez (salt okunur).",
-        "tooltipExperimental": "Deneysel"
+        "tooltipExperimental": "Deneysel",
+        "currentLabel": "Mevcut:"
     },
     "tweaks": {
         "title": "İnce Ayarlar",
         "presets": "Hazır Ayarlar",
+        "presetLabel": "Hazır Ayar:",
+        "presetDefaultName": "Varsayılan",
+        "loadDefaultDesc": "Bu, çekirdeğinizdeki varsayılan ayar değerlerini yükleyecektir.",
+        "loadPresetDesc": "Bu, değerleri \"{name}\"den yükleyecektir.",
+        "loadPresetTitle": "Hazır Ayarı Yükle",
+        "loadPresetWarning": "Bu, mevcut ayarlarınızı geçersiz kılacak ve <strong>kaydedecektir</strong>.",
+        "loadOnly": "Sadece Yükle",
+        "applyNow": "Şimdi Uygula",
         "commonTweaks": "Genel Ayarlar",
         "save": "Kaydet",
         "apply": "Uygula",
@@ -59,6 +68,8 @@
             "enable": "ZRAM'i Etkinleştir",
             "diskSize": "Disk Boyutu",
             "algorithm": "Algoritma",
+            "activeDisksize": "Aktif disk boyutu",
+            "activeAlgorithm": "Aktif algoritma",
             "custom": "Özel",
             "customSize": "Özel Boyut (MiB)",
             "enterSize": "Boyutu girin",
@@ -202,6 +213,12 @@
         "translationCredits": "Çeviri ekibi",
         "repository": "Depo",
         "telegram": "Telegram kanalı",
+        "variantStandard": "Standart",
+        "build": {
+            "release": "Yayın Derlemesi",
+            "testing": "Test",
+            "dirty": "Kirli"
+        },
         "easterEgg": {
             "title": "FloppyKernel'ı kullandığınız için teşekkürler!",
             "signature": "- Flopster101",
