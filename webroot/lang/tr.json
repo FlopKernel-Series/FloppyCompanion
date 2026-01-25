@@ -12,7 +12,7 @@
         "unknown": "Bilinmiyor",
         "kernelStatus": "Kernel Durumu",
         "device": "Cihaz",
-        "linux": "Linux",
+        "linux": "Linux Sürümü",
         "variant": "Varyant",
         "version": "Sürüm",
         "buildType": "Yapı Türü",
