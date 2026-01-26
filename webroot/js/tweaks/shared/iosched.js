@@ -205,7 +205,7 @@ function initIoSchedulerTweak() {
         window.registerTweak('iosched', {
             getState: () => ({ ...ioschedPendingState }),
             setState: (config) => {
-                ioschedPendingState = { ...config };
+                ioschedPendingState = { ...ioschedPendingState, ...config };
                 renderIoCard();
             },
             render: renderIoCard,

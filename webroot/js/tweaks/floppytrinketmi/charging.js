@@ -142,7 +142,7 @@ async function initChargingTweak() {
         window.registerTweak('charging', {
             getState: () => ({ ...chargingPendingState }),
             setState: (config) => {
-                chargingPendingState = { ...config };
+                chargingPendingState = { ...chargingPendingState, ...config };
                 renderChargingCard();
             },
             render: renderChargingCard,

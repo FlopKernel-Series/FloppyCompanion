@@ -301,7 +301,7 @@ function initZramTweak() {
         window.registerTweak('zram', {
             getState: () => ({ ...zramPendingState }),
             setState: (config) => {
-                zramPendingState = { ...config };
+                zramPendingState = { ...zramPendingState, ...config };
                 renderZramCard();
             },
             render: renderZramCard,

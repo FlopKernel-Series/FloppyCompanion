@@ -277,7 +277,7 @@ function initUndervoltTweak() {
         window.registerTweak('undervolt', {
             getState: () => ({ ...undervoltPendingState }),
             setState: (config) => {
-                undervoltPendingState = { ...config };
+                undervoltPendingState = { ...undervoltPendingState, ...config };
                 renderUndervoltCard();
             },
             render: renderUndervoltCard,

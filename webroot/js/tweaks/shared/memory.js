@@ -270,7 +270,7 @@ function initMemoryTweak() {
         window.registerTweak('memory', {
             getState: () => ({ ...memoryPendingState }),
             setState: (config) => {
-                memoryPendingState = { ...config };
+                memoryPendingState = { ...memoryPendingState, ...config };
                 // Update mode based on config
                 if (parseInt(config.dirty_bytes) > 0 || parseInt(config.dirty_background_bytes) > 0) {
                     memoryDirtyMode = 'bytes';

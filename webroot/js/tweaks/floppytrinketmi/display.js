@@ -169,11 +169,10 @@ function initDisplayTweak() {
         if (typeof window.registerTweak === 'function') {
             window.registerTweak('display', {
                 getState: () => ({ ...displayPendingState }),
-                setState: (config) => {
-                    displayPendingState = { ...config };
-                    renderDisplayCard();
-                },
-                render: renderDisplayCard,
+                            setState: (config) => {
+                                displayPendingState = { ...displayPendingState, ...config };
+                                renderDisplayCard();
+                            },                render: renderDisplayCard,
                 save: saveDisplay,
                 apply: applyDisplay
             });

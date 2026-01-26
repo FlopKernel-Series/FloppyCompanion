@@ -149,11 +149,10 @@ function initMiscTrinketTweak() {
         if (typeof window.registerTweak === 'function') {
             window.registerTweak('misc_trinket', {
                 getState: () => ({ ...miscTrinketPendingState }),
-                setState: (config) => {
-                    miscTrinketPendingState = { ...config };
-                    renderMiscTrinketCard();
-                },
-                render: renderMiscTrinketCard,
+                            setState: (config) => {
+                                miscTrinketPendingState = { ...miscTrinketPendingState, ...config };
+                                renderMiscTrinketCard();
+                            },                render: renderMiscTrinketCard,
                 save: saveMiscTrinket,
                 apply: applyMiscTrinket
             });

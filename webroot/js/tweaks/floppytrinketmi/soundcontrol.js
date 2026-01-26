@@ -275,7 +275,7 @@ function initSoundControlTweak() {
         window.registerTweak('soundcontrol', {
             getState: () => ({ ...scPendingState }),
             setState: (config) => {
-                scPendingState = { ...config };
+                scPendingState = { ...scPendingState, ...config };
                 // Handle split mode logic during restore
                 if (scPendingState.hp_l !== scPendingState.hp_r) {
                     toggleSoundControlSplitMode(true);

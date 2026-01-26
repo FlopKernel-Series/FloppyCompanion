@@ -211,7 +211,7 @@ function initMiscTweak() {
         window.registerTweak('misc', {
             getState: () => ({ ...miscPendingState }),
             setState: (config) => {
-                miscPendingState = { ...config };
+                miscPendingState = { ...miscPendingState, ...config };
                 renderMiscCard();
             },
             render: renderMiscCard,
