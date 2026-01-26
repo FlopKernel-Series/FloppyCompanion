@@ -140,6 +140,15 @@ function updateBottomPadding(hasApplyButton) {
     }
 }
 
+// Helper to prevent touch events on sliders/inputs from triggering tab swipe
+window.preventSwipePropagation = function (element) {
+    if (!element) return;
+    const stopProp = (e) => e.stopPropagation();
+    element.addEventListener('touchstart', stopProp, { passive: true });
+    element.addEventListener('touchmove', stopProp, { passive: true });
+    element.addEventListener('touchend', stopProp, { passive: true });
+};
+
 // --- Initialize Navigation ---
 function initNavigation() {
     const navItems = document.querySelectorAll('.nav-item');
@@ -166,6 +175,14 @@ function initNavigation() {
     if (!sliderContainer || !sliderTrack) return;
 
     sliderContainer.addEventListener('touchstart', (e) => {
+        // Ignore touches on interactive elements to prevent layout glitches
+        const target = e.target;
+        const isInteractive = target.closest('input, button, select, .styled-slider, .option-btn');
+        if (isInteractive) {
+            isDragging = false;
+            return;
+        }
+
         startX = e.touches[0].clientX;
         startY = e.touches[0].clientY;
         currentX = startX;

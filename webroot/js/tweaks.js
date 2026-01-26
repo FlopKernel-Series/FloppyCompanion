@@ -335,14 +335,6 @@ function parseKeyValue(output) {
     return result;
 }
 
-// Helper: Stop propagation of touch events to prevent page swipe
-function preventSwipePropagation(element) {
-    if (!element) return;
-    const stopProp = (e) => e.stopPropagation();
-    element.addEventListener('touchstart', stopProp, { passive: true });
-    element.addEventListener('touchmove', stopProp, { passive: true });
-}
-
 // Expose toast function if not already available
 if (typeof showToast === 'undefined') {
     window.showToast = function (message, isError = false) {

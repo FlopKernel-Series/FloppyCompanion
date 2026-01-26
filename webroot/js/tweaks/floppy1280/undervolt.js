@@ -235,7 +235,7 @@ function initUndervoltTweak() {
         const input = document.getElementById(`undervolt-input-${type}`);
 
         if (slider) {
-            preventSwipePropagation(slider); // Fix swipe conflict
+            if (window.preventSwipePropagation) window.preventSwipePropagation(slider); // Fix swipe conflict
 
             slider.addEventListener('input', (e) => {
                 const val = e.target.value;
@@ -247,6 +247,8 @@ function initUndervoltTweak() {
         }
 
         if (input) {
+            if (window.preventSwipePropagation) window.preventSwipePropagation(input);
+
             input.addEventListener('change', (e) => {
                 let val = parseInt(e.target.value) || 0;
                 // Clamp

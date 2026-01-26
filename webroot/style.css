@@ -570,6 +570,7 @@ body {
 .slider-container {
     width: 100%;
     overflow: hidden;
+    overflow-x: hidden !important;
 }
 
 .slider-track {
@@ -585,6 +586,7 @@ body {
     flex-shrink: 0;
     height: 100vh;
     overflow-y: auto;
+    overflow-x: hidden;
 
     -webkit-overflow-scrolling: touch;
     padding-bottom: 80px;
@@ -1020,12 +1022,14 @@ body {
     appearance: none;
     height: 20px;
     /* Match thumb height for proper hit area */
-    width: 100%;
+    min-width: 0;
+    width: auto;
     background: transparent;
     /* Track is drawn via runnable-track */
     outline: none;
     margin: 0;
     padding: 0;
+    touch-action: none;
 }
 
 .styled-slider::-webkit-slider-runnable-track {
