@@ -581,7 +581,12 @@ async function init() {
         }
 
         if (kernelName) {
-            kernelLinksHeader.textContent = t('about.kernelLinksTemplate', { name: kernelName });
+            kernelLinksHeader.setAttribute('data-i18n', 'about.kernelLinksTemplate');
+            kernelLinksHeader.setAttribute('data-i18n-params', JSON.stringify({ name: kernelName }));
+            // Apply immediately
+            if (window.I18N && typeof window.I18N.t === 'function') {
+                kernelLinksHeader.textContent = window.I18N.t('about.kernelLinksTemplate', { name: kernelName });
+            }
         }
 
         if (kernelLinks.length > 0) {
@@ -762,6 +767,11 @@ async function init() {
 
                 if (translationCreditsList) {
                     renderTranslationCredits(translationCreditsList, creditsData);
+                }
+
+                // Force translation update for the newly injected content
+                if (window.I18N && typeof window.I18N.applyTranslations === 'function') {
+                    window.I18N.applyTranslations();
                 }
             }
         } catch (e) {

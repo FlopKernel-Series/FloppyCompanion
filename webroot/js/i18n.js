@@ -188,7 +188,17 @@ const I18N = {
     applyTranslations() {
         document.querySelectorAll('[data-i18n]').forEach(el => {
             const key = el.getAttribute('data-i18n');
-            const translation = this.t(key);
+            let params = {};
+            const paramsAttr = el.getAttribute('data-i18n-params');
+            if (paramsAttr) {
+                try {
+                    params = JSON.parse(paramsAttr);
+                } catch (e) {
+                    console.warn('Invalid i18n params:', paramsAttr);
+                }
+            }
+            
+            const translation = this.t(key, params);
 
             // Check for data-i18n-attr for attribute translations
             const attr = el.getAttribute('data-i18n-attr');
@@ -202,7 +212,15 @@ const I18N = {
         // Also handle data-i18n-html for HTML content
         document.querySelectorAll('[data-i18n-html]').forEach(el => {
             const key = el.getAttribute('data-i18n-html');
-            el.innerHTML = this.t(key);
+            // Support params for HTML too if needed, though rare
+            let params = {};
+            const paramsAttr = el.getAttribute('data-i18n-params');
+            if (paramsAttr) {
+                try {
+                    params = JSON.parse(paramsAttr);
+                } catch (e) {}
+            }
+            el.innerHTML = this.t(key, params);
         });
     },
 
