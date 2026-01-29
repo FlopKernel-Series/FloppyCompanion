@@ -1,0 +1,8 @@
+{
+    "id": "floppy_companion",
+    "title": "FloppyCompanion",
+    "icon": "icon.png",
+    "windowResize": false,
+    "backInterceptor": "javascript",
+    "contentSecurityPolicy": "default-src 'self' data: blob: {domain}; script-src * 'unsafe-inline' 'unsafe-eval' {domain}; script-src-elem * 'unsafe-inline' 'unsafe-eval' {domain}; style-src 'self' 'unsafe-inline' {domain}; style-src-elem 'self' 'unsafe-inline' {domain}; connect-src *; img-src *;"
+}
