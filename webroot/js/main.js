@@ -372,10 +372,8 @@ async function init() {
     revealUI();
     const revealedAt = (typeof performance !== 'undefined' && performance.now) ? performance.now() : Date.now();
 
-    const device = await getDevice();
     const props = await getModuleProps();
-    // Pass detected uname directly to resolveDeviceInfo
-    const devInfo = await resolveDeviceInfo(device ? device.uname : null);
+    const devInfo = await resolveDeviceInfo();
 
     // Populate About Page (from module.prop, except description which is i18n)
     const aboutTitle = document.getElementById('about-title');
@@ -561,17 +559,17 @@ async function init() {
     const kernelLinksHeader = document.getElementById('kernel-links-header');
     const kernelLinksList = document.getElementById('kernel-links-list');
 
-    if (kernelLinksCard && kernelLinksList && device) {
+    if (kernelLinksCard && kernelLinksList) {
         let kernelLinks = [];
         let kernelName = '';
-        if (device.schemaKey === 'features_1280') {
+        if (devInfo.is1280) {
             kernelName = 'Floppy1280';
             kernelLinks = [
                 { icon: 'github', text: 'Floppy1280 repository', url: 'https://github.com/FlopKernel-Series/flop_s5e8825_kernel' },
                 { icon: 'telegram', text: 'Floppy1280 channel', url: 'https://t.me/Floppy1280' },
                 { icon: 'telegram', text: 'Floppy1280 group', url: 'https://t.me/Floppy1280_Chat' }
             ];
-        } else if (device.schemaKey === 'features_trinket') {
+        } else if (devInfo.isTrinketMi) {
             kernelName = 'FloppyTrinketMi';
             kernelLinks = [
                 { icon: 'github', text: 'FloppyTrinketMi repository', url: 'https://github.com/FlopKernel-Series/flop_trinket-mi_kernel' },

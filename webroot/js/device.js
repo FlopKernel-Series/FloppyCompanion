@@ -1,29 +1,5 @@
 // device.js - Device Detection and Parsing
 
-// --- Detection Logic ---
-async function getDevice() {
-    try {
-        const uname = await exec('uname -r');
-        if (!uname) return null;
-
-        // Simple detection logic
-        let schemaKey = 'features_1280'; // Default
-        if (uname.includes('4.14') || uname.includes('trinket')) {
-            schemaKey = 'features_trinket';
-        } else if (uname.includes('5.10') || uname.includes('s5e8825')) {
-            schemaKey = 'features_1280';
-        }
-
-        return {
-            uname: uname,
-            schemaKey: schemaKey
-        };
-    } catch (e) {
-        console.error("Device detection failed:", e);
-        return null;
-    }
-}
-
 // --- Module Prop Parsing ---
 async function getModuleProps() {
     try {
@@ -47,7 +23,7 @@ async function getModuleProps() {
 }
 
 // --- Device Info Resolution ---
-async function resolveDeviceInfo(unameOverride) {
+async function resolveDeviceInfo() {
     let deviceName = null;
     let deviceModel = null;
     let isTrinketMi = false;
@@ -71,21 +47,6 @@ async function resolveDeviceInfo(unameOverride) {
     for (const path of modelPaths) {
         deviceModel = await exec(`cat ${path}`);
         if (deviceModel) break;
-    }
-
-    // Fallback if deviceName is missing but we know the kernel
-    if (!deviceName) {
-        const uname = unameOverride || await exec('uname -r');
-        if (uname) {
-            if (uname.includes('trinket')) {
-                deviceName = 'ginkgo';
-                deviceModel = 'Trinket Device';
-                isTrinketMi = true;
-            } else if (uname.includes('s5e8825')) {
-                deviceName = 'a25x';
-                is1280 = true;
-            }
-        }
     }
 
     if (deviceName) {
