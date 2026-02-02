@@ -67,6 +67,30 @@ async function clearAllTweakConfigs() {
     await exec(`rm -f "${configDir}"/*.conf 2>/dev/null || true`);
 }
 
+async function reloadAllTweakStates() {
+    const loaders = [
+        window.loadZramState,
+        window.loadMemoryState,
+        window.loadIoSchedulerState,
+        window.loadThermalState,
+        window.loadUndervoltState,
+        window.loadMiscState,
+        window.loadSoundControlState,
+        window.loadChargingState,
+        window.loadDisplayState,
+        window.loadAdrenoState,
+        window.loadMiscTrinketState
+    ].filter(fn => typeof fn === 'function');
+
+    for (const fn of loaders) {
+        try {
+            await fn();
+        } catch (e) {
+            console.error('Failed to reload tweak state', e);
+        }
+    }
+}
+
 // Load a preset file
 async function loadPresetFile(path) {
     const content = await exec(`cat "${path}" 2>/dev/null || echo "{}"`);
@@ -182,6 +206,8 @@ async function handleLoadPreset() {
     if (currentPresetName === 'Default') {
         // Clear persisted configs so defaults come from kernel snapshot
         await clearAllTweakConfigs();
+        // Reload states so reference baselines switch to defaults
+        await reloadAllTweakStates();
 
         if (action === 'apply') {
             await applyAllTweaks();
