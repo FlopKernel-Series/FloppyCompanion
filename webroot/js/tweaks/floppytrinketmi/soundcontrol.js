@@ -4,6 +4,7 @@ let scCurrentState = { hp_l: '0', hp_r: '0', mic: '0' };
 let scSavedState = { hp_l: '0', hp_r: '0', mic: '0' };
 let scPendingState = { hp_l: '0', hp_r: '0', mic: '0' };
 let scSplitMode = false;
+let scReferenceState = { hp_l: '0', hp_r: '0', mic: '0' };
 
 const runSoundControlBackend = (...args) => window.runTweakBackend('soundcontrol', ...args);
 
@@ -44,9 +45,9 @@ function renderSoundControlCard() {
 
 function updateSoundControlPendingIndicator() {
     const hasChanges =
-        scPendingState.hp_l !== scSavedState.hp_l ||
-        scPendingState.hp_r !== scSavedState.hp_r ||
-        scPendingState.mic !== scSavedState.mic;
+        scPendingState.hp_l !== scReferenceState.hp_l ||
+        scPendingState.hp_r !== scReferenceState.hp_r ||
+        scPendingState.mic !== scReferenceState.mic;
 
     window.setPendingIndicator('soundcontrol-pending-indicator', hasChanges);
 }
@@ -85,7 +86,15 @@ async function loadSoundControlState() {
         mic: saved.mic || '0'
     };
 
-    scPendingState = { ...scSavedState };
+    const defSound = window.getDefaultTweakPreset('soundcontrol');
+    scPendingState = window.initPendingState(scCurrentState, scSavedState, defSound);
+
+    const { reference } = window.resolveTweakReference(scCurrentState, scSavedState, defSound);
+    scReferenceState = {
+        hp_l: reference.hp_l || '0',
+        hp_r: reference.hp_r || '0',
+        mic: reference.mic || '0'
+    };
 
     // Check if L and R are different - if so, enable split mode
     if (scPendingState.hp_l !== scPendingState.hp_r) {
@@ -100,6 +109,7 @@ async function loadSoundControlState() {
 async function saveSoundControl() {
     await runSoundControlBackend('save', scPendingState.hp_l, scPendingState.hp_r, scPendingState.mic);
     scSavedState = { ...scPendingState };
+    scReferenceState = { ...scSavedState };
     updateSoundControlPendingIndicator();
     showToast(window.t ? window.t('toast.settingsSaved') : 'Saved');
 }

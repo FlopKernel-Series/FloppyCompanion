@@ -4,6 +4,7 @@ let undervoltAvailable = false;
 let undervoltCurrentState = { little: '0', big: '0', gpu: '0' };
 let undervoltSavedState = { little: '0', big: '0', gpu: '0' }; // From config file
 let undervoltPendingState = { little: '0', big: '0', gpu: '0' };
+let undervoltReferenceState = { little: '0', big: '0', gpu: '0' };
 
 const runUndervoltBackend = (...args) => window.runTweakBackend('undervolt', ...args);
 
@@ -32,12 +33,15 @@ function loadUndervoltState() {
             undervoltCurrentState = current;
             undervoltSavedState = saved;
 
-            // Set pending to saved if available, else current (0)
-            if (savedOutput.trim() && undervoltSavedState.little !== undefined) {
-                undervoltPendingState = { ...undervoltSavedState };
-            } else {
-                undervoltPendingState = { ...undervoltCurrentState };
-            }
+            const defUndervolt = window.getDefaultTweakPreset('undervolt');
+            undervoltPendingState = window.initPendingState(undervoltCurrentState, undervoltSavedState, defUndervolt);
+
+            const { reference } = window.resolveTweakReference(undervoltCurrentState, undervoltSavedState, defUndervolt);
+            undervoltReferenceState = {
+                little: reference.little || '0',
+                big: reference.big || '0',
+                gpu: reference.gpu || '0'
+            };
 
             renderUndervoltCard();
         });
@@ -133,8 +137,7 @@ function updateSliderTicks(slider, isUnlocked) {
 
 function updateUndervoltPendingIndicator() {
     // Compare pending with saved (or current/default)
-    const hasSaved = undervoltSavedState.little !== undefined;
-    const reference = hasSaved ? undervoltSavedState : { little: '0', big: '0', gpu: '0' };
+    const reference = undervoltReferenceState || { little: '0', big: '0', gpu: '0' };
 
     const isChanged =
         undervoltPendingState.little !== reference.little ||
@@ -148,6 +151,7 @@ async function saveUndervolt() {
     const { little, big, gpu } = undervoltPendingState;
     await runUndervoltBackend('save', little, big, gpu);
     undervoltSavedState = { ...undervoltPendingState };
+    undervoltReferenceState = { ...undervoltSavedState };
     updateUndervoltPendingIndicator();
     showToast(window.t ? window.t('toast.settingsSaved') : 'Settings saved');
 }

@@ -3,6 +3,7 @@
 let miscCurrentState = { block_ed3: '0', gpu_clklck: '0', gpu_unlock: '0' };
 let miscSavedState = { block_ed3: '0', gpu_clklck: '0', gpu_unlock: '0' };
 let miscPendingState = { block_ed3: '0', gpu_clklck: '0', gpu_unlock: '0' };
+let miscReferenceState = { block_ed3: '0', gpu_clklck: '0', gpu_unlock: '0' };
 
 const runMiscBackend = (...args) => window.runTweakBackend('misc', ...args);
 
@@ -38,9 +39,9 @@ function renderMiscCard() {
 
 function updateMiscPendingIndicator() {
     const hasChanges =
-        miscPendingState.block_ed3 !== miscSavedState.block_ed3 ||
-        miscPendingState.gpu_clklck !== miscSavedState.gpu_clklck ||
-        miscPendingState.gpu_unlock !== miscSavedState.gpu_unlock;
+        miscPendingState.block_ed3 !== miscReferenceState.block_ed3 ||
+        miscPendingState.gpu_clklck !== miscReferenceState.gpu_clklck ||
+        miscPendingState.gpu_unlock !== miscReferenceState.gpu_unlock;
 
     window.setPendingIndicator('misc-pending-indicator', hasChanges);
 }
@@ -88,8 +89,15 @@ async function loadMiscState() {
         gpu_unlock: saved.gpu_unlock || '0'
     };
 
-    // Pending starts from saved
-    miscPendingState = { ...miscSavedState };
+    const defMisc = window.getDefaultTweakPreset('misc');
+    miscPendingState = window.initPendingState(miscCurrentState, miscSavedState, defMisc);
+
+    const { reference } = window.resolveTweakReference(miscCurrentState, miscSavedState, defMisc);
+    miscReferenceState = {
+        block_ed3: reference.block_ed3 || '0',
+        gpu_clklck: reference.gpu_clklck || '0',
+        gpu_unlock: reference.gpu_unlock || '0'
+    };
 
     renderMiscCard();
 }
@@ -99,6 +107,7 @@ async function saveMisc() {
     await runMiscBackend('save', 'gpu_clklck', miscPendingState.gpu_clklck);
     await runMiscBackend('save', 'gpu_unlock', miscPendingState.gpu_unlock);
     miscSavedState = { ...miscPendingState };
+    miscReferenceState = { ...miscSavedState };
     updateMiscPendingIndicator();
     showToast(window.t ? window.t('toast.settingsSaved') : 'Saved');
 }

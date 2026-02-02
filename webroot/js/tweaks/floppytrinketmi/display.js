@@ -6,6 +6,7 @@ const DISPLAY_CABC_NODE = '/sys/devices/platform/soc/soc:qcom,dsi-display/cabc';
 let displayCurrentState = { hbm: '0', cabc: '0' };
 let displaySavedState = { hbm: '0', cabc: '0' };
 let displayPendingState = { hbm: '0', cabc: '0' };
+let displayReferenceState = { hbm: '0', cabc: '0' };
 
 const runDisplayBackend = (...args) => window.runTweakBackend('display', ...args);
 
@@ -37,8 +38,8 @@ function updateDisplayOptions(containerId, selectedValue) {
 
 function updateDisplayPendingIndicator() {
     const hasChanges =
-        displayPendingState.hbm !== displaySavedState.hbm ||
-        displayPendingState.cabc !== displaySavedState.cabc;
+        displayPendingState.hbm !== displayReferenceState.hbm ||
+        displayPendingState.cabc !== displayReferenceState.cabc;
 
     window.setPendingIndicator('display-pending-indicator', hasChanges);
 }
@@ -67,13 +68,21 @@ async function loadDisplayState() {
         cabc: saved.cabc || displayCurrentState.cabc || '0'
     };
 
-    displayPendingState = { ...displaySavedState };
+    const defDisplay = window.getDefaultTweakPreset('display');
+    displayPendingState = window.initPendingState(displayCurrentState, displaySavedState, defDisplay);
+
+    const { reference } = window.resolveTweakReference(displayCurrentState, displaySavedState, defDisplay);
+    displayReferenceState = {
+        hbm: reference.hbm || '0',
+        cabc: reference.cabc || '0'
+    };
     renderDisplayCard();
 }
 
 async function saveDisplay() {
     await runDisplayBackend('save', displayPendingState.hbm, displayPendingState.cabc);
     displaySavedState = { ...displayPendingState };
+    displayReferenceState = { ...displaySavedState };
     updateDisplayPendingIndicator();
     showToast(window.t ? window.t('toast.settingsSaved') : 'Settings saved');
 }

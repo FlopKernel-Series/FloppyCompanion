@@ -4,6 +4,7 @@ let thermalCurrentState = {};
 let thermalSavedState = {};
 let thermalPendingState = {};
 let thermalAvailable = false;
+let thermalReferenceState = {};
 
 // Mode descriptions for display
 const THERMAL_MODE_NAMES = {
@@ -37,9 +38,15 @@ async function loadThermalState() {
         thermalSavedState = saved;
 
         // Initialize pending state
-        thermalPendingState = {
-            mode: thermalSavedState.mode || thermalCurrentState.mode || '1',
-            custom_freq: thermalSavedState.custom_freq || thermalCurrentState.custom_freq || ''
+        const defThermal = window.getDefaultTweakPreset('thermal');
+        thermalPendingState = window.initPendingState(thermalCurrentState, thermalSavedState, defThermal);
+        if (!thermalPendingState.mode) thermalPendingState.mode = '1';
+        if (thermalPendingState.custom_freq === undefined) thermalPendingState.custom_freq = '';
+
+        const { reference } = window.resolveTweakReference(thermalCurrentState, thermalSavedState, defThermal);
+        thermalReferenceState = {
+            mode: reference.mode || '1',
+            custom_freq: reference.custom_freq || ''
         };
 
         // Show thermal card
@@ -92,8 +99,12 @@ function renderThermalCard() {
     }
 
     // Update custom frequency input
-    if (customFreqInput && thermalPendingState.custom_freq) {
-        customFreqInput.value = thermalPendingState.custom_freq;
+    if (customFreqInput) {
+        const referenceFreq = thermalReferenceState.custom_freq || '';
+        customFreqInput.placeholder = referenceFreq;
+        customFreqInput.value = (thermalPendingState.custom_freq && thermalPendingState.custom_freq !== referenceFreq)
+            ? thermalPendingState.custom_freq
+            : '';
     }
 
     // Update mode description
@@ -120,9 +131,8 @@ function renderThermalCard() {
 // Update pending indicator
 function updateThermalPendingIndicator() {
     // If no saved config exists yet, compare against current kernel state (no "unsaved" on first load)
-    const hasSavedConfig = thermalSavedState.mode !== undefined && thermalSavedState.mode !== '';
-    const referenceMode = hasSavedConfig ? thermalSavedState.mode : thermalCurrentState.mode;
-    const referenceFreq = hasSavedConfig ? (thermalSavedState.custom_freq || '') : (thermalCurrentState.custom_freq || '');
+    const referenceMode = thermalReferenceState.mode || thermalCurrentState.mode;
+    const referenceFreq = thermalReferenceState.custom_freq || thermalCurrentState.custom_freq || '';
 
     const hasChanges = thermalPendingState.mode !== referenceMode ||
         (thermalPendingState.mode === '2' && thermalPendingState.custom_freq !== referenceFreq);
@@ -146,6 +156,10 @@ async function saveThermal() {
     // Update saved state
     thermalSavedState.mode = mode;
     thermalSavedState.custom_freq = customFreq;
+    thermalReferenceState = {
+        mode: thermalSavedState.mode || '1',
+        custom_freq: thermalSavedState.custom_freq || ''
+    };
 
     updateThermalPendingIndicator();
     showToast(window.t ? window.t('toast.settingsSaved') : 'Settings saved');

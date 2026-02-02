@@ -4,6 +4,7 @@ let memoryCurrentState = {};
 let memorySavedState = {};
 let memoryPendingState = {};
 let memoryDirtyMode = 'ratio'; // 'ratio' or 'bytes'
+let memoryReferenceState = {};
 
 const runMemoryBackend = (...args) => window.runTweakBackend('memory', ...args);
 
@@ -17,7 +18,10 @@ async function loadMemoryState() {
 
         // Initialize pending
         const defMem = window.getDefaultTweakPreset('memory');
-        memoryPendingState = { ...defMem, ...memoryCurrentState, ...memorySavedState };
+        memoryPendingState = window.initPendingState(memoryCurrentState, memorySavedState, defMem);
+
+        const { reference } = window.resolveTweakReference(memoryCurrentState, memorySavedState, defMem);
+        memoryReferenceState = { ...reference };
 
         // Determine initial Dirty Mode
         // If bytes are non-zero, use bytes. Otherwise default to ratio.
@@ -42,8 +46,9 @@ function renderMemoryCard() {
     const swappinessInput = document.getElementById('mem-swappiness');
     const swappinessVal = document.getElementById('mem-val-swappiness');
     if (swappinessInput) {
-        swappinessInput.placeholder = memoryCurrentState.swappiness || '';
-        swappinessInput.value = memoryPendingState.swappiness !== memoryCurrentState.swappiness ? memoryPendingState.swappiness : '';
+        const referenceVal = memoryReferenceState.swappiness || memoryCurrentState.swappiness || '';
+        swappinessInput.placeholder = referenceVal;
+        swappinessInput.value = memoryPendingState.swappiness !== referenceVal ? memoryPendingState.swappiness : '';
     }
     if (swappinessVal) swappinessVal.textContent = memoryCurrentState.swappiness || '--';
 
@@ -86,9 +91,10 @@ function updateMemInput(key) {
     const label = document.getElementById(`mem-val-${key}`);
 
     if (input) {
-        input.placeholder = memoryCurrentState[key] || '';
-        // Only show value if it differs from current
-        if (memoryPendingState[key] && memoryPendingState[key] !== memoryCurrentState[key]) {
+        input.placeholder = memoryReferenceState[key] || memoryCurrentState[key] || '';
+        // Only show value if it differs from reference (saved or defaults)
+        const referenceVal = memoryReferenceState[key] || memoryCurrentState[key];
+        if (memoryPendingState[key] && memoryPendingState[key] !== referenceVal) {
             input.value = memoryPendingState[key];
         } else {
             input.value = '';
@@ -107,9 +113,9 @@ function updateMemoryPendingIndicator() {
     let hasPending = false;
     // Check against saved if exists, else current
     for (const key of paramKeys) {
-        const savedVal = memorySavedState[key] || memoryCurrentState[key];
-        const pendingVal = memoryPendingState[key] || savedVal; // Fallback to saved if not in pending
-        if (pendingVal != savedVal) {
+        const referenceVal = memoryReferenceState[key] || memoryCurrentState[key];
+        const pendingVal = memoryPendingState[key] || referenceVal;
+        if (pendingVal != referenceVal) {
             hasPending = true;
             break;
         }
@@ -122,7 +128,7 @@ function updateMemoryPendingIndicator() {
 function handleMemInput(key, value) {
     if (value === '' || value === undefined) {
         // Revert to saved/current
-        memoryPendingState[key] = memorySavedState[key] || memoryCurrentState[key];
+        memoryPendingState[key] = memoryReferenceState[key] || memoryCurrentState[key];
     } else {
         memoryPendingState[key] = value;
     }
@@ -175,6 +181,7 @@ async function saveMemory() {
             memorySavedState.dirty_ratio = '0';
             memorySavedState.dirty_background_ratio = '0';
         }
+        memoryReferenceState = { ...memorySavedState };
         updateMemoryPendingIndicator();
     } else {
         showToast('Failed to save Memory settings', true);

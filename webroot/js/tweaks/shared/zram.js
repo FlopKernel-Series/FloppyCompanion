@@ -3,6 +3,7 @@
 let zramCurrentState = {};
 let zramSavedState = {};
 let zramPendingState = {};
+let zramReferenceState = {};
 
 // Helper: Convert bytes to MiB for display
 function bytesToMiB(bytes) {
@@ -27,10 +28,16 @@ async function loadZramState() {
         // Initialize pending state from saved if available, else from current, else from defaults
         const defZram = window.getDefaultTweakPreset('zram');
 
-        zramPendingState = {
-            disksize: zramSavedState.disksize || zramCurrentState.disksize || defZram.disksize || '0',
-            algorithm: zramSavedState.algorithm || zramCurrentState.algorithm || defZram.algorithm || 'lz4',
-            enabled: zramSavedState.enabled !== undefined ? zramSavedState.enabled : (zramCurrentState.enabled || defZram.enabled || '1')
+        zramPendingState = window.initPendingState(zramCurrentState, zramSavedState, defZram);
+        if (zramPendingState.enabled === undefined) zramPendingState.enabled = '1';
+        if (!zramPendingState.algorithm) zramPendingState.algorithm = 'lz4';
+        if (!zramPendingState.disksize) zramPendingState.disksize = '0';
+
+        const { reference } = window.resolveTweakReference(zramCurrentState, zramSavedState, defZram);
+        zramReferenceState = {
+            disksize: reference.disksize || '0',
+            algorithm: reference.algorithm || 'lz4',
+            enabled: reference.enabled !== undefined ? reference.enabled : '1'
         };
 
         renderZramCard();
@@ -55,7 +62,7 @@ function renderZramCard() {
 
     if (sizeOptions) {
         const pendingSize = zramPendingState.disksize;
-        const currentMiB = bytesToMiB(parseInt(zramCurrentState.disksize) || 0);
+        const referenceMiB = bytesToMiB(parseInt(zramReferenceState.disksize) || 0);
         let matchedPreset = false;
 
         sizeOptions.querySelectorAll('.option-btn').forEach(btn => {
@@ -73,11 +80,11 @@ function renderZramCard() {
             customBtn.classList.add('selected');
             if (customInputRow) customInputRow.classList.remove('hidden');
             if (customInput) {
-                customInput.placeholder = currentMiB.toString();
+                customInput.placeholder = referenceMiB.toString();
                 // Only set value if it's a custom (non-preset) size
                 const pendingMiB = bytesToMiB(parseInt(pendingSize) || 0);
                 if (pendingMiB > 0 && ![1536, 2048, 3072, 4096, 6144, 8192].includes(pendingMiB)) {
-                    customInput.value = pendingMiB;
+                    customInput.value = pendingMiB !== referenceMiB ? pendingMiB : '';
                 }
             }
         } else if (customInputRow) {
@@ -136,9 +143,9 @@ function renderZramCard() {
 function updateZramPendingIndicator() {
     // Check if pending differs from saved
     // If nothing is saved, compare pending to current (initial) values
-    const savedDisksize = zramSavedState.disksize || zramCurrentState.disksize;
-    const savedAlgorithm = zramSavedState.algorithm || zramCurrentState.algorithm;
-    const savedEnabled = zramSavedState.enabled !== undefined ? zramSavedState.enabled : zramCurrentState.enabled;
+    const savedDisksize = zramReferenceState.disksize || zramCurrentState.disksize;
+    const savedAlgorithm = zramReferenceState.algorithm || zramCurrentState.algorithm;
+    const savedEnabled = zramReferenceState.enabled !== undefined ? zramReferenceState.enabled : zramCurrentState.enabled;
 
     const hasPending =
         (zramPendingState.disksize !== savedDisksize) ||
@@ -192,6 +199,11 @@ async function saveZram() {
 
     if (result && result.includes('saved')) {
         zramSavedState = { ...zramPendingState };
+        zramReferenceState = {
+            disksize: zramSavedState.disksize || '0',
+            algorithm: zramSavedState.algorithm || 'lz4',
+            enabled: zramSavedState.enabled !== undefined ? zramSavedState.enabled : '1'
+        };
         showToast('ZRAM settings saved');
         updateZramPendingIndicator();
     } else {

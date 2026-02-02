@@ -3,6 +3,7 @@
 let miscTrinketCurrentState = { touchboost: '0' };
 let miscTrinketSavedState = { touchboost: '0' };
 let miscTrinketPendingState = { touchboost: '0' };
+let miscTrinketReferenceState = { touchboost: '0' };
 
 const runMiscTrinketBackend = (...args) => window.runTweakBackend('misc_trinket', ...args);
 
@@ -24,7 +25,7 @@ function renderMiscTrinketCard() {
 }
 
 function updateMiscTrinketPendingIndicator() {
-    const hasChanges = miscTrinketPendingState.touchboost !== miscTrinketSavedState.touchboost;
+    const hasChanges = miscTrinketPendingState.touchboost !== miscTrinketReferenceState.touchboost;
 
     window.setPendingIndicator('misc-trinket-pending-indicator', hasChanges);
 }
@@ -40,24 +41,15 @@ async function loadMiscTrinketState() {
         touchboost: saved.touchboost || '0'
     };
 
-    // Check if saved values are the defaults (which backend returns when no config file exists)
-    const isDefaultSaved = savedNormalized.touchboost === '0';
+    miscTrinketSavedState = { ...savedNormalized };
 
-    // If saved is defaults and differs from current, there's no saved config file - use current
-    // Otherwise, use saved (either it's not defaults, or it matches current)
-    const savedDiffersFromCurrent = savedNormalized.touchboost !== miscTrinketCurrentState.touchboost;
+    const defMiscTrinket = window.getDefaultTweakPreset('misc_trinket');
+    miscTrinketPendingState = window.initPendingState(miscTrinketCurrentState, miscTrinketSavedState, defMiscTrinket);
 
-    const hasActualSavedConfig = !isDefaultSaved || !savedDiffersFromCurrent;
-
-    // If no saved config exists, set saved state to current so pending indicator works correctly
-    if (hasActualSavedConfig) {
-        miscTrinketSavedState = savedNormalized;
-    } else {
-        miscTrinketSavedState = { ...miscTrinketCurrentState };
-    }
-
-    // Initialize pending state from current if no saved config, otherwise from saved
-    miscTrinketPendingState = hasActualSavedConfig ? { ...miscTrinketSavedState } : { ...miscTrinketCurrentState };
+    const { reference } = window.resolveTweakReference(miscTrinketCurrentState, miscTrinketSavedState, defMiscTrinket);
+    miscTrinketReferenceState = {
+        touchboost: reference.touchboost || '0'
+    };
 
     renderMiscTrinketCard();
 }
@@ -65,6 +57,7 @@ async function loadMiscTrinketState() {
 async function saveMiscTrinket() {
     await runMiscTrinketBackend('save', 'touchboost', miscTrinketPendingState.touchboost);
     miscTrinketSavedState = { ...miscTrinketPendingState };
+    miscTrinketReferenceState = { ...miscTrinketSavedState };
     updateMiscTrinketPendingIndicator();
     showToast(window.t ? window.t('toast.settingsSaved') : 'Settings saved');
 }

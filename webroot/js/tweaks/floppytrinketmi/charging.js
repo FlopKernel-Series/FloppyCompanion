@@ -3,6 +3,7 @@
 let chargingCurrentState = { bypass: '0', fast: '0' };
 let chargingSavedState = { bypass: '0', fast: '0' };
 let chargingPendingState = { bypass: '0', fast: '0' };
+let chargingReferenceState = { bypass: '0', fast: '0' };
 
 const runChargingBackend = (...args) => window.runTweakBackend('charging', ...args);
 
@@ -28,8 +29,8 @@ function renderChargingCard() {
 
 function updateChargingPendingIndicator() {
     const hasChanges =
-        chargingPendingState.bypass !== chargingSavedState.bypass ||
-        chargingPendingState.fast !== chargingSavedState.fast;
+        chargingPendingState.bypass !== chargingReferenceState.bypass ||
+        chargingPendingState.fast !== chargingReferenceState.fast;
 
     window.setPendingIndicator('charging-pending-indicator', hasChanges);
 }
@@ -46,13 +47,21 @@ async function loadChargingState() {
         fast: saved.fast || chargingCurrentState.fast || '0'
     };
 
-    chargingPendingState = { ...chargingSavedState };
+    const defCharging = window.getDefaultTweakPreset('charging');
+    chargingPendingState = window.initPendingState(chargingCurrentState, chargingSavedState, defCharging);
+
+    const { reference } = window.resolveTweakReference(chargingCurrentState, chargingSavedState, defCharging);
+    chargingReferenceState = {
+        bypass: reference.bypass || '0',
+        fast: reference.fast || '0'
+    };
     renderChargingCard();
 }
 
 async function saveCharging() {
     await runChargingBackend('save', chargingPendingState.bypass, chargingPendingState.fast);
     chargingSavedState = { ...chargingPendingState };
+    chargingReferenceState = { ...chargingSavedState };
     updateChargingPendingIndicator();
     showToast(window.t ? window.t('toast.settingsSaved') : 'Settings saved');
 }

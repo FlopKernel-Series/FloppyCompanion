@@ -379,6 +379,29 @@ window.getDefaultTweakPreset = function (tweakId) {
     return defaults?.tweaks?.[tweakId] || {};
 };
 
+function savedMatchesDefaults(saved, defaults) {
+    if (!saved || !defaults) return false;
+    const savedKeys = Object.keys(saved);
+    const defaultKeys = Object.keys(defaults || {});
+    if (savedKeys.length === 0 || defaultKeys.length === 0) return false;
+    return savedKeys.every(key => Object.prototype.hasOwnProperty.call(defaults, key) && String(saved[key]) === String(defaults[key]));
+}
+
+window.resolveTweakReference = function (current, saved, defaults) {
+    const hasDefaults = defaults && Object.keys(defaults).length > 0;
+    const hasSaved = saved && Object.keys(saved).length > 0 && !savedMatchesDefaults(saved, defaults);
+    const reference = hasSaved ? saved : (hasDefaults ? defaults : current);
+    return { reference, hasSaved, hasDefaults };
+};
+
+window.initPendingState = function (current, saved, defaults) {
+    const hasSaved = saved && Object.keys(saved).length > 0 && !savedMatchesDefaults(saved, defaults);
+    if (hasSaved) {
+        return { ...current, ...defaults, ...saved };
+    }
+    return { ...current, ...defaults };
+};
+
 window.setPendingIndicator = function (indicatorId, hasPending) {
     const indicator = document.getElementById(indicatorId);
     if (!indicator) return;

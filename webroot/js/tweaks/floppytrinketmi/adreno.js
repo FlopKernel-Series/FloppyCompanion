@@ -27,6 +27,13 @@ let adrenoPendingState = {
     idler_idlewait: '15',
     idler_idleworkload: '5000'
 };
+let adrenoReferenceState = {
+    adrenoboost: '0',
+    idler_active: 'N',
+    idler_downdifferential: '20',
+    idler_idlewait: '15',
+    idler_idleworkload: '5000'
+};
 
 const runAdrenoBackend = (...args) => window.runTweakBackend('adreno', ...args);
 
@@ -49,11 +56,11 @@ function updateAdrenoboostOptions(selectedValue) {
 
 function updateAdrenoPendingIndicator() {
     const hasChanges =
-        adrenoPendingState.adrenoboost !== adrenoSavedState.adrenoboost ||
-        adrenoPendingState.idler_active !== adrenoSavedState.idler_active ||
-        adrenoPendingState.idler_downdifferential !== adrenoSavedState.idler_downdifferential ||
-        adrenoPendingState.idler_idlewait !== adrenoSavedState.idler_idlewait ||
-        adrenoPendingState.idler_idleworkload !== adrenoSavedState.idler_idleworkload;
+        adrenoPendingState.adrenoboost !== adrenoReferenceState.adrenoboost ||
+        adrenoPendingState.idler_active !== adrenoReferenceState.idler_active ||
+        adrenoPendingState.idler_downdifferential !== adrenoReferenceState.idler_downdifferential ||
+        adrenoPendingState.idler_idlewait !== adrenoReferenceState.idler_idlewait ||
+        adrenoPendingState.idler_idleworkload !== adrenoReferenceState.idler_idleworkload;
 
     window.setPendingIndicator('adreno-pending-indicator', hasChanges);
 }
@@ -82,8 +89,9 @@ function renderAdrenoCard() {
     const inputDowndiff = document.getElementById('adreno-downdifferential');
     if (valDowndiff) valDowndiff.textContent = adrenoCurrentState.idler_downdifferential || '--';
     if (inputDowndiff) {
-        inputDowndiff.placeholder = adrenoCurrentState.idler_downdifferential || '';
-        if (adrenoPendingState.idler_downdifferential && adrenoPendingState.idler_downdifferential !== adrenoCurrentState.idler_downdifferential) {
+        const referenceVal = adrenoReferenceState.idler_downdifferential || adrenoCurrentState.idler_downdifferential || '';
+        inputDowndiff.placeholder = referenceVal;
+        if (adrenoPendingState.idler_downdifferential && adrenoPendingState.idler_downdifferential !== referenceVal) {
             inputDowndiff.value = adrenoPendingState.idler_downdifferential;
         } else {
             inputDowndiff.value = '';
@@ -94,8 +102,9 @@ function renderAdrenoCard() {
     const inputIdlewait = document.getElementById('adreno-idlewait');
     if (valIdlewait) valIdlewait.textContent = adrenoCurrentState.idler_idlewait || '--';
     if (inputIdlewait) {
-        inputIdlewait.placeholder = adrenoCurrentState.idler_idlewait || '';
-        if (adrenoPendingState.idler_idlewait && adrenoPendingState.idler_idlewait !== adrenoCurrentState.idler_idlewait) {
+        const referenceVal = adrenoReferenceState.idler_idlewait || adrenoCurrentState.idler_idlewait || '';
+        inputIdlewait.placeholder = referenceVal;
+        if (adrenoPendingState.idler_idlewait && adrenoPendingState.idler_idlewait !== referenceVal) {
             inputIdlewait.value = adrenoPendingState.idler_idlewait;
         } else {
             inputIdlewait.value = '';
@@ -106,8 +115,9 @@ function renderAdrenoCard() {
     const inputIdleworkload = document.getElementById('adreno-idleworkload');
     if (valIdleworkload) valIdleworkload.textContent = adrenoCurrentState.idler_idleworkload || '--';
     if (inputIdleworkload) {
-        inputIdleworkload.placeholder = adrenoCurrentState.idler_idleworkload || '';
-        if (adrenoPendingState.idler_idleworkload && adrenoPendingState.idler_idleworkload !== adrenoCurrentState.idler_idleworkload) {
+        const referenceVal = adrenoReferenceState.idler_idleworkload || adrenoCurrentState.idler_idleworkload || '';
+        inputIdleworkload.placeholder = referenceVal;
+        if (adrenoPendingState.idler_idleworkload && adrenoPendingState.idler_idleworkload !== referenceVal) {
             inputIdleworkload.value = adrenoPendingState.idler_idleworkload;
         } else {
             inputIdleworkload.value = '';
@@ -127,7 +137,6 @@ async function loadAdrenoState() {
         idler_idleworkload: current.idler_idleworkload || '5000'
     };
 
-    // Normalize saved values (use defaults if empty)
     const savedNormalized = {
         adrenoboost: saved.adrenoboost || '0',
         idler_active: saved.idler_active || 'N',
@@ -136,34 +145,19 @@ async function loadAdrenoState() {
         idler_idleworkload: saved.idler_idleworkload || '5000'
     };
 
-    // Check if saved values are the defaults (which backend returns when no config file exists)
-    const isDefaultSaved =
-        savedNormalized.adrenoboost === '0' &&
-        savedNormalized.idler_active === 'N' &&
-        savedNormalized.idler_downdifferential === '20' &&
-        savedNormalized.idler_idlewait === '15' &&
-        savedNormalized.idler_idleworkload === '5000';
+    adrenoSavedState = { ...savedNormalized };
 
-    // If saved is defaults and differs from current, there's no saved config file - use current
-    // Otherwise, use saved (either it's not defaults, or it matches current)
-    const savedDiffersFromCurrent =
-        savedNormalized.adrenoboost !== adrenoCurrentState.adrenoboost ||
-        savedNormalized.idler_active !== adrenoCurrentState.idler_active ||
-        savedNormalized.idler_downdifferential !== adrenoCurrentState.idler_downdifferential ||
-        savedNormalized.idler_idlewait !== adrenoCurrentState.idler_idlewait ||
-        savedNormalized.idler_idleworkload !== adrenoCurrentState.idler_idleworkload;
+    const defAdreno = window.getDefaultTweakPreset('adreno');
+    adrenoPendingState = window.initPendingState(adrenoCurrentState, adrenoSavedState, defAdreno);
 
-    const hasActualSavedConfig = !isDefaultSaved || !savedDiffersFromCurrent;
-
-    // pending indicator fix
-    if (hasActualSavedConfig) {
-        adrenoSavedState = savedNormalized;
-    } else {
-        adrenoSavedState = { ...adrenoCurrentState };
-    }
-
-    // Initialize pending state from current if no saved config, otherwise from saved
-    adrenoPendingState = hasActualSavedConfig ? { ...adrenoSavedState } : { ...adrenoCurrentState };
+    const { reference } = window.resolveTweakReference(adrenoCurrentState, adrenoSavedState, defAdreno);
+    adrenoReferenceState = {
+        adrenoboost: reference.adrenoboost || '0',
+        idler_active: reference.idler_active || 'N',
+        idler_downdifferential: reference.idler_downdifferential || '20',
+        idler_idlewait: reference.idler_idlewait || '15',
+        idler_idleworkload: reference.idler_idleworkload || '5000'
+    };
     renderAdrenoCard();
 }
 
@@ -176,6 +170,7 @@ async function saveAdreno() {
         adrenoPendingState.idler_idleworkload
     );
     adrenoSavedState = { ...adrenoPendingState };
+    adrenoReferenceState = { ...adrenoSavedState };
     updateAdrenoPendingIndicator();
     showToast(window.t ? window.t('toast.settingsSaved') : 'Settings saved');
 }
@@ -262,7 +257,7 @@ function initAdrenoTweak() {
         if (inputDowndiff) {
             inputDowndiff.addEventListener('input', (e) => {
                 if (e.target.value === '') {
-                    adrenoPendingState.idler_downdifferential = adrenoSavedState.idler_downdifferential || adrenoCurrentState.idler_downdifferential || '20';
+                    adrenoPendingState.idler_downdifferential = adrenoReferenceState.idler_downdifferential || adrenoCurrentState.idler_downdifferential || '20';
                 } else {
                     adrenoPendingState.idler_downdifferential = e.target.value;
                 }
@@ -274,7 +269,7 @@ function initAdrenoTweak() {
         if (inputIdlewait) {
             inputIdlewait.addEventListener('input', (e) => {
                 if (e.target.value === '') {
-                    adrenoPendingState.idler_idlewait = adrenoSavedState.idler_idlewait || adrenoCurrentState.idler_idlewait || '15';
+                    adrenoPendingState.idler_idlewait = adrenoReferenceState.idler_idlewait || adrenoCurrentState.idler_idlewait || '15';
                 } else {
                     adrenoPendingState.idler_idlewait = e.target.value;
                 }
@@ -286,7 +281,7 @@ function initAdrenoTweak() {
         if (inputIdleworkload) {
             inputIdleworkload.addEventListener('input', (e) => {
                 if (e.target.value === '') {
-                    adrenoPendingState.idler_idleworkload = adrenoSavedState.idler_idleworkload || adrenoCurrentState.idler_idleworkload || '5000';
+                    adrenoPendingState.idler_idleworkload = adrenoReferenceState.idler_idleworkload || adrenoCurrentState.idler_idleworkload || '5000';
                 } else {
                     adrenoPendingState.idler_idleworkload = e.target.value;
                 }

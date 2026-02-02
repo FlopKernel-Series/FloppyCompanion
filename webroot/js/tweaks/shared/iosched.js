@@ -3,6 +3,7 @@
 let ioschedDevices = []; // Array of {name, active, available}
 let ioschedSavedState = {};
 let ioschedPendingState = {};
+let ioschedReferenceState = {};
 
 const runIoBackend = (...args) => window.runTweakBackend('iosched', ...args);
 
@@ -37,11 +38,14 @@ async function loadIoSchedulerState() {
         ioschedSavedState = parseKeyValue(savedOutput);
 
         // Initialize pending state
+        const defIo = window.getDefaultTweakPreset('iosched');
+        const { reference } = window.resolveTweakReference({}, ioschedSavedState, defIo);
+        ioschedReferenceState = { ...reference };
+
         ioschedPendingState = {};
         ioschedDevices.forEach(d => {
-            // Priority: Saved > Active in system > Default
-            const defIo = window.getDefaultTweakPreset('iosched');
-            ioschedPendingState[d.device] = ioschedSavedState[d.device] || d.active || defIo[d.device];
+            const fallback = ioschedReferenceState[d.device] || d.active;
+            ioschedPendingState[d.device] = ioschedSavedState[d.device] || fallback;
         });
 
         renderIoCard();
@@ -126,8 +130,8 @@ function updateIoPendingIndicator() {
     let hasPending = false;
     for (const dev of ioschedDevices) {
         // Compare pending vs saved (or initial active)
-        const saved = ioschedSavedState[dev.device] || dev.active;
-        if (ioschedPendingState[dev.device] !== saved) {
+        const reference = ioschedReferenceState[dev.device] || dev.active;
+        if (ioschedPendingState[dev.device] !== reference) {
             hasPending = true;
             break;
         }
@@ -147,6 +151,7 @@ async function saveIoScheduler() {
     if (result && result.includes('saved')) {
         showToast('I/O settings saved');
         ioschedSavedState = { ...ioschedPendingState };
+        ioschedReferenceState = { ...ioschedSavedState };
         updateIoPendingIndicator();
     } else {
         showToast('Failed to save I/O settings', true);
