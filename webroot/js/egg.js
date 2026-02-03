@@ -7,7 +7,7 @@
     const MUSIC_GAIN = 0.8;
     const MUSIC_START_DELAY_MS = 500;
 
-    const REMOTE_MOD_URL = 'https://modland.com/pub/modules/Protracker/MC%20Spicy/betty.mod';
+    const REMOTE_MOD_URL = 'https://api.modarchive.org/downloads.php?moduleid=60205#stop4am.mod';
 
     let tapCount = 0;
     let tapTimer = null;
