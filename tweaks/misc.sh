@@ -114,6 +114,15 @@ apply() {
     esac
 }
 
+# Clear a single saved key (so kernel default applies)
+clear_saved_key() {
+    local key="$1"
+    if [ -f "$CONFIG_FILE" ]; then
+        sed -i "/^${key}=/d" "$CONFIG_FILE"
+    fi
+    echo "cleared"
+}
+
 # Apply saved config (called at boot)
 apply_saved() {
     if [ ! -f "$CONFIG_FILE" ]; then
@@ -159,8 +168,11 @@ case "$1" in
     apply_saved)
         apply_saved
         ;;
+    clear_saved_key)
+        clear_saved_key "$2"
+        ;;
     *)
-        echo "usage: $0 {is_available|get_current|get_saved|save|apply|apply_saved}"
+        echo "usage: $0 {is_available|get_current|get_saved|save|apply|apply_saved|clear_saved_key}"
         exit 1
         ;;
 esac

@@ -481,6 +481,12 @@ async function applyChanges() {
                         logToModal("Undervolt settings cleared.");
                     }
                 }
+                // Clear GPU unlock persistence on any mode change so kernel default applies
+                logToModal("Resetting GPU overclock to kernel default...");
+                if (window.clearGpuUnlockPersistence) {
+                    await window.clearGpuUnlockPersistence();
+                    logToModal("GPU overclock setting reset.");
+                }
             }
 
             logToModal("\nAll done! Please reboot.");

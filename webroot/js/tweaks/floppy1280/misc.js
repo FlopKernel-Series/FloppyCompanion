@@ -101,7 +101,11 @@ async function loadMiscState() {
 async function saveMisc() {
     await runMiscBackend('save', 'block_ed3', miscPendingState.block_ed3);
     await runMiscBackend('save', 'gpu_clklck', miscPendingState.gpu_clklck);
-    await runMiscBackend('save', 'gpu_unlock', miscPendingState.gpu_unlock);
+    // Only persist gpu_unlock when the toggle is available (not greyed out)
+    const gpuUnlockSwitch = document.getElementById('misc-gpuunlock-switch');
+    if (gpuUnlockSwitch && !gpuUnlockSwitch.disabled) {
+        await runMiscBackend('save', 'gpu_unlock', miscPendingState.gpu_unlock);
+    }
     miscSavedState = { ...miscPendingState };
     miscReferenceState = { ...miscSavedState };
     updateMiscPendingIndicator();
@@ -111,7 +115,11 @@ async function saveMisc() {
 async function applyMisc() {
     await runMiscBackend('apply', 'block_ed3', miscPendingState.block_ed3);
     await runMiscBackend('apply', 'gpu_clklck', miscPendingState.gpu_clklck);
-    await runMiscBackend('apply', 'gpu_unlock', miscPendingState.gpu_unlock);
+    // Only apply gpu_unlock when the toggle is available (not greyed out)
+    const gpuUnlockSwitch = document.getElementById('misc-gpuunlock-switch');
+    if (gpuUnlockSwitch && !gpuUnlockSwitch.disabled) {
+        await runMiscBackend('apply', 'gpu_unlock', miscPendingState.gpu_unlock);
+    }
 
     // Refresh only current kernel state so active values update,
     // but do NOT reset pending state back to saved.
@@ -131,6 +139,15 @@ async function applyMisc() {
     renderMiscCard();
     showToast(window.t ? window.t('toast.settingsApplied') : 'Applied');
 }
+
+// Clear GPU unlock persistence (called on Unlocked Mode category change)
+async function clearGpuUnlockPersistence() {
+    await runMiscBackend('clear_saved_key', 'gpu_unlock');
+    delete miscSavedState.gpu_unlock;
+    miscPendingState.gpu_unlock = miscCurrentState.gpu_unlock;
+    renderMiscCard();
+}
+window.clearGpuUnlockPersistence = clearGpuUnlockPersistence;
 
 function initMiscTweak() {
     // Register tweak immediately (Early Registration)
@@ -190,10 +207,28 @@ function initMiscTweak() {
     // Load initial state
     loadMiscState();
 
+    // Track GPU unlock mode category for reset on transition
+    let lastGpuUnlockCategory = null;
+
     // Listen for superfloppy mode changes
-    document.addEventListener('superfloppyModeChanged', () => {
+    document.addEventListener('superfloppyModeChanged', (e) => {
+        const mode = String(e?.detail?.mode ?? window.currentSuperfloppyMode ?? '0');
+        const newCategory = ['1', '2', '3'].includes(mode) ? 'oc' : 'other';
+
+        // On category transition, clear saved gpu_unlock and reset to kernel default
+        if (lastGpuUnlockCategory !== null && lastGpuUnlockCategory !== newCategory) {
+            if (window.clearGpuUnlockPersistence) {
+                window.clearGpuUnlockPersistence();
+            }
+        }
+        lastGpuUnlockCategory = newCategory;
+
         updateGpuUnlockAvailability();
     });
+
+    // Seed initial category from current mode (so first real change can be detected)
+    const initialMode = String(window.currentSuperfloppyMode ?? '0');
+    lastGpuUnlockCategory = ['1', '2', '3'].includes(initialMode) ? 'oc' : 'other';
 
     // Language change listener
     document.addEventListener('languageChanged', () => {
