@@ -17,6 +17,12 @@ const I18N = {
         { code: 'az', name: 'Azərbaycanca' }
     ],
 
+    // Get direction for language
+    getDir(code) {
+        const rtlLangs = ['ar', 'he', 'fa', 'ur'];
+        return rtlLangs.includes(code) ? 'rtl' : 'ltr';
+    },
+
     // Initialize i18n system
     async init() {
         // Load saved preference or detect from browser
@@ -31,6 +37,10 @@ const I18N = {
             }
         }
 
+        // Set initial direction
+        document.documentElement.dir = this.getDir(this.currentLang);
+        document.documentElement.lang = this.currentLang;
+
         // Always load fallback first
         await this.loadLanguage(this.fallbackLang, true);
         await this.loadFeatureStrings(this.fallbackLang, true);
@@ -44,7 +54,7 @@ const I18N = {
         this.applyTranslations();
 
         // Dispatch event so components can update with the loaded language
-        document.dispatchEvent(new CustomEvent('languageChanged', { detail: { lang: this.currentLang } }));
+        document.dispatchEvent(new CustomEvent('languageChanged', { detail: { lang: this.currentLang, dir: this.getDir(this.currentLang) } }));
     },
 
     // Load a language file
@@ -244,8 +254,12 @@ const I18N = {
 
         this.applyTranslations();
 
+        // Update direction
+        document.documentElement.dir = this.getDir(code);
+        document.documentElement.lang = code;
+
         // Dispatch event for dynamic content
-        document.dispatchEvent(new CustomEvent('languageChanged', { detail: { lang: code } }));
+        document.dispatchEvent(new CustomEvent('languageChanged', { detail: { lang: code, dir: this.getDir(code) } }));
     }
 };
 

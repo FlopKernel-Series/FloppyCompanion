@@ -110,7 +110,9 @@ function updateSlide(index) {
     });
 
     // Slide track
-    const percentage = nextIndex * -20;
+    const isRtl = document.documentElement.dir === 'rtl';
+    const scalar = isRtl ? 1 : -1;
+    const percentage = nextIndex * 20 * scalar;
     const sliderTrack = document.getElementById('slider-track');
     if (sliderTrack) {
         sliderTrack.style.transform = `translateX(${percentage}%)`;
@@ -214,8 +216,12 @@ function initNavigation() {
         const diff = currentX - startX;
 
         // Calculate resistance or limit
-        // Current translate percentage
-        const baseTranslate = currentIndex * -20; // %
+        const isRtl = document.documentElement.dir === 'rtl';
+        const scalar = isRtl ? 1 : -1;
+        
+        // Base translation based on current index (-20% steps for LTR, +20% for RTL)
+        const baseTranslate = currentIndex * 20 * scalar; 
+        
         // Convert diff to percentage of container width
         const containerWidth = sliderContainer.offsetWidth;
         const diffPercent = (diff / containerWidth) * 100 / 5; // /5 because track is 500%
@@ -223,8 +229,15 @@ function initNavigation() {
         let newTranslate = baseTranslate + diffPercent;
 
         // Form boundaries with resistance
-        if (newTranslate > 0) newTranslate = newTranslate * 0.3;
-        if (newTranslate < -80) newTranslate = -80 + (newTranslate + 80) * 0.3;
+        if (isRtl) {
+            // RTL Boundaries: 0 to +80
+            if (newTranslate < 0) newTranslate = newTranslate * 0.3;
+            if (newTranslate > 80) newTranslate = 80 + (newTranslate - 80) * 0.3;
+        } else {
+            // LTR Boundaries: 0 to -80
+            if (newTranslate > 0) newTranslate = newTranslate * 0.3;
+            if (newTranslate < -80) newTranslate = -80 + (newTranslate + 80) * 0.3;
+        }
 
         sliderTrack.style.transform = `translateX(${newTranslate}%)`;
     }, { passive: true });
@@ -235,13 +248,28 @@ function initNavigation() {
         sliderTrack.style.transition = 'transform 0.3s cubic-bezier(0.2, 0, 0, 1)'; // Restore transition
 
         const diff = currentX - startX;
+        const isRtl = document.documentElement.dir === 'rtl';
 
         // Only change slide if it was a deliberate horizontal swipe
         if (isHorizontalSwipe && Math.abs(diff) > minSwipeDistance) {
-            if (diff < 0 && currentIndex < TAB_COUNT - 1) {
-                currentIndex++;
-            } else if (diff > 0 && currentIndex > 0) {
-                currentIndex--;
+            if (diff < 0) {
+                // Swipe Left
+                // LTR: Next (++)
+                // RTL: Prev (--)
+                if (!isRtl && currentIndex < TAB_COUNT - 1) {
+                    currentIndex++;
+                } else if (isRtl && currentIndex > 0) {
+                    currentIndex--;
+                }
+            } else if (diff > 0) {
+                // Swipe Right
+                // LTR: Prev (--)
+                // RTL: Next (++)
+                if (!isRtl && currentIndex > 0) {
+                    currentIndex--;
+                } else if (isRtl && currentIndex < TAB_COUNT - 1) {
+                    currentIndex++;
+                }
             }
         }
 

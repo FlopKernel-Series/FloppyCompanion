@@ -305,7 +305,7 @@ body.theme-detect-anim .nav-item .icon {
     align-items: center;
     justify-content: flex-end;
     gap: 8px;
-    text-align: right;
+    text-align: end;
 }
 
 .status-icon-wrapper {
@@ -315,11 +315,11 @@ body.theme-detect-anim .nav-item .icon {
     justify-content: center;
     line-height: 0;
     vertical-align: middle;
-    margin-left: 6px;
+    margin-inline-start: 6px;
 }
 
 .tooltip-anchor {
-    margin-left: 2px;
+    margin-inline-start: 2px;
     vertical-align: middle;
 }
 
@@ -366,8 +366,8 @@ body.theme-detect-anim .nav-item .icon {
     position: absolute;
     bottom: 125%;
     /* Above icon */
-    right: 0;
-    left: auto;
+    inset-inline-end: 0;
+    inset-inline-start: auto;
     transform: none;
     background-color: var(--md-sys-color-surface-variant);
     color: var(--md-sys-color-on-surface-variant);
@@ -379,7 +379,7 @@ body.theme-detect-anim .nav-item .icon {
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
     z-index: 100;
     pointer-events: none;
-    text-align: left;
+    text-align: start;
     white-space: normal;
     text-transform: none;
     font-weight: 400;
@@ -389,9 +389,9 @@ body.theme-detect-anim .nav-item .icon {
 }
 
 .status-bubble.center {
-    left: 50%;
-    right: auto;
-    transform: translateX(-50%);
+    inset-inline-start: 50%;
+    inset-inline-end: auto;
+    transform: translateX(-50%); /* This needs to remain physical or be handled by logic if needed, but centering X is direction neutral usually */
     width: 200px;
 }
 
@@ -399,28 +399,28 @@ body.theme-detect-anim .nav-item .icon {
     content: '';
     position: absolute;
     top: 100%;
-    right: 10px;
+    inset-inline-end: 10px;
     border-width: 5px;
     border-style: solid;
     border-color: var(--md-sys-color-surface-variant) transparent transparent transparent;
 }
 
 .status-bubble.center::after {
-    left: 50%;
-    right: auto;
-    margin-left: -5px;
+    inset-inline-start: 50%;
+    inset-inline-end: auto;
+    margin-inline-start: -5px;
 }
 
 /* Left-aligned tooltip - extends to the right */
 .status-bubble.left {
-    left: 0;
-    right: auto;
+    inset-inline-start: 0;
+    inset-inline-end: auto;
     transform: none;
 }
 
 .status-bubble.left::after {
-    left: 10px;
-    right: auto;
+    inset-inline-start: 10px;
+    inset-inline-end: auto;
 }
 
 .status-bubble.hidden {
@@ -451,8 +451,9 @@ body {
 .top-app-bar {
     position: fixed;
     top: 0;
-    left: 0;
-    right: 0;
+    top: 0;
+    inset-inline-start: 0;
+    inset-inline-end: 0;
     height: 64px;
     background-color: var(--md-sys-color-surface);
     display: flex;
@@ -472,7 +473,7 @@ body {
 
 /* Header Actions - always right-aligned, stacked buttons */
 .header-actions {
-    margin-left: auto;
+    margin-inline-start: auto;
     position: relative;
     width: 40px;
     /* Size of icon-button */
@@ -483,7 +484,7 @@ body {
 .header-actions>* {
     position: absolute;
     top: 0;
-    right: 0;
+    inset-inline-end: 0;
 }
 
 /* Ensure dropdown menus position relative to their container, not header-actions */
@@ -521,7 +522,7 @@ body {
 .dropdown-menu {
     position: absolute;
     top: 100%;
-    right: 0;
+    inset-inline-end: 0;
     min-width: 200px;
     background-color: var(--md-sys-color-surface-container-high);
     border-radius: var(--md-sys-shape-corner-medium);
@@ -612,8 +613,9 @@ body {
 .bottom-nav {
     position: fixed;
     bottom: 0;
-    left: 0;
-    right: 0;
+    bottom: 0;
+    inset-inline-start: 0;
+    inset-inline-end: 0;
     height: 80px;
     background-color: var(--md-sys-color-surface);
     border-top: 1px solid var(--md-sys-color-surface-variant);
@@ -666,8 +668,8 @@ body {
     content: '';
     position: absolute;
     top: 0;
-    left: 0;
-    right: 0;
+    inset-inline-start: 0;
+    inset-inline-end: 0;
     bottom: 0;
     background-color: var(--md-sys-color-on-surface);
     opacity: 0;
@@ -721,7 +723,7 @@ body {
     height: 18px;
     fill: currentColor;
     vertical-align: middle;
-    margin-right: 8px;
+    margin-inline-end: 8px;
 }
 
 /* Action Buttons (Tools Card) */
@@ -776,15 +778,15 @@ body {
 }
 
 .info-button .icon-svg-small {
-    margin-right: 0;
+    margin-inline-end: 0;
 }
 
 /* Toast Notification */
 .toast {
     position: fixed;
     bottom: 80px;
-    left: 50%;
-    transform: translateX(-50%) translateY(100px);
+    inset-inline-start: 50%;
+    transform: translateX(-50%) translateY(100px); /* Center X remains physical as translate is axis-based */
     background-color: var(--md-sys-color-surface-container-high);
     color: var(--md-sys-color-on-surface);
     padding: 12px 20px;
@@ -848,8 +850,8 @@ body {
     -webkit-appearance: none;
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='%23747775'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
     background-repeat: no-repeat;
-    background-position: right 8px center;
-    padding-right: 32px;
+    background-position: right 8px center; /* Background position keyword 'right' might need handling or is fine if icon always on right */
+    padding-inline-end: 32px;
     outline: none;
 }
 
@@ -896,7 +898,7 @@ body {
 }
 
 .preset-btn .icon-svg-small {
-    margin-right: 0;
+    margin-inline-end: 0;
 }
 
 .preset-name-input {
@@ -1001,7 +1003,7 @@ body {
 .mode-num {
     opacity: 0.5;
     font-size: 0.9em;
-    margin-left: 2px;
+    margin-inline-start: 2px;
 }
 
 .tweak-description {
@@ -1019,7 +1021,7 @@ body {
     width: 16px;
     height: 16px;
     vertical-align: text-bottom;
-    margin-right: 2px;
+    margin-inline-end: 2px;
 }
 
 /* Slider Styles */
@@ -1058,8 +1060,8 @@ body {
 }
 
 .tweak-row {
-    padding-left: 0 !important;
-    padding-right: 0 !important;
+    padding-inline-start: 0 !important;
+    padding-inline-end: 0 !important;
 }
 
 .tweak-separator {
@@ -1299,8 +1301,8 @@ body {
 .pending-tooltip {
     position: absolute;
     top: 100%;
-    left: auto;
-    right: 0;
+    inset-inline-start: auto;
+    inset-inline-end: 0;
     margin-top: 8px;
     padding: 8px 12px;
     background-color: var(--md-sys-color-surface-variant);
@@ -1403,7 +1405,7 @@ body {
 
 #tab-about .logo-container .ee-logo-glow-svg {
     position: absolute;
-    inset: 0;
+    inset-inline: 0;
     width: 100%;
     height: 100%;
     pointer-events: none;
@@ -1589,7 +1591,7 @@ body {
     margin-bottom: 12px;
     border-bottom: none;
     gap: 8px;
-    padding-right: 40px;
+    padding-inline-end: 40px;
 }
 
 .monitor-card .card-title {
@@ -1679,7 +1681,7 @@ body {
     align-items: center;
     gap: 12px;
     margin-bottom: 12px;
-    padding-right: 44px;
+    padding-inline-end: 44px;
     color: var(--md-sys-color-primary);
 }
 
@@ -1746,7 +1748,7 @@ body {
     padding-bottom: 12px;
     border-bottom: 1px solid var(--md-sys-color-outline-variant);
     margin-bottom: 12px;
-    padding-right: 44px;
+    padding-inline-end: 44px;
 }
 
 .link-list {
@@ -1806,7 +1808,7 @@ body {
     margin-top: 16px;
     margin-bottom: 0;
     padding: 16px;
-    padding-right: 0;
+    padding-inline-end: 0;
     background: var(--md-sys-color-surface-container);
     border-radius: 16px;
 }
@@ -1828,7 +1830,7 @@ body {
     position: relative;
     width: 52px;
     height: 32px;
-    margin-right: 10px;
+    margin-inline-end: 10px;
 }
 
 .m3-switch input {
@@ -1843,8 +1845,8 @@ body {
 .m3-switch-track {
     position: absolute;
     top: 0;
-    left: 0;
-    right: 0;
+    inset-inline-start: 0;
+    inset-inline-end: 0;
     bottom: 0;
     background-color: var(--md-sys-color-surface-variant);
     border: 2px solid var(--md-sys-color-outline);
@@ -1854,7 +1856,7 @@ body {
 
 .m3-switch-thumb {
     position: absolute;
-    left: 4px;
+    inset-inline-start: 4px; /* Default for unchecked */
     top: 50%;
     transform: translateY(-50%);
     width: 16px;
@@ -1870,7 +1872,7 @@ body {
 }
 
 .m3-switch input:checked+.m3-switch-track .m3-switch-thumb {
-    left: 24px;
+    inset-inline-start: 24px; /* Move to end when checked */
     width: 20px;
     height: 20px;
     background-color: var(--md-sys-color-on-primary);
@@ -1885,21 +1887,21 @@ body {
 /* Feature cards need larger inset for rounded corners */
 .feature-card>.experimental-badge {
     top: 16px;
-    right: 16px;
+    inset-inline-end: 16px;
 }
 
 /* Option items use smaller inset */
 .option-item>.experimental-badge {
     top: 8px;
-    right: 8px;
+    inset-inline-end: 8px;
 }
 
 /* --- Custom Modal Styles --- */
 .modal {
     position: fixed;
     top: 0;
-    left: 0;
-    right: 0;
+    inset-inline-start: 0;
+    inset-inline-end: 0;
     bottom: 0;
     background: rgba(0, 0, 0, 0.5);
     display: flex;
@@ -1961,7 +1963,7 @@ body {
 
 .easter-egg-canvas {
     position: absolute;
-    inset: 0;
+    inset-inline: 0;
     width: 100%;
     height: 100%;
     z-index: 0;
@@ -2028,8 +2030,8 @@ body {
 .easter-egg-close-x {
     position: absolute;
     top: 12px;
-    right: 12px;
-    left: auto;
+    inset-inline-end: 12px;
+    inset-inline-start: auto;
     bottom: auto;
     z-index: 2;
     width: 22px;
@@ -2156,7 +2158,8 @@ body {
 .fab-container {
     position: fixed;
     bottom: 100px;
-    right: 24px;
+    aspect-ratio: 1; /* For FAB circle/square */
+    inset-inline-end: 24px;
     display: flex;
     flex-direction: column;
     gap: 16px;
@@ -2275,7 +2278,7 @@ body {
     padding: 12px;
     cursor: pointer;
     transition: background-color 0.2s;
-    text-align: left;
+    text-align: start;
 }
 
 .option-item.selected {
@@ -2360,7 +2363,7 @@ body {
     overflow-y: auto;
     margin: 16px 0;
     white-space: pre-wrap;
-    text-align: left;
+    text-align: start;
 }
 
 .btn {
@@ -2371,7 +2374,7 @@ body {
     border-radius: 20px;
     font-weight: 500;
     cursor: pointer;
-    float: right;
+    float: inline-end;
 }
 
 /* Loading Spinner */
@@ -2458,7 +2461,7 @@ body {
     text-transform: uppercase;
     letter-spacing: 0.8px;
     color: var(--md-sys-color-primary);
-    padding-left: 6px;
+    padding-inline-start: 6px;
 }
 
 /* Segmented Control */
@@ -2502,7 +2505,7 @@ body {
 
 .tweak-subsection .tweak-section-header {
     margin-top: 0;
-    padding-left: 0;
+    padding-inline-start: 0;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -2565,7 +2568,7 @@ body {
 }
 
 .credits-role {
-    margin-left: 6px;
+    margin-inline-start: 6px;
     font-size: 13px;
     color: var(--md-sys-color-on-surface-variant);
 }
