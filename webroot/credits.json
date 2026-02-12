@@ -64,6 +64,15 @@
                     "url": "https://codeberg.org/maydo"
                 }
             ]
+        },
+        "az": {
+            "name": "Azərbaycanca",
+            "contributors": [
+                {
+                    "name": "akifakif32",
+                    "url": "https://github.com/akifakif32"
+                }
+            ]
         }
     }
 }
