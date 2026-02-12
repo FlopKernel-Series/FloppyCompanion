@@ -12,7 +12,8 @@ const I18N = {
         { code: 'es', name: 'Español' },
         { code: 'tr', name: 'Türkçe' },
         { code: "uk", name: "Українська" },
-        { code: 'ru' , name: 'Русский' }
+        { code: 'ru' , name: 'Русский' },
+        { code: 'ar', name: 'العربية' }
     ],
 
     // Initialize i18n system
