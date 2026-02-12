@@ -91,6 +91,25 @@
             "noData": "CPU verisi yok",
             "clusterLabel": "Küme {id}",
             "cpuLabel": "CPU {id}"
+        },
+        "gpu": {
+            "title": "GPU",
+            "freqSection": "Frekans",
+            "statusSection": "Özellikler",
+            "currentLabel": "Mevcut",
+            "minLabel": "Min",
+            "maxLabel": "Maks",
+            "govLabel": "Governor",
+            "gpuUnlock": "GPU Kilidi",
+            "gpuClockLock": "GPU Saat Kilidi",
+            "adrenoboost": "Adrenoboost",
+            "idlerActive": "Adreno Idler",
+            "idlerDownDiff": "Düşüş Farkı",
+            "idlerIdleWait": "Boşta Bekleme",
+            "idlerWorkload": "Boşta İş Yükü",
+            "enabled": "Etkin",
+            "disabled": "Devre Dışı",
+            "noData": "GPU verisi yok"
         }
     },
     "tweaks": {
