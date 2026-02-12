@@ -55,6 +55,15 @@
                     "url": "https://github.com/golkov1993"
                 }
             ]
+        },
+        "ar": {
+            "name": "العربية",
+            "contributors": [
+                {
+                    "name": "Maydo",
+                    "url": "https://codeberg.org/maydo"
+                }
+            ]
         }
     }
 }
