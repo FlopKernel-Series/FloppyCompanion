@@ -88,9 +88,28 @@
       "enabled": "Увімкнено",
       "disabled": "Вимкнено",
       "off": "Вимкнено",
-      "noData": "Дані про ЦП недоступні",
+      "noData": "Дані ЦП відсутні",
       "clusterLabel": "Кластер {id}",
       "cpuLabel": "ЦП {id}"
+    },
+    "gpu": {
+      "title": "ГП",
+      "freqSection": "Частота",
+      "statusSection": "Функції",
+      "currentLabel": "Поточно",
+      "minLabel": "Мін",
+      "maxLabel": "Макс",
+      "govLabel": "Регулятор частоти",
+      "gpuUnlock": "Розблокування ГП",
+      "gpuClockLock": "Блокування частот ГП",
+      "adrenoboost": "Прискорення ГП Adreno",
+      "idlerActive": "Активно",
+      "idlerDownDiff": "Поріг зниження частоти",
+      "idlerIdleWait": "Затримка перед простоєм",
+      "idlerWorkload": "Поріг навантаження",
+      "enabled": "Увімкнено",
+      "disabled": "Вимкнено",
+      "noData": "Дані ГП відсутні"
     }
   },
   "tweaks": {
