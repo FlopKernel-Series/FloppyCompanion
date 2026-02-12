@@ -1,0 +1,72 @@
+{
+    "1280": {
+        "superfloppy": {
+            "title": "Kilidsiz Rejim",
+            "desc": "FloppyKernel üçün CPU və GPU tezlik tənzimləmələri.",
+            "options": {
+                "1": {
+                    "label": "Aktiv (Overclock/Sürət artırma)",
+                    "desc": "CL0 = 2.2 GHz (OC), CL1 = 2.496 GHz (OC), GPU = 1.209 GHz (OC), UV deaktivdir."
+                },
+                "2": {
+                    "label": "MegaFloppy (Overclock, riskli)",
+                    "desc": "CL0 = 2.2 GHz (OC), CL1 = 2.6 GHz (OC), GPU = 1.209 GHz (OC), UV deaktivdir."
+                },
+                "3": {
+                    "label": "UltraFloppy (Overclock, riskli)",
+                    "desc": "CL0 = 2.2 GHz (OC), CL1 = 2.704 GHz (OC), GPU = 1.209 GHz (OC), UV deaktivdir."
+                },
+                "4": {
+                    "label": "CoolFloppy (Underclock/Sürət azaltma)",
+                    "desc": "CL0 = 2.0 GHz (standart), CL1 = 2.112 GHz (UC), GPU = 897 MHz (standart), UV aktivdir."
+                },
+                "5": {
+                    "label": "BalancedFloppy (Overclock)",
+                    "desc": "CL0 = 2.2 GHz (OC), CL1 = 2.4 GHz (standart), GPU = 897 MHz (standart), UV deaktivdir."
+                }
+            }
+        }
+    },
+    "force_perm": {
+        "title": "Məcburi Permissive",
+        "desc": "SELinux-u məcburi Permissive rejiminə keçirir. Tərtibatçılar üçün nəzərdə tutulub."
+    },
+    "ems_efficient": {
+        "title": "EMS Səmərəli Rejim",
+        "desc": "EMS səmərəli planlayıcı (scheduler) rejimini aktivləşdirir. Performansı azaldır və batareya ömrünü uzadır."
+    },
+    "aosp_mode": {
+        "title": "AOSP Rejimi",
+        "desc": "AOSP-ə xas xüsusi modifikasiyaları aktivləşdirir."
+    },
+    "no_init_protection": {
+        "title": "Init Müdafiəsini Söndür",
+        "desc": "Power HAL-lara və init skriptlərinə kernel parametrlərini dəyişməyə icazə verir. Performansın ROM tərəfindən idarə olunmasını istəyirsinizsə, aktiv edin."
+    },
+    "legacy_timestamp_source": {
+        "title": "Köhnə Zaman Damğası (Legacy Timestamp)",
+        "desc": "Köhnə kamera HAL-ları olan ROM-larda video qeydi müddəti problemlərini həll edir."
+    },
+    "no_msm_perf_boost": {
+        "title": "MSM Boost-u Deaktiv et",
+        "desc": "MSM Performance-ın CPU minimum/maksimum tezliklərinin üzərinə yazmasının qarşısını alır. Sistemin cavabdehliyini (responsiveness) azalda bilər."
+    },
+    "warm_reboot": {
+        "title": "Məcburi İsti Yenidən Başlatma",
+        "desc": "Qeydləri (log) daha asan toplamaq üçün yenidən başlatma zamanı RAM-ı qoruyur. Yalnız xətaların ayıklanması (debugging) üçün tövsiyə olunur, WiFi-ın işləməməsinə səbəb ola bilər."
+    },
+    "uname_bpf_spoof": {
+        "title": "BPF Saxtalaşdırma (Spoofing)",
+        "desc": "BPF dəstəyi üçün Linux versiyasını saxtalaşdırır. Xaricdən idarə olunur; bunu əl ilə dəyişmək açılış döngəsinə (bootloop) səbəb ola bilər.",
+        "options": {
+            "1": {
+                "label": "Qismən saxtalaşdırma",
+                "desc": "Uname məlumatını yalnız netbpfload üçün saxtalaşdırır."
+            },
+            "5": {
+                "label": "Tam saxtalaşdırma",
+                "desc": "Uname məlumatını bir neçə BPF ilə əlaqəli xidmət üçün saxtalaşdırır."
+            }
+        }
+    }
+}
