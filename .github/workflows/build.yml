@@ -49,12 +49,24 @@ jobs:
 
           zip_path="${files[0]}"
           zip_name="$(basename "$zip_path")"
+          zip_stem="${zip_name%.zip}"
           echo "zip_path=$zip_path" >> "$GITHUB_OUTPUT"
           echo "zip_name=$zip_name" >> "$GITHUB_OUTPUT"
+          echo "zip_stem=$zip_stem" >> "$GITHUB_OUTPUT"
+
+      - name: Prepare artifact payload
+        run: |
+          rm -rf artifact_payload
+          mkdir -p artifact_payload
+          unzip -q "${{ steps.out.outputs.zip_path }}" -d artifact_payload
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ steps.out.outputs.zip_name }}
-          path: ${{ steps.out.outputs.zip_path }}
+          # GitHub always wraps artifacts in its own zip. Upload the built zip
+          # contents instead, so the downloaded artifact zip is itself the
+          # installable module package rather than a zip containing another zip.
+          name: ${{ steps.out.outputs.zip_stem }}
+          path: artifact_payload/*
           if-no-files-found: error
+          compression-level: 0
