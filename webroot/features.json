@@ -65,6 +65,34 @@
                 }
             ]
         },
+        "2100": {
+            "read_mode": "kernel_tokens",
+            "live_read_mode": "fkfeat",
+            "patch_mode": "kernel_tokens",
+            "features": [
+                {
+                    "key": "uname_bpf_spoof",
+                    "title": "Uname Spoofing for BPF",
+                    "type": "select",
+                    "readOnly": true,
+                    "desc": "Spoof Linux version for BPF support. Managed externally; changing this manually may cause bootloops.",
+                    "experimental": true,
+                    "save": true,
+                    "options": [
+                        {
+                            "val": "1",
+                            "label": "Partial spoofing",
+                            "desc": "Spoofs the uname only for netbpfload."
+                        },
+                        {
+                            "val": "2",
+                            "label": "Full spoofing",
+                            "desc": "Spoofs the uname for several bpf-related services."
+                        }
+                    ]
+                }
+            ]
+        },
         "trinket": {
             "patch_mode": "header",
             "features": [
@@ -99,7 +127,7 @@
                 },
                 {
                     "key": "uname_bpf_spoof",
-                    "title": "BPF Spoofing",
+                    "title": "Uname Spoofing for BPF",
                     "type": "select",
                     "readOnly": true,
                     "desc": "Spoof Linux version for BPF support. Managed externally; changing this manually may cause bootloops.",

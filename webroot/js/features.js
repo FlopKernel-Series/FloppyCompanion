@@ -7,8 +7,11 @@ let allowReadonlyPatch = false; // Allow patching read-only (info) features
 let currentSchema = null; // Current feature schema
 let currentProcCmdline = null; // Current /proc/cmdline
 let currentFamily = null; // Current device family key for translation
+let currentReadMode = 'kernel'; // Current boot feature read mode
+let currentLiveReadMode = 'proc_cmdline'; // Current live feature read mode
 let currentPatchMode = 'kernel'; // Current patch mode (kernel/header)
 let currentDeviceFamily = null; // State for schema selection (set during init)
+let currentLiveFeatures = {}; // Live values from runtime sources like fkfeatctl
 
 // --- Backend Communication ---
 
@@ -84,6 +87,7 @@ async function loadFeatures() {
         if (window.updateBottomPadding) window.updateBottomPadding(false);
     }
     pendingChanges = {};
+    currentLiveFeatures = {};
 
     try {
         // Load Feature Definitions
@@ -109,6 +113,8 @@ async function loadFeatures() {
 
         const schema = deviceFamily.features;
         currentPatchMode = deviceFamily.patch_mode || 'kernel';
+        currentReadMode = deviceFamily.read_mode || currentPatchMode;
+        currentLiveReadMode = deviceFamily.live_read_mode || 'proc_cmdline';
 
         // Set global family for translation lookups
         currentFamily = familyKey;
@@ -124,8 +130,8 @@ async function loadFeatures() {
             return;
         }
 
-        // Read features (pass patch mode)
-        const featureOutput = await runBackend('read_features', currentPatchMode);
+        // Read boot-side features
+        const featureOutput = await runBackend('read_features', currentReadMode);
 
         const startMarker = '---FEATURES_START---';
         const endMarker = '---FEATURES_END---';
@@ -145,6 +151,24 @@ async function loadFeatures() {
                 currentFeatures[k] = v;
             }
         });
+
+        if (currentLiveReadMode === 'fkfeat') {
+            const liveOutput = await runBackend('read_live_features', 'fkfeat');
+
+            if (!liveOutput.includes(startMarker)) {
+                featuresContainer.innerHTML = `<div class="p-4 text-center">Failed to read live features.<br><small>${liveOutput}</small></div>`;
+                return;
+            }
+
+            const liveContent = liveOutput.split(startMarker)[1].split(endMarker)[0].trim();
+            const liveTokens = liveContent.split(/\s+/);
+            liveTokens.forEach(token => {
+                if (token.includes('=')) {
+                    const [k, v] = token.split('=');
+                    currentLiveFeatures[k] = v;
+                }
+            });
+        }
 
         // Expose Unlocked Mode (superfloppy) for Tweaks gating
         if (currentFeatures.superfloppy !== undefined) {
@@ -210,8 +234,13 @@ function renderFeatures(schema, procCmdline) {
     }
 
     schema.forEach(item => {
+        const hasCurrentVal = Object.prototype.hasOwnProperty.call(currentFeatures, item.key);
+        const hasLiveVal = Object.prototype.hasOwnProperty.call(currentLiveFeatures, item.key);
+
         // Skip entirely if experimental and toggle off, UNLESS enabled
-        const currentVal = currentFeatures[item.key] || '0';
+        const currentVal = hasCurrentVal
+            ? String(currentFeatures[item.key])
+            : (hasLiveVal ? String(currentLiveFeatures[item.key]) : '0');
         const isEnabled = currentVal !== '0';
         if (item.experimental && !showExperimental && !isEnabled) {
             return;
@@ -230,7 +259,9 @@ function renderFeatures(schema, procCmdline) {
         }
 
         let liveVal = null;
-        if (procCmdline && item.key) {
+        if (hasLiveVal) {
+            liveVal = String(currentLiveFeatures[item.key]);
+        } else if (procCmdline && item.key) {
             const match = procCmdline.match(new RegExp(`${item.key}=(\\d+)`));
             if (match) liveVal = match[1];
         }

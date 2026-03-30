@@ -3,6 +3,7 @@
 MODDIR="${0%/*}"
 TOOLS="$MODDIR/tools"
 MAGISKBOOT="$TOOLS/magiskboot"
+FKFEAT="$TOOLS/fkfeat/fkfeatctl"
 WORK_DIR="/data/local/tmp/fc_work"
 BOOT_BLOCK="/dev/block/by-name/boot"
 LOG_FILE="$MODDIR/.patch_log"
@@ -26,6 +27,16 @@ check_magiskboot() {
     fi
 }
 
+check_fkfeat() {
+    if [ ! -x "$FKFEAT" ] && [ -f "$FKFEAT" ]; then
+        chmod 755 "$FKFEAT"
+    fi
+    if [ ! -x "$FKFEAT" ]; then
+        log "Error: fkfeatctl not found or not executable at $FKFEAT"
+        return 1
+    fi
+}
+
 # Helper: Resolve Boot Device (handling A/B slots)
 get_boot_device() {
     local SLOT=$(getprop ro.boot.slot_suffix 2>/dev/null)
@@ -36,6 +47,11 @@ get_boot_device() {
     else
          echo "/dev/block/by-name/boot"
     fi
+}
+
+get_kernel_feature_value() {
+    local KEY="$1"
+    strings kernel | grep -E "^${KEY}=[0-9]+$" | head -1 | cut -d= -f2
 }
 
 case "$1" in
@@ -70,7 +86,7 @@ case "$1" in
         
     read_features)
         # Usage: read_features <mode>
-        # mode: header or kernel
+        # mode: header, kernel, or kernel_tokens
         MODE="$2"
         
         cd "$WORK_DIR" || exit 1
@@ -85,10 +101,33 @@ case "$1" in
             # Trinket: header-based cmdline
             FULL_CMDLINE=$(grep "^cmdline=" header | cut -d= -f2-)
             echo "$FULL_CMDLINE"
-        else
+        elif [ "$MODE" = "kernel" ]; then
             # Floppy1280: baked-in kernel cmdline
             # Use cgroup.memory=nokmem as anchor
             strings kernel | grep "cgroup.memory=nokmem" | head -1
+        elif [ "$MODE" = "kernel_tokens" ]; then
+            strings kernel | grep -E '^[A-Za-z0-9_.-]+=[0-9]+$'
+        else
+            echo "Error: Unsupported feature read mode: $MODE"
+            exit 1
+        fi
+
+        echo "---FEATURES_END---"
+        ;;
+
+    read_live_features)
+        # Usage: read_live_features <mode>
+        # mode: fkfeat
+        MODE="$2"
+
+        echo "---FEATURES_START---"
+
+        if [ "$MODE" = "fkfeat" ]; then
+            check_fkfeat || exit 1
+            "$FKFEAT" list
+        else
+            echo "Error: Unsupported live feature read mode: $MODE"
+            exit 1
         fi
 
         echo "---FEATURES_END---"
@@ -96,7 +135,7 @@ case "$1" in
         
     patch)
         # Usage: patch <mode> "key=val" "key2=val2" ...
-        # mode: header or kernel
+        # mode: header, kernel, or kernel_tokens
         MODE="$2"
         shift 2  # Remove 'patch' and mode from args
         
@@ -174,6 +213,48 @@ case "$1" in
             else
                 log "No changes needing binary patch."
             fi
+        elif [ "$MODE" = "kernel_tokens" ]; then
+            # --- Feature Token / Kernel Mode ---
+            PATCHED_ANY=0
+
+            for ARG in "$@"; do
+                KEY="${ARG%%=*}"
+                VAL="${ARG#*=}"
+                CURRENT_VAL=$(get_kernel_feature_value "$KEY")
+
+                if [ -z "$CURRENT_VAL" ]; then
+                    log "Warning: Feature token not found in kernel: $KEY"
+                    continue
+                fi
+
+                if [ "$CURRENT_VAL" = "$VAL" ]; then
+                    log "No patch needed for $KEY (already $VAL)."
+                    continue
+                fi
+
+                OLD_TOKEN="${KEY}=${CURRENT_VAL}"
+                NEW_TOKEN="${KEY}=${VAL}"
+
+                log "Old: $OLD_TOKEN"
+                log "New: $NEW_TOKEN"
+
+                if [ ${#OLD_TOKEN} -ne ${#NEW_TOKEN} ]; then
+                    log "Error: Length mismatch for $KEY. Safe padding not implemented."
+                    exit 1
+                fi
+
+                str_to_hex() { printf "%s" "$1" | xxd -p | tr -d '\n'; }
+                HEX_OLD=$(str_to_hex "$OLD_TOKEN")
+                HEX_NEW=$(str_to_hex "$NEW_TOKEN")
+
+                "$MAGISKBOOT" hexpatch kernel "$HEX_OLD" "$HEX_NEW" > /dev/null 2>&1
+                log "Kernel token patched for $KEY."
+                PATCHED_ANY=1
+            done
+
+            if [ "$PATCHED_ANY" -eq 0 ]; then
+                log "No changes needing binary patch."
+            fi
         else
             log "Error: Unsupported boot image layout."
             exit 1
@@ -199,7 +280,7 @@ case "$1" in
         ;;
         
     *)
-        echo "Usage: $0 {unpack|read_features|patch key=val...|cleanup}"
+        echo "Usage: $0 {unpack|read_features <mode>|read_live_features <mode>|patch <mode> key=val...|cleanup}"
         exit 1
         ;;
 esac

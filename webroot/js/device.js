@@ -70,6 +70,7 @@ async function resolveDeviceInfo() {
     } else if (is2100) {
         familyKey = '2100';
         kernelName = 'Floppy2100';
+        featuresSupported = true;
     } else if (is1280) {
         familyKey = '1280';
         kernelName = 'Floppy1280';
