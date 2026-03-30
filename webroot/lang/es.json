@@ -265,6 +265,10 @@
             "enabled": "Habilitado",
             "disabled": "Deshabilitado"
         },
+        "miscGenericTitle": "Tweaks Misc",
+        "exynos": {
+            "title": "Tweaks Exynos"
+        },
         "miscTrinket": {
             "title": "Tweaks Misc FloppyTrinket",
             "touchboost": "MSM Performance Touchboost",

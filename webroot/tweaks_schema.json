@@ -48,20 +48,23 @@
           "type": "custom",
           "templateId": "tpl-misc",
           "iconKey": "misc",
-          "titleKey": "tweaks.misc.title",
-          "tooltipKey": null,
-          "controlRules": [
-            {
-              "id": "gpu_clklck_hide_2100",
-              "selector": "#misc-gpuclklck-switch",
-              "mode": "hide",
-              "hideClosest": ".tweak-row",
-              "requires": {
-                "var": "kernelName",
-                "eq": "Floppy1280"
-              }
-            }
-          ],
+          "titleKey": null,
+          "requires": {
+            "var": "kernelName",
+            "in": [
+              "Floppy1280",
+              "Floppy2100"
+            ]
+          }
+        },
+        {
+          "id": "exynos",
+          "cardId": "exynos-card",
+          "pendingId": "exynos-pending-indicator",
+          "type": "custom",
+          "templateId": "tpl-exynos",
+          "iconKey": "shadow",
+          "titleKey": null,
           "requires": {
             "var": "kernelName",
             "in": [

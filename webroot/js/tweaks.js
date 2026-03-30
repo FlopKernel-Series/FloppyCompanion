@@ -532,6 +532,7 @@ function initPlatformTweaks() {
         if (typeof initThermalTweak === 'function') initThermalTweak();
         if (typeof initUndervoltTweak === 'function') initUndervoltTweak();
         if (typeof initMiscTweak === 'function') initMiscTweak();
+        if (typeof initExynosTweak === 'function') initExynosTweak();
         if (typeof initChargingTweak === 'function') initChargingTweak();
         if (typeof initDisplayTweak === 'function') initDisplayTweak();
         if (typeof initSoundControlTweak === 'function') initSoundControlTweak();

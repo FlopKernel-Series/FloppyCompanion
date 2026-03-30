@@ -9,6 +9,7 @@ OUTPUT_FILE="$DATA_DIR/presets/.defaults.json"
 # Detect kernel family (best-effort, aligned with WebUI logic)
 KERN_VER=$(uname -r 2>/dev/null || echo "")
 IS_1280=0
+IS_2100=0
 IS_TRINKET=0
 
 DEVICE_NAME=""
@@ -21,6 +22,7 @@ fi
 DEVICE_CODE=$(echo "$DEVICE_NAME" | tr 'A-Z' 'a-z')
 TRINKET_DEVICES="ginkgo willow sm6125 trinket laurel_sprout"
 FLOPPY1280_DEVICES="a25x a33x a53x m33x m34x gta4xls a26xs"
+FLOPPY2100_DEVICES="r9s o1s p3s t2s"
 
 for d in $TRINKET_DEVICES; do
   if echo "$DEVICE_CODE" | grep -q "$d"; then
@@ -33,6 +35,15 @@ if [ "$IS_TRINKET" != "1" ]; then
   for d in $FLOPPY1280_DEVICES; do
     if echo "$DEVICE_CODE" | grep -q "$d"; then
       IS_1280=1
+      break
+    fi
+  done
+fi
+
+if [ "$IS_TRINKET" != "1" ] && [ "$IS_1280" != "1" ]; then
+  for d in $FLOPPY2100_DEVICES; do
+    if echo "$DEVICE_CODE" | grep -q "$d"; then
+      IS_2100=1
       break
     fi
   done
@@ -143,13 +154,21 @@ fi
       "little": "$(cat /sys/kernel/exynos_uv/cpucl0_uv_percent 2>/dev/null || echo 0)",
       "big": "$(cat /sys/kernel/exynos_uv/cpucl1_uv_percent 2>/dev/null || echo 0)",
       "gpu": "$(cat /sys/kernel/exynos_uv/gpu_uv_percent 2>/dev/null || echo 0)"
-    },
+    }
+EOF_1280
+    fi
+)$(
+    if [ "$IS_1280" = "1" ] || [ "$IS_2100" = "1" ]; then
+      cat << EOF_EXYNOS
+,
     "misc": {
-      "block_ed3": "$(cat /sys/devices/virtual/sec/tsp/block_ed3 2>/dev/null || echo 0)",
+      "block_ed3": "$(cat /sys/devices/virtual/sec/tsp/block_ed3 2>/dev/null || echo 0)"
+    },
+    "exynos": {
       "gpu_clklck": "$(cat /sys/kernel/gpu/gpu_clklck 2>/dev/null || echo 0)",
       "gpu_unlock": "$(cat /sys/kernel/gpu/gpu_unlock 2>/dev/null || echo 0)"
     }
-EOF_1280
+EOF_EXYNOS
     elif [ "$IS_TRINKET" = "1" ]; then
     cat << EOF_TRINKET
 ,

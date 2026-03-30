@@ -75,6 +75,7 @@ async function reloadAllTweakStates() {
         window.loadThermalState,
         window.loadUndervoltState,
         window.loadMiscState,
+        window.loadExynosState,
         window.loadSoundControlState,
         window.loadChargingState,
         window.loadDisplayState,

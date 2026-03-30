@@ -1,13 +1,18 @@
-// Misc Tweaks
+// Shared Exynos tweaks state
 
 let miscCurrentState = { block_ed3: '0', gpu_clklck: '0', gpu_unlock: '0' };
 let miscSavedState = { block_ed3: '0', gpu_clklck: '0', gpu_unlock: '0' };
 let miscPendingState = { block_ed3: '0', gpu_clklck: '0', gpu_unlock: '0' };
 let miscReferenceState = { block_ed3: '0', gpu_clklck: '0', gpu_unlock: '0' };
 let miscCapabilities = { block_ed3: '0', gpu_clklck: '0', gpu_unlock: '0' };
+let exynosStateInitialized = false;
+let exynosUiBound = false;
+let exynosVariantListenerBound = false;
 
 const runMiscBackend = (...args) => window.runTweakBackend('misc', ...args);
-const MISC_STATE_KEYS = ['block_ed3', 'gpu_clklck', 'gpu_unlock'];
+const EXYNOS_STATE_KEYS = ['block_ed3', 'gpu_clklck', 'gpu_unlock'];
+const MISC_KEYS = ['block_ed3'];
+const EXYNOS_KEYS = ['gpu_clklck', 'gpu_unlock'];
 
 function getEnabledDisabledText(val) {
     if (val === '1') {
@@ -16,76 +21,87 @@ function getEnabledDisabledText(val) {
     return window.t ? window.t('tweaks.misc.disabled') : 'Disabled';
 }
 
-function getMiscSupportedKeys() {
-    const keys = [];
-
-    if (miscCapabilities.block_ed3 === '1') {
-        keys.push('block_ed3');
+function translateTextOrFallback(key, fallback) {
+    const translated = window.t ? window.t(key) : '';
+    if (translated && !String(translated).startsWith(key)) {
+        return translated;
     }
+    return fallback;
+}
 
+function getSupportedExynosKeys() {
+    const keys = [];
     if (miscCapabilities.gpu_clklck === '1' && window.KERNEL_NAME !== 'Floppy2100') {
         keys.push('gpu_clklck');
     }
-
     if (miscCapabilities.gpu_unlock === '1') {
         keys.push('gpu_unlock');
     }
-
     return keys;
 }
 
 function isMiscKeySupported(key) {
-    return getMiscSupportedKeys().includes(key);
+    if (key === 'block_ed3') return miscCapabilities.block_ed3 === '1';
+    if (key === 'gpu_clklck') return getSupportedExynosKeys().includes('gpu_clklck');
+    if (key === 'gpu_unlock') return getSupportedExynosKeys().includes('gpu_unlock');
+    return false;
 }
 
-function updateMiscRowVisibility() {
-    const rowBlocked3 = document.getElementById('misc-row-blocked3');
-    const rowGpuClkLck = document.getElementById('misc-row-gpuclklck');
-    const rowGpuUnlock = document.getElementById('misc-row-gpuunlock');
+function getCardSupportedKeys(cardId) {
+    return cardId === 'misc' ? MISC_KEYS.filter(isMiscKeySupported) : EXYNOS_KEYS.filter(isMiscKeySupported);
+}
 
+function setCardVisibility(cardId, visible) {
+    const card = document.getElementById(`${cardId}-card`);
+    if (card) {
+        card.classList.toggle('hidden', !visible);
+    }
+}
+
+function updateRowVisibility() {
     const rowDefs = [
-        { el: rowBlocked3, visible: isMiscKeySupported('block_ed3') },
-        { el: rowGpuClkLck, visible: isMiscKeySupported('gpu_clklck') },
-        { el: rowGpuUnlock, visible: isMiscKeySupported('gpu_unlock') }
+        { id: 'misc-row-blocked3', visible: isMiscKeySupported('block_ed3') },
+        { id: 'misc-row-gpuclklck', visible: isMiscKeySupported('gpu_clklck') },
+        { id: 'misc-row-gpuunlock', visible: isMiscKeySupported('gpu_unlock') }
     ];
 
-    rowDefs.forEach(({ el, visible }) => {
+    rowDefs.forEach(({ id, visible }) => {
+        const el = document.getElementById(id);
         if (!el) return;
         el.classList.toggle('hidden', !visible);
         el.style.borderBottom = visible ? '1px solid var(--md-sys-color-outline-variant)' : '';
     });
 
-    const visibleRows = rowDefs.filter(({ el, visible }) => el && visible).map(({ el }) => el);
-    if (visibleRows.length > 0) {
-        visibleRows[visibleRows.length - 1].style.borderBottom = 'none';
-    }
+    ['misc', 'exynos'].forEach((cardId) => {
+        const rows = cardId === 'misc'
+            ? [document.getElementById('misc-row-blocked3')]
+            : [document.getElementById('misc-row-gpuclklck'), document.getElementById('misc-row-gpuunlock')];
+        const visibleRows = rows.filter((row) => row && !row.classList.contains('hidden'));
+        if (visibleRows.length > 0) {
+            visibleRows[visibleRows.length - 1].style.borderBottom = 'none';
+        }
+    });
 }
 
-function getGpuUnlockTooltipText() {
+function updateCardTitles() {
+    const miscTitle = document.querySelector('#misc-card .card-title');
+    const exynosTitle = document.querySelector('#exynos-card .card-title');
+
+    if (miscTitle) miscTitle.textContent = translateTextOrFallback('tweaks.miscGenericTitle', 'Misc Tweaks');
+    if (exynosTitle) exynosTitle.textContent = translateTextOrFallback('tweaks.exynos.title', 'Exynos Tweaks');
+}
+
+function updateGpuUnlockCopy() {
+    const gpuUnlockBubble = document.getElementById('bubble-misc-gpuunlock');
+    if (!gpuUnlockBubble) return;
+
     const key = window.KERNEL_NAME === 'Floppy2100'
         ? 'tweaks.tooltip.gpuUnlock2100'
         : 'tweaks.tooltip.gpuUnlock';
-
-    const translated = window.t ? window.t(key) : '';
-    if (translated && !String(translated).startsWith(key)) {
-        return translated;
-    }
-
-    return window.t ? window.t('tweaks.tooltip.gpuUnlock') : 'Enables GPU overclocking immediately.';
+    gpuUnlockBubble.textContent = translateTextOrFallback(key, 'Enables GPU unlock immediately.');
 }
 
-function updateMiscCopy() {
-    const gpuUnlockBubble = document.getElementById('bubble-misc-gpuunlock');
-    if (gpuUnlockBubble) {
-        gpuUnlockBubble.textContent = getGpuUnlockTooltipText();
-    }
-}
-
-function renderMiscCard() {
-    updateMiscRowVisibility();
-    updateMiscCopy();
-
-    // Update value labels from current state
+function renderSharedValues() {
     const valBlocked3 = document.getElementById('misc-val-blocked3');
     const valGpuClkLck = document.getElementById('misc-val-gpuclklck');
     const valGpuUnlock = document.getElementById('misc-val-gpuunlock');
@@ -94,23 +110,23 @@ function renderMiscCard() {
     if (valGpuClkLck) valGpuClkLck.textContent = getEnabledDisabledText(miscCurrentState.gpu_clklck);
     if (valGpuUnlock) valGpuUnlock.textContent = getEnabledDisabledText(miscCurrentState.gpu_unlock);
 
-    // Update switches from pending state
     const blockEd3Switch = document.getElementById('misc-blocked3-switch');
     const gpuClkLckSwitch = document.getElementById('misc-gpuclklck-switch');
     const gpuUnlockSwitch = document.getElementById('misc-gpuunlock-switch');
 
-    if (blockEd3Switch) blockEd3Switch.checked = (miscPendingState.block_ed3 === '1');
-    if (gpuClkLckSwitch) gpuClkLckSwitch.checked = (miscPendingState.gpu_clklck === '1');
-    if (gpuUnlockSwitch) gpuUnlockSwitch.checked = (miscPendingState.gpu_unlock === '1');
-
-    updateMiscPendingIndicator();
-    updateGpuUnlockAvailability();
+    if (blockEd3Switch) blockEd3Switch.checked = miscPendingState.block_ed3 === '1';
+    if (gpuClkLckSwitch) gpuClkLckSwitch.checked = miscPendingState.gpu_clklck === '1';
+    if (gpuUnlockSwitch) gpuUnlockSwitch.checked = miscPendingState.gpu_unlock === '1';
 }
 
-function updateMiscPendingIndicator() {
-    const hasChanges = getMiscSupportedKeys().some((key) => miscPendingState[key] !== miscReferenceState[key]);
+function updatePendingIndicatorFor(cardId, keys) {
+    const hasChanges = keys.some((key) => miscPendingState[key] !== miscReferenceState[key]);
+    window.setPendingIndicator(`${cardId}-pending-indicator`, hasChanges);
+}
 
-    window.setPendingIndicator('misc-pending-indicator', hasChanges);
+function updatePendingIndicators() {
+    updatePendingIndicatorFor('misc', getCardSupportedKeys('misc'));
+    updatePendingIndicatorFor('exynos', getCardSupportedKeys('exynos'));
 }
 
 function updateGpuUnlockAvailability() {
@@ -130,32 +146,28 @@ function updateGpuUnlockAvailability() {
         return;
     }
 
-    // If schema-driven control rules are available, let the generic engine handle it.
-    if (window.__tweaksSchema) {
-        const kernelName = window.KERNEL_NAME || '';
-        if (kernelName !== 'Floppy1280') {
-            applyControlAvailability(window.__tweaksSchema);
-            return;
-        }
-    }
-
-    // Prefer schema-declared condition, fallback to derived vars / raw superfloppy mode.
     let isOcMode = truthy(getTweakVar('isUnlockedOcMode'));
     if (!isOcMode) {
         const superfloppyMode = String(getTweakVar('superfloppyMode') ?? window.currentSuperfloppyMode ?? '0');
         isOcMode = ['1', '2', '3'].includes(superfloppyMode);
     }
 
-    if (!isOcMode) {
-        gpuUnlockSwitch.disabled = true;
-        if (switchContainer) switchContainer.style.opacity = '0.5';
-    } else {
-        gpuUnlockSwitch.disabled = false;
-        if (switchContainer) switchContainer.style.opacity = '1';
-    }
+    gpuUnlockSwitch.disabled = !isOcMode;
+    if (switchContainer) switchContainer.style.opacity = isOcMode ? '1' : '0.5';
 }
 
-async function loadMiscState() {
+function renderExynosCards() {
+    updateCardTitles();
+    updateGpuUnlockCopy();
+    updateRowVisibility();
+    setCardVisibility('misc', getCardSupportedKeys('misc').length > 0);
+    setCardVisibility('exynos', getCardSupportedKeys('exynos').length > 0);
+    renderSharedValues();
+    updatePendingIndicators();
+    updateGpuUnlockAvailability();
+}
+
+async function loadSharedExynosState() {
     const capabilitiesOutput = await runMiscBackend('get_capabilities');
     const capabilities = parseKeyValue(capabilitiesOutput);
     miscCapabilities = {
@@ -164,7 +176,6 @@ async function loadMiscState() {
         gpu_unlock: capabilities.gpu_unlock || '0'
     };
 
-    // Get current kernel state
     const { current, saved } = await window.loadTweakState('misc');
     miscCurrentState = {
         block_ed3: current.block_ed3 || '0',
@@ -175,35 +186,49 @@ async function loadMiscState() {
     miscSavedState = { ...saved };
 
     const defMisc = window.getDefaultTweakPreset('misc');
-    miscPendingState = window.initPendingState(miscCurrentState, miscSavedState, defMisc);
+    const defExynos = window.getDefaultTweakPreset('exynos');
+    const defaultState = { ...defMisc, ...defExynos };
 
-    const { reference } = window.resolveTweakReference(miscCurrentState, miscSavedState, defMisc);
+    miscPendingState = window.initPendingState(miscCurrentState, miscSavedState, defaultState);
+
+    const { reference } = window.resolveTweakReference(miscCurrentState, miscSavedState, defaultState);
     miscReferenceState = {
         block_ed3: reference.block_ed3 || '0',
         gpu_clklck: reference.gpu_clklck || '0',
         gpu_unlock: reference.gpu_unlock || '0'
     };
 
-    renderMiscCard();
+    exynosStateInitialized = true;
+    renderExynosCards();
 }
 
-async function saveMisc() {
-    for (const key of getMiscSupportedKeys()) {
+async function loadMiscState() {
+    await loadSharedExynosState();
+}
+window.loadMiscState = loadMiscState;
+
+async function loadExynosState() {
+    await loadSharedExynosState();
+}
+window.loadExynosState = loadExynosState;
+
+async function saveStateSubset(keys) {
+    for (const key of keys) {
         if (key === 'gpu_unlock') {
             const gpuUnlockSwitch = document.getElementById('misc-gpuunlock-switch');
             if (gpuUnlockSwitch && gpuUnlockSwitch.disabled) continue;
         }
         await runMiscBackend('save', key, miscPendingState[key]);
+        miscSavedState[key] = miscPendingState[key];
+        miscReferenceState[key] = miscPendingState[key];
     }
 
-    miscSavedState = { ...miscPendingState };
-    miscReferenceState = { ...miscSavedState };
-    updateMiscPendingIndicator();
+    renderExynosCards();
     showToast(window.t ? window.t('toast.settingsSaved') : 'Saved');
 }
 
-async function applyMisc() {
-    for (const key of getMiscSupportedKeys()) {
+async function applyStateSubset(keys) {
+    for (const key of keys) {
         if (key === 'gpu_unlock') {
             const gpuUnlockSwitch = document.getElementById('misc-gpuunlock-switch');
             if (gpuUnlockSwitch && gpuUnlockSwitch.disabled) continue;
@@ -211,8 +236,6 @@ async function applyMisc() {
         await runMiscBackend('apply', key, miscPendingState[key]);
     }
 
-    // Refresh only current kernel state so active values update,
-    // but do NOT reset pending state back to saved.
     const currentOutput = await runMiscBackend('get_current');
     if (!currentOutput) {
         showToast(window.t ? window.t('toast.settingsFailed') : 'Failed to apply settings', true);
@@ -226,108 +249,155 @@ async function applyMisc() {
         gpu_unlock: current.gpu_unlock || '0'
     };
 
-    renderMiscCard();
+    renderExynosCards();
     showToast(window.t ? window.t('toast.settingsApplied') : 'Applied');
 }
 
-// Clear GPU unlock persistence (called on Unlocked Mode category change)
+async function saveMisc() {
+    await saveStateSubset(getCardSupportedKeys('misc'));
+}
+
+async function applyMisc() {
+    await applyStateSubset(getCardSupportedKeys('misc'));
+}
+
+async function saveExynos() {
+    await saveStateSubset(getCardSupportedKeys('exynos'));
+}
+
+async function applyExynos() {
+    await applyStateSubset(getCardSupportedKeys('exynos'));
+}
+
 async function clearGpuUnlockPersistence() {
     await runMiscBackend('clear_saved_key', 'gpu_unlock');
     delete miscSavedState.gpu_unlock;
+    miscReferenceState.gpu_unlock = miscCurrentState.gpu_unlock;
     miscPendingState.gpu_unlock = miscCurrentState.gpu_unlock;
-    renderMiscCard();
+    renderExynosCards();
 }
 window.clearGpuUnlockPersistence = clearGpuUnlockPersistence;
 
-function initMiscTweak() {
-    // Register tweak immediately (Early Registration)
-    if (typeof window.registerTweak === 'function') {
-        window.registerTweak('misc', {
-            getState: () => ({ ...miscPendingState }),
-            setState: (config) => {
-                MISC_STATE_KEYS.forEach((key) => {
-                    if (Object.prototype.hasOwnProperty.call(config || {}, key)) {
-                        miscPendingState[key] = config[key];
-                    }
-                });
-                renderMiscCard();
-            },
-            render: renderMiscCard,
-            save: saveMisc,
-            apply: applyMisc
-        });
-    }
+function applySubsetState(config, keys) {
+    keys.forEach((key) => {
+        if (Object.prototype.hasOwnProperty.call(config || {}, key)) {
+            miscPendingState[key] = config[key];
+        }
+    });
+    renderExynosCards();
+}
 
-    const miscCard = document.getElementById('misc-card');
-    if (!miscCard) return;
-
-    // Only show on Floppy1280 and Floppy2100
-    if (window.KERNEL_NAME !== 'Floppy1280' && window.KERNEL_NAME !== 'Floppy2100') {
-        miscCard.classList.add('hidden');
-        return;
-    }
-
-    // Show card
-    miscCard.classList.remove('hidden');
+function bindExynosUiIfNeeded() {
+    if (exynosUiBound) return;
+    exynosUiBound = true;
 
     const blockEd3Switch = document.getElementById('misc-blocked3-switch');
     const gpuClkLckSwitch = document.getElementById('misc-gpuclklck-switch');
     const gpuUnlockSwitch = document.getElementById('misc-gpuunlock-switch');
 
-    // Switch change handlers - update pending state only
     if (blockEd3Switch) {
         blockEd3Switch.addEventListener('change', (e) => {
             miscPendingState.block_ed3 = e.target.checked ? '1' : '0';
-            updateMiscPendingIndicator();
+            updatePendingIndicators();
         });
     }
 
     if (gpuClkLckSwitch) {
         gpuClkLckSwitch.addEventListener('change', (e) => {
             miscPendingState.gpu_clklck = e.target.checked ? '1' : '0';
-            updateMiscPendingIndicator();
+            updatePendingIndicators();
         });
     }
 
     if (gpuUnlockSwitch) {
         gpuUnlockSwitch.addEventListener('change', (e) => {
             miscPendingState.gpu_unlock = e.target.checked ? '1' : '0';
-            updateMiscPendingIndicator();
+            updatePendingIndicators();
         });
     }
 
     window.bindSaveApplyButtons('misc', saveMisc, applyMisc);
+    window.bindSaveApplyButtons('exynos', saveExynos, applyExynos);
 
-    // Load initial state
-    loadMiscState();
-
-    if (window.KERNEL_NAME === 'Floppy1280') {
-        // Track GPU unlock mode category for reset on transition
-        let lastGpuUnlockCategory = null;
-
-        // Listen for superfloppy mode changes
-        document.addEventListener('superfloppyModeChanged', (e) => {
-            const mode = String(e?.detail?.mode ?? window.currentSuperfloppyMode ?? '0');
-            const newCategory = ['1', '2', '3'].includes(mode) ? 'oc' : 'other';
-
-            // On category transition, clear saved gpu_unlock and reset to kernel default
-            if (lastGpuUnlockCategory !== null && lastGpuUnlockCategory !== newCategory) {
-                if (window.clearGpuUnlockPersistence) {
-                    window.clearGpuUnlockPersistence();
-                }
-            }
-            lastGpuUnlockCategory = newCategory;
-
-            updateGpuUnlockAvailability();
-        });
-
-        // Seed initial category from current mode (so first real change can be detected)
-        const initialMode = String(window.currentSuperfloppyMode ?? '0');
-        lastGpuUnlockCategory = ['1', '2', '3'].includes(initialMode) ? 'oc' : 'other';
-    }
-
-    // Language change listener
     document.addEventListener('languageChanged', () => {
-        renderMiscCard();
+        renderExynosCards();
     });
 }
+
+function bindGpuUnlockVariantListenerIfNeeded() {
+    if (exynosVariantListenerBound || window.KERNEL_NAME !== 'Floppy1280') return;
+    exynosVariantListenerBound = true;
+
+    let lastGpuUnlockCategory = ['1', '2', '3'].includes(String(window.currentSuperfloppyMode ?? '0')) ? 'oc' : 'other';
+
+    document.addEventListener('superfloppyModeChanged', (e) => {
+        const mode = String(e?.detail?.mode ?? window.currentSuperfloppyMode ?? '0');
+        const newCategory = ['1', '2', '3'].includes(mode) ? 'oc' : 'other';
+
+        if (lastGpuUnlockCategory !== null && lastGpuUnlockCategory !== newCategory) {
+            if (window.clearGpuUnlockPersistence) {
+                window.clearGpuUnlockPersistence();
+            }
+        }
+        lastGpuUnlockCategory = newCategory;
+
+        updateGpuUnlockAvailability();
+    });
+}
+
+function registerExynosTweaks() {
+    if (typeof window.registerTweak !== 'function') return;
+
+    window.registerTweak('misc', {
+        getState: () => ({ block_ed3: miscPendingState.block_ed3 }),
+        setState: (config) => applySubsetState(config, MISC_KEYS),
+        render: renderExynosCards,
+        save: saveMisc,
+        apply: applyMisc
+    });
+
+    window.registerTweak('exynos', {
+        getState: () => {
+            const state = {};
+            EXYNOS_KEYS.forEach((key) => {
+                state[key] = miscPendingState[key];
+            });
+            return state;
+        },
+        setState: (config) => applySubsetState(config, EXYNOS_KEYS),
+        render: renderExynosCards,
+        save: saveExynos,
+        apply: applyExynos
+    });
+}
+
+function initSharedExynosTweakUI() {
+    const isSupportedKernel = window.KERNEL_NAME === 'Floppy1280' || window.KERNEL_NAME === 'Floppy2100';
+    if (!isSupportedKernel) {
+        setCardVisibility('misc', false);
+        setCardVisibility('exynos', false);
+        return;
+    }
+
+    bindExynosUiIfNeeded();
+    bindGpuUnlockVariantListenerIfNeeded();
+
+    if (!exynosStateInitialized) {
+        loadSharedExynosState();
+        return;
+    }
+
+    renderExynosCards();
+}
+
+function initMiscTweak() {
+    registerExynosTweaks();
+    initSharedExynosTweakUI();
+}
+
+function initExynosTweak() {
+    registerExynosTweaks();
+    initSharedExynosTweakUI();
+}
+
+window.initExynosTweak = initExynosTweak;
