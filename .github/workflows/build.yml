@@ -24,7 +24,7 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y --no-install-recommends curl unzip zip make gcc-aarch64-linux-gnu
+          sudo apt-get install -y --no-install-recommends curl unzip zip make gcc-aarch64-linux-gnu libc6-dev-arm64-cross
 
       - name: Build zip (build.sh)
         run: |

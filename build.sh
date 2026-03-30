@@ -1,4 +1,5 @@
 #!/bin/bash
+set -euo pipefail
 
 # Configuration
 MODULE_DIR="$(dirname "$(readlink -f "$0")")"
