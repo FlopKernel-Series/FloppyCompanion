@@ -252,7 +252,21 @@ function renderFeatures(schema, procCmdline) {
         return;
     }
 
-    schema.forEach(item => {
+    const getFeatureGroupOrder = (item) => {
+        if (item.type === 'info' || item.readOnly) return 2;
+        if (item.experimental) return 1;
+        return 0;
+    };
+
+    const orderedSchema = schema
+        .map((item, index) => ({ item, index }))
+        .sort((a, b) => {
+            const groupDiff = getFeatureGroupOrder(a.item) - getFeatureGroupOrder(b.item);
+            return groupDiff !== 0 ? groupDiff : a.index - b.index;
+        })
+        .map(({ item }) => item);
+
+    orderedSchema.forEach(item => {
         const hasCurrentVal = Object.prototype.hasOwnProperty.call(currentFeatures, item.key);
         const hasLiveVal = Object.prototype.hasOwnProperty.call(currentLiveFeatures, item.key);
 
