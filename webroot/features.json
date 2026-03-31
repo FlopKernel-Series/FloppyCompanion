@@ -90,6 +90,13 @@
                             "desc": "Spoofs the uname for several bpf-related services."
                         }
                     ]
+                },
+                {
+                    "key": "mass_storage_hack",
+                    "title": "Mass Storage support hack",
+                    "type": "toggle",
+                    "desc": "Injects mass_storage gadget handling into the vendor's init.exynos2100.usb.rc script to allow apps like DriveDroid to work.",
+                    "save": true
                 }
             ]
         },

@@ -68,5 +68,9 @@
                 "desc": "Falsifica el uname para varios servicios relacionados con BPF."
             }
         }
+    },
+    "mass_storage_hack": {
+        "title": "Hack de soporte Mass Storage",
+        "desc": "Inyecta el manejo del gadget mass_storage en el script init.exynos2100.usb.rc del vendor para permitir que apps como DriveDroid funcionen."
     }
 }
