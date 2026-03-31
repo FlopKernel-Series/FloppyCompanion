@@ -101,7 +101,7 @@
             "minLabel": "Tối thiểu",
             "maxLabel": "Tối đa",
             "govLabel": "Governor",
-            "gpuUnlock": "Mở khoá GPU",
+            "gpuUnlock": "Ép xung GPU",
             "gpuClockLock": "Khoá Xung nhịp GPU",
             "adrenoboost": "Adrenoboost",
             "idlerActive": "Adreno Idler",
