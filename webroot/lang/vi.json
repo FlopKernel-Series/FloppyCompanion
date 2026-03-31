@@ -187,7 +187,7 @@
             "psiCompleteStall": "Ngừng Hoàn toàn PSI",
             "thrashingLimit": "Giới hạn Thrashing",
             "thrashingLimitDecay": "Suy giảm Giới hạn Thrashing",
-            "swapUtilMax": "Tối đa Tiẹn ích Swap",
+            "swapUtilMax": "Tối đa Tiện ích Swap",
             "swapFreeLowPercentage": "Swap Trống % Thấp",
             "enabled": "Đã bật",
             "disabled": "Đã tắt",
