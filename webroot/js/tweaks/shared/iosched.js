@@ -53,6 +53,7 @@ async function loadIoSchedulerState() {
         console.error('Failed to load I/O Scheduler state:', e);
     }
 }
+window.loadIoSchedulerState = loadIoSchedulerState;
 
 // Render I/O Card
 function renderIoCard() {

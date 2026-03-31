@@ -71,6 +71,108 @@ function evaluateRequires(requires) {
     return { ok: true };
 }
 
+async function showResetTweakModal(tweakName) {
+    const title = window.t ? window.t('tweaks.resetTweakTitle') : 'Restore Defaults';
+    const desc = (window.t ? window.t('tweaks.resetTweakDesc') : 'This will delete the saved configuration for "{name}" and reload its captured defaults.')
+        .replace('{name}', tweakName);
+    const warning = window.t ? window.t('tweaks.resetTweakWarning') : 'Your unsaved changes on this card will be replaced.';
+
+    const result = await showConfirmModal({
+        title,
+        body: `<p>${desc}</p><p>${warning}</p>`,
+        iconClass: 'warning',
+        confirmText: window.t ? window.t('tweaks.applyNow') : 'Apply Now',
+        cancelText: window.t ? window.t('modal.cancel') : 'Cancel',
+        extraButton: {
+            text: window.t ? window.t('tweaks.loadOnly') : 'Load Only',
+            value: 'load'
+        }
+    });
+
+    if (result === true) return 'apply';
+    if (result === 'load') return 'load';
+    return null;
+}
+
+window.reloadTweakState = async function (tweakId) {
+    const loaders = {
+        zram: window.loadZramState,
+        memory: window.loadMemoryState,
+        lmkd: window.loadLmkdState,
+        iosched: window.loadIoSchedulerState,
+        thermal: window.loadThermalState,
+        undervolt: window.loadUndervoltState,
+        misc: window.loadMiscState,
+        exynos: window.loadExynosState,
+        soundcontrol: window.loadSoundControlState,
+        charging: window.loadChargingState,
+        display: window.loadDisplayState,
+        adreno: window.loadAdrenoState,
+        misc_trinket: window.loadMiscTrinketState
+    };
+
+    const loader = loaders[tweakId];
+    if (typeof loader === 'function') {
+        await loader();
+    }
+};
+
+window.clearTweakPersistence = async function (tweakId) {
+    if (tweakId === 'misc') {
+        await window.runTweakBackend('misc', 'clear_saved_key', 'block_ed3');
+        return;
+    }
+
+    if (tweakId === 'exynos') {
+        await window.runTweakBackend('misc', 'clear_saved_key', 'gpu_clklck');
+        await window.runTweakBackend('misc', 'clear_saved_key', 'gpu_unlock');
+        return;
+    }
+
+    const configFiles = {
+        zram: 'zram.conf',
+        memory: 'memory.conf',
+        lmkd: 'lmkd.conf',
+        iosched: 'iosched.conf',
+        thermal: 'thermal.conf',
+        undervolt: 'undervolt.conf',
+        soundcontrol: 'soundcontrol.conf',
+        charging: 'charging.conf',
+        display: 'display.conf',
+        adreno: 'adreno.conf',
+        misc_trinket: 'misc_trinket.conf'
+    };
+
+    const fileName = configFiles[tweakId];
+    if (!fileName) return;
+
+    await exec(`rm -f "/data/adb/floppy_companion/config/${fileName}"`);
+};
+
+async function handleResetTweakCard(card) {
+    const tweakId = card?.id;
+    if (!tweakId) return;
+
+    const cardEl = card.cardId ? document.getElementById(card.cardId) : null;
+    const tweakName = cardEl?.querySelector('.card-title')?.textContent?.trim() || tweakId;
+    const action = await showResetTweakModal(tweakName);
+    if (!action) return;
+
+    await window.clearTweakPersistence(tweakId);
+    await window.reloadTweakState(tweakId);
+
+    if (action === 'apply') {
+        const tweak = window.TWEAK_REGISTRY?.[tweakId];
+        if (tweak && typeof tweak.apply === 'function') {
+            await tweak.apply();
+        }
+        return;
+    }
+
+    const loadedText = window.t ? window.t('toast.tweakDefaultLoaded') : 'Defaults loaded for {name}';
+    showToast(loadedText.replace('{name}', tweakName));
+}
+
 function buildTweakCardShell(card) {
     const el = document.createElement('div');
     el.id = card.cardId;
@@ -106,6 +208,9 @@ function buildTweakCardShell(card) {
 
     header.appendChild(titleWrap);
 
+    const headerActions = document.createElement('div');
+    headerActions.className = 'card-header-actions';
+
     if (card.pendingId) {
         const pending = document.createElement('div');
         pending.id = card.pendingId;
@@ -137,7 +242,35 @@ function buildTweakCardShell(card) {
             pending.classList.remove('show-tooltip');
         });
 
-        header.appendChild(pending);
+        headerActions.appendChild(pending);
+    }
+
+    if (card.id) {
+        const reset = document.createElement('button');
+        reset.type = 'button';
+        reset.className = 'card-reset-btn';
+
+        const resetLabel = window.t ? window.t('tweaks.resetCard') : 'Restore defaults';
+        reset.setAttribute('aria-label', resetLabel);
+        reset.title = resetLabel;
+
+        const resetIcon = window.FC && window.FC.icons && window.FC.icons.createSvg
+            ? window.FC.icons.createSvg('refresh', { className: 'card-reset-icon' })
+            : null;
+        if (resetIcon) {
+            reset.appendChild(resetIcon);
+        }
+
+        reset.addEventListener('click', async (e) => {
+            e.stopPropagation();
+            await handleResetTweakCard(card);
+        });
+
+        headerActions.appendChild(reset);
+    }
+
+    if (headerActions.childElementCount > 0) {
+        header.appendChild(headerActions);
     }
 
     el.appendChild(header);

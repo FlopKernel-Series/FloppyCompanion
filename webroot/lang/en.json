@@ -137,6 +137,10 @@
         "apply": "Apply",
         "saveApply": "Save & Apply",
         "unsaved": "Unsaved",
+        "resetCard": "Restore defaults",
+        "resetTweakTitle": "Restore Defaults",
+        "resetTweakDesc": "This will delete the saved configuration for \"{name}\" and reload its captured defaults.",
+        "resetTweakWarning": "Your unsaved changes on this card will be replaced.",
         "zram": {
             "title": "ZRAM",
             "enable": "Enable ZRAM",
@@ -340,6 +344,7 @@
         "presetLoadFailed": "Failed to load preset",
         "presetDefaultApplied": "Default preset applied",
         "presetDefaultLoaded": "Default preset loaded",
+        "tweakDefaultLoaded": "Defaults loaded for {name}",
         "presetSavedApplied": "Preset saved & applied",
         "presetLoadedSaved": "Preset loaded & saved",
         "presetExportBuiltIn": "Cannot export built-in presets",

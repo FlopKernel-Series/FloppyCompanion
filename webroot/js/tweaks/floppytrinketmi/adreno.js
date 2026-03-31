@@ -165,6 +165,7 @@ async function loadAdrenoState() {
     };
     renderAdrenoCard();
 }
+window.loadAdrenoState = loadAdrenoState;
 
 async function saveAdreno() {
     const sparseState = window.buildSparseStateAgainstDefaults(adrenoPendingState, adrenoDefaultState);

@@ -33,9 +33,6 @@ get_current() {
 get_saved() {
     if [ -f "$CONFIG_FILE" ]; then
         cat "$CONFIG_FILE"
-    else
-        echo "bypass=0"
-        echo "fast=0"
     fi
 }
 

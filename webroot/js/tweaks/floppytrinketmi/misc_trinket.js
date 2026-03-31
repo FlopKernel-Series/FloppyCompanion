@@ -49,6 +49,7 @@ async function loadMiscTrinketState() {
 
     renderMiscTrinketCard();
 }
+window.loadMiscTrinketState = loadMiscTrinketState;
 
 async function saveMiscTrinket() {
     await runMiscTrinketBackend('save', 'touchboost', miscTrinketPendingState.touchboost);

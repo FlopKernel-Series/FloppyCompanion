@@ -64,6 +64,7 @@ async function loadMemoryState() {
         console.error('Failed to load Memory state:', e);
     }
 }
+window.loadMemoryState = loadMemoryState;
 
 // Render Memory Card UI
 function renderMemoryCard() {

@@ -59,6 +59,7 @@ async function loadThermalState() {
         console.error('Failed to load thermal state:', e);
     }
 }
+window.loadThermalState = loadThermalState;
 
 // Render Thermal card UI
 function renderThermalCard() {

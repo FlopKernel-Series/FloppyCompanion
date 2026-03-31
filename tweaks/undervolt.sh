@@ -83,16 +83,35 @@ get_current() {
 get_saved() {
     if [ -f "$CONFIG_FILE" ]; then
         cat "$CONFIG_FILE"
-    else
-        echo "little=0"
-        echo "big=0"
-        echo "prime=0"
-        echo "gpu=0"
     fi
 }
 
 # Save config
 save() {
+    if [ "$#" -eq 0 ]; then
+        rm -f "$CONFIG_FILE"
+        echo "saved"
+        return 0
+    fi
+
+    if echo "$1" | grep -q '='; then
+        mkdir -p "$(dirname "$CONFIG_FILE")"
+        : > "$CONFIG_FILE"
+
+        for arg in "$@"; do
+            key="${arg%%=*}"
+            val="${arg#*=}"
+            [ -n "$key" ] && [ -n "$val" ] && echo "$key=$val" >> "$CONFIG_FILE"
+        done
+
+        if [ ! -s "$CONFIG_FILE" ]; then
+            rm -f "$CONFIG_FILE"
+        fi
+
+        echo "saved"
+        return 0
+    fi
+
     local little="$1"
     local big="$2"
     local prime="$3"

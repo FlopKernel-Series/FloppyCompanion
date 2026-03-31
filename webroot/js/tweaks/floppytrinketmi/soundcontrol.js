@@ -101,6 +101,7 @@ async function loadSoundControlState() {
 
     renderSoundControlCard();
 }
+window.loadSoundControlState = loadSoundControlState;
 
 async function saveSoundControl() {
     await runSoundControlBackend('save', scPendingState.hp_l, scPendingState.hp_r, scPendingState.mic);

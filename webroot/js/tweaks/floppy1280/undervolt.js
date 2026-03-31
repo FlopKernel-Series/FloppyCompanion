@@ -6,9 +6,10 @@ const UNDERVOLT_BASE_STATE = { little: '0', big: '0', prime: '0', gpu: '0' };
 let undervoltAvailable = false;
 let undervoltCapabilities = { little: '0', big: '0', prime: '0', gpu: '0' };
 let undervoltCurrentState = { ...UNDERVOLT_BASE_STATE };
-let undervoltSavedState = { ...UNDERVOLT_BASE_STATE }; // From config file
+let undervoltSavedState = {}; // Sparse overrides from config file
 let undervoltPendingState = { ...UNDERVOLT_BASE_STATE };
 let undervoltReferenceState = { ...UNDERVOLT_BASE_STATE };
+let undervoltDefaultState = { ...UNDERVOLT_BASE_STATE };
 
 const runUndervoltBackend = (...args) => window.runTweakBackend('undervolt', ...args);
 
@@ -25,6 +26,31 @@ function normalizeUndervoltState(state) {
     };
 }
 
+function buildUndervoltEffectiveState(source = undervoltPendingState) {
+    const state = {};
+    UNDERVOLT_KEYS.forEach((key) => {
+        state[key] = String(
+            source[key]
+            ?? window.getTweakDefaultValue(key, undervoltCurrentState, undervoltDefaultState, '0')
+        );
+    });
+    return state;
+}
+
+function ensureUndervoltUnlockedIfNeeded() {
+    const unlockSwitch = document.getElementById('undervolt-unlock-switch');
+    if (!unlockSwitch) return;
+
+    const hasHighValue = getSupportedUndervoltKeys().some((key) => {
+        const val = parseInt(undervoltPendingState[key] || '0', 10);
+        return val > 15;
+    });
+
+    if (hasHighValue && !unlockSwitch.checked) {
+        unlockSwitch.checked = true;
+    }
+}
+
 async function checkUndervoltAvailable() {
     if (!['Floppy1280', 'Floppy2100'].includes(window.KERNEL_NAME)) {
         undervoltAvailable = false;
@@ -39,31 +65,31 @@ async function checkUndervoltAvailable() {
     return undervoltAvailable;
 }
 
-function loadUndervoltState() {
-    checkUndervoltAvailable().then(available => {
-        if (!available) {
-            document.getElementById('undervolt-card').classList.add('hidden');
-            return;
-        }
+async function loadUndervoltState() {
+    const available = await checkUndervoltAvailable();
+    const card = document.getElementById('undervolt-card');
+    if (!available) {
+        if (card) card.classList.add('hidden');
+        return;
+    }
 
-        document.getElementById('undervolt-card').classList.remove('hidden');
+    if (card) card.classList.remove('hidden');
 
-        // Load current and saved states in parallel
-        window.loadTweakState('undervolt').then(({ current, saved }) => {
-            undervoltCurrentState = normalizeUndervoltState(current);
-            undervoltSavedState = normalizeUndervoltState(saved);
+    const { current, saved } = await window.loadTweakState('undervolt');
+    undervoltCurrentState = normalizeUndervoltState(current);
+    undervoltDefaultState = normalizeUndervoltState(window.getDefaultTweakPreset('undervolt') || {});
+    undervoltSavedState = window.buildSparseStateAgainstDefaults(saved, undervoltDefaultState);
+    undervoltPendingState = normalizeUndervoltState(
+        window.initPendingState(undervoltCurrentState, undervoltSavedState, undervoltDefaultState)
+    );
 
-            const defUndervolt = window.getDefaultTweakPreset('undervolt');
-            const normalizedDefaults = normalizeUndervoltState(defUndervolt || {});
-            undervoltPendingState = normalizeUndervoltState(window.initPendingState(undervoltCurrentState, undervoltSavedState, normalizedDefaults));
+    const { reference } = window.resolveTweakReference(undervoltCurrentState, undervoltSavedState, undervoltDefaultState);
+    undervoltReferenceState = normalizeUndervoltState(reference);
 
-            const { reference } = window.resolveTweakReference(undervoltCurrentState, undervoltSavedState, normalizedDefaults);
-            undervoltReferenceState = normalizeUndervoltState(reference);
-
-            renderUndervoltCard();
-        });
-    });
+    ensureUndervoltUnlockedIfNeeded();
+    renderUndervoltCard();
 }
+window.loadUndervoltState = loadUndervoltState;
 
 function renderUndervoltCard() {
     UNDERVOLT_KEYS.forEach((key) => {
@@ -74,6 +100,9 @@ function renderUndervoltCard() {
     });
 
     const elements = getSupportedUndervoltKeys();
+    ensureUndervoltUnlockedIfNeeded();
+    const unlockSwitch = document.getElementById('undervolt-unlock-switch');
+    const isUnlocked = !!unlockSwitch?.checked;
 
     elements.forEach(el => {
         const valEl = document.getElementById(`undervolt-val-${el}`);
@@ -82,7 +111,14 @@ function renderUndervoltCard() {
 
         if (!sliderEl || !inputEl) return;
 
-        const valPending = undervoltPendingState[el] || '0';
+        const valPending = window.getTweakPendingValue(
+            el,
+            undervoltPendingState,
+            undervoltReferenceState,
+            undervoltDefaultState,
+            undervoltCurrentState,
+            '0'
+        );
         const valCurrent = undervoltCurrentState[el] || '0';
 
         // Update display values (label shows current kernel state)
@@ -90,11 +126,19 @@ function renderUndervoltCard() {
 
         // Slider shows pending/slider state
         sliderEl.value = valPending;
-        if (inputEl) inputEl.value = valPending;
-
+        const { placeholder, value } = window.getTweakTextInputState(
+            el,
+            undervoltPendingState,
+            undervoltSavedState,
+            undervoltReferenceState,
+            undervoltDefaultState,
+            undervoltCurrentState,
+            '0'
+        );
+        inputEl.placeholder = placeholder;
+        inputEl.value = value;
 
         // Update max range based on lock switch
-        const isUnlocked = document.getElementById('undervolt-unlock-switch').checked;
         const max = isUnlocked ? 100 : 15;
         sliderEl.max = max;
         inputEl.max = max;
@@ -104,14 +148,10 @@ function renderUndervoltCard() {
     });
 
     // Initial update
-    const switchEl = document.getElementById('undervolt-unlock-switch');
-    if (switchEl) {
-        const isUnlocked = switchEl.checked;
-        const sliders = elements.map(t => document.getElementById(`undervolt-slider-${t}`));
-        sliders.forEach(slider => {
-            if (slider) updateSliderTicks(slider, isUnlocked);
-        });
-    }
+    const sliders = elements.map(t => document.getElementById(`undervolt-slider-${t}`));
+    sliders.forEach(slider => {
+        if (slider) updateSliderTicks(slider, isUnlocked);
+    });
 
     // High-value warning logic (show if any value > 10)
     const highWarning = document.getElementById('undervolt-high-warning');
@@ -167,11 +207,15 @@ function updateUndervoltPendingIndicator() {
 }
 
 async function saveUndervolt() {
-    const { little, big, prime, gpu } = undervoltPendingState;
-    await runUndervoltBackend('save', little, big, prime, gpu);
-    undervoltSavedState = normalizeUndervoltState(undervoltPendingState);
-    undervoltReferenceState = normalizeUndervoltState(undervoltSavedState);
-    updateUndervoltPendingIndicator();
+    const effectiveState = buildUndervoltEffectiveState();
+    const sparseState = window.buildSparseStateAgainstDefaults(effectiveState, undervoltDefaultState);
+    await runUndervoltBackend('save', ...Object.entries(sparseState).map(([key, value]) => `${key}=${value}`));
+    undervoltSavedState = { ...sparseState };
+    undervoltReferenceState = normalizeUndervoltState(
+        window.initPendingState(undervoltCurrentState, undervoltSavedState, undervoltDefaultState)
+    );
+    undervoltPendingState = { ...undervoltReferenceState };
+    renderUndervoltCard();
     showToast(window.t ? window.t('toast.settingsSaved') : 'Settings saved');
 }
 
@@ -190,10 +234,7 @@ async function applyUndervolt() {
 // Clear undervolt persistence (called externally)
 async function clearUndervoltPersistence() {
     await runUndervoltBackend('clear_saved');
-    undervoltSavedState = { ...UNDERVOLT_BASE_STATE };
-    undervoltPendingState = { ...UNDERVOLT_BASE_STATE };
-    undervoltReferenceState = { ...UNDERVOLT_BASE_STATE };
-    renderUndervoltCard();
+    await loadUndervoltState();
 
     // Show the notice to inform user their settings were cleared
     const notice = document.getElementById('undervolt-notice');
@@ -208,21 +249,9 @@ function initUndervoltTweak() {
         window.registerTweak('undervolt', {
             getState: () => ({ ...undervoltPendingState }),
             setState: (config) => {
-                undervoltPendingState = { ...undervoltPendingState, ...config };
-                
-                // Auto-unlock if any value exceeds safe limit (15)
-                const isHighValue = UNDERVOLT_KEYS.some(key => {
-                    const val = parseInt(undervoltPendingState[key] || '0');
-                    return val > 15;
-                });
-                
-                if (isHighValue) {
-                    const unlockSwitch = document.getElementById('undervolt-unlock-switch');
-                    if (unlockSwitch && !unlockSwitch.checked) {
-                        unlockSwitch.checked = true;
-                    }
-                }
-
+                const baseline = normalizeUndervoltState({ ...undervoltCurrentState, ...undervoltDefaultState });
+                undervoltPendingState = normalizeUndervoltState({ ...baseline, ...(config || {}) });
+                ensureUndervoltUnlockedIfNeeded();
                 renderUndervoltCard();
             },
             render: renderUndervoltCard,
@@ -243,10 +272,7 @@ function initUndervoltTweak() {
             if (window.preventSwipePropagation) window.preventSwipePropagation(slider); // Fix swipe conflict
 
             slider.addEventListener('input', (e) => {
-                const val = e.target.value;
-                if (input) input.value = val;
-
-                undervoltPendingState[type] = val;
+                undervoltPendingState[type] = String(e.target.value || '0');
                 renderUndervoltCard();
             });
         }
@@ -255,13 +281,23 @@ function initUndervoltTweak() {
             if (window.preventSwipePropagation) window.preventSwipePropagation(input);
 
             input.addEventListener('change', (e) => {
+                if (e.target.value === '') {
+                    undervoltPendingState[type] = window.getTweakDefaultValue(
+                        type,
+                        undervoltCurrentState,
+                        undervoltDefaultState,
+                        '0'
+                    );
+                    renderUndervoltCard();
+                    return;
+                }
+
                 let val = parseInt(e.target.value) || 0;
                 // Clamp
                 const max = parseInt(document.getElementById(`undervolt-slider-${type}`).max);
                 if (val < 0) val = 0;
                 if (val > max) val = max;
 
-                input.value = val;
                 if (slider) slider.value = val;
 
                 undervoltPendingState[type] = val.toString();

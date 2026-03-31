@@ -1277,9 +1277,7 @@ body {
 }
 
 .pending-indicator {
-    position: absolute;
-    top: 12px;
-    right: 12px;
+    position: relative;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1290,6 +1288,46 @@ body {
     border-radius: 50%;
     cursor: pointer;
     z-index: 10;
+}
+
+.card-header-actions {
+    position: absolute;
+    inset-inline-end: 0;
+    top: 50%;
+    transform: translateY(calc(-50% - 5px));
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.card-reset-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 32px;
+    margin-inline-start: 4px;
+    padding: 0 0 0 8px;
+    border: none;
+    border-inline-start: 1px solid var(--md-sys-color-outline-variant);
+    background: transparent;
+    color: var(--md-sys-color-on-surface-variant);
+    cursor: pointer;
+}
+
+.card-header-actions .pending-indicator.hidden + .card-reset-btn {
+    border-inline-start-color: transparent;
+}
+
+.card-reset-btn:active {
+    transform: scale(0.96);
+}
+
+.card-reset-btn .icon-svg,
+.card-reset-icon {
+    width: 18px;
+    height: 18px;
+    fill: currentColor;
 }
 
 .pending-icon {
@@ -1678,10 +1716,11 @@ body {
 
 .card-header {
     display: flex;
+    position: relative;
     align-items: center;
     gap: 12px;
     margin-bottom: 12px;
-    padding-inline-end: 44px;
+    padding-inline-end: 84px;
     color: var(--md-sys-color-primary);
 }
 
@@ -1691,7 +1730,9 @@ body {
 }
 
 .card-title-wrap {
-    display: inline;
+    display: flex;
+    align-items: center;
+    flex: 1 1 auto;
     gap: 8px;
     min-width: 0;
 }

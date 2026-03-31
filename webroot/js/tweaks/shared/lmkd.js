@@ -157,6 +157,7 @@ async function loadLmkdState() {
         console.error('Failed to load LMKD state:', e);
     }
 }
+window.loadLmkdState = loadLmkdState;
 
 function renderLmkdBoolean(key) {
     const toggle = document.getElementById(`lmkd-toggle-${key}`);

@@ -45,6 +45,7 @@ async function loadZramState() {
         console.error('Failed to load ZRAM state:', e);
     }
 }
+window.loadZramState = loadZramState;
 
 // Render ZRAM card UI
 function renderZramCard() {

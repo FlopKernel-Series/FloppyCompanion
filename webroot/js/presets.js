@@ -68,24 +68,26 @@ async function clearAllTweakConfigs() {
 }
 
 async function reloadAllTweakStates() {
-    const loaders = [
-        window.loadZramState,
-        window.loadMemoryState,
-        window.loadIoSchedulerState,
-        window.loadThermalState,
-        window.loadUndervoltState,
-        window.loadMiscState,
-        window.loadExynosState,
-        window.loadSoundControlState,
-        window.loadChargingState,
-        window.loadDisplayState,
-        window.loadAdrenoState,
-        window.loadMiscTrinketState
-    ].filter(fn => typeof fn === 'function');
+    const tweakIds = [
+        'zram',
+        'memory',
+        'lmkd',
+        'iosched',
+        'thermal',
+        'undervolt',
+        'misc',
+        'soundcontrol',
+        'charging',
+        'display',
+        'adreno',
+        'misc_trinket'
+    ];
 
-    for (const fn of loaders) {
+    for (const tweakId of tweakIds) {
         try {
-            await fn();
+            if (typeof window.reloadTweakState === 'function') {
+                await window.reloadTweakState(tweakId);
+            }
         } catch (e) {
             console.error('Failed to reload tweak state', e);
         }
@@ -541,6 +543,7 @@ async function initPresets() {
 // Make functions available globally
 window.TWEAK_REGISTRY = TWEAK_REGISTRY;
 window.registerTweak = registerTweak;
+window.getRegisteredTweak = (id) => TWEAK_REGISTRY[id];
 window.initPresets = initPresets;
 window.collectAllTweakStates = collectAllTweakStates;
 window.loadPresetToUI = loadPresetToUI;

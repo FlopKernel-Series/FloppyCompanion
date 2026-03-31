@@ -154,10 +154,27 @@ $(if [ "$IS_1280" = "1" ]; then cat << EOF_1280_THERMAL
 EOF_1280_THERMAL
 fi)
     "undervolt": {
-      "little": "$(cat /sys/kernel/exynos_uv/cpucl0_uv_percent 2>/dev/null || echo 0)",
-      "big": "$(cat /sys/kernel/exynos_uv/cpucl1_uv_percent 2>/dev/null || echo 0)",
-      "prime": "$(cat /sys/kernel/exynos_uv/cpucl2_uv_percent 2>/dev/null || echo 0)",
-      "gpu": "$(cat /sys/kernel/exynos_uv/g3d_uv_percent 2>/dev/null || cat /sys/kernel/exynos_uv/gpu_uv_percent 2>/dev/null || echo 0)"
+$(      first=1
+      append_uv_entry() {
+        key="$1"
+        node="$2"
+        [ -e "$node" ] || return
+        val=$(cat "$node" 2>/dev/null || echo 0)
+        if [ "$first" -eq 0 ]; then
+          printf ',\n'
+        fi
+        printf '      "%s": "%s"' "$key" "$val"
+        first=0
+      }
+      append_uv_entry "little" "/sys/kernel/exynos_uv/cpucl0_uv_percent"
+      append_uv_entry "big" "/sys/kernel/exynos_uv/cpucl1_uv_percent"
+      append_uv_entry "prime" "/sys/kernel/exynos_uv/cpucl2_uv_percent"
+      if [ -f /sys/kernel/exynos_uv/g3d_uv_percent ]; then
+        append_uv_entry "gpu" "/sys/kernel/exynos_uv/g3d_uv_percent"
+      elif [ -f /sys/kernel/exynos_uv/gpu_uv_percent ]; then
+        append_uv_entry "gpu" "/sys/kernel/exynos_uv/gpu_uv_percent"
+      fi
+)
     }
 EOF_EXYNOS_UV
     fi
@@ -166,11 +183,27 @@ EOF_EXYNOS_UV
       cat << EOF_EXYNOS
 ,
     "misc": {
-      "block_ed3": "$(cat /sys/devices/virtual/sec/tsp/block_ed3 2>/dev/null || echo 0)"
+$(      if [ -f /sys/devices/virtual/sec/tsp/block_ed3 ]; then
+        printf '      "block_ed3": "%s"' "$(cat /sys/devices/virtual/sec/tsp/block_ed3 2>/dev/null || echo 0)"
+      fi
+)
     },
     "exynos": {
-      "gpu_clklck": "$(cat /sys/kernel/gpu/gpu_clklck 2>/dev/null || echo 0)",
-      "gpu_unlock": "$(cat /sys/kernel/gpu/gpu_unlock 2>/dev/null || echo 0)"
+$(      first=1
+      append_exynos_entry() {
+        key="$1"
+        node="$2"
+        [ -f "$node" ] || return
+        val=$(cat "$node" 2>/dev/null || echo 0)
+        if [ "$first" -eq 0 ]; then
+          printf ',\n'
+        fi
+        printf '      "%s": "%s"' "$key" "$val"
+        first=0
+      }
+      append_exynos_entry "gpu_clklck" "/sys/kernel/gpu/gpu_clklck"
+      append_exynos_entry "gpu_unlock" "/sys/kernel/gpu/gpu_unlock"
+)
     }
 EOF_EXYNOS
     elif [ "$IS_TRINKET" = "1" ]; then

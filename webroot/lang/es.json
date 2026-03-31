@@ -137,6 +137,10 @@
         "apply": "Aplicar",
         "saveApply": "Guardar y Aplicar",
         "unsaved": "Sin guardar",
+        "resetCard": "Restaurar predeterminados",
+        "resetTweakTitle": "Restaurar Predeterminados",
+        "resetTweakDesc": "Esto eliminará la configuración guardada de \"{name}\" y recargará sus valores capturados.",
+        "resetTweakWarning": "Tus cambios sin guardar en esta tarjeta serán reemplazados.",
         "zram": {
             "title": "ZRAM",
             "enable": "Activar ZRAM",
@@ -341,6 +345,7 @@
         "presetLoadFailed": "Error al cargar el preajuste",
         "presetDefaultApplied": "Preajuste predeterminado aplicado",
         "presetDefaultLoaded": "Preajuste predeterminado cargado",
+        "tweakDefaultLoaded": "Predeterminados cargados para {name}",
         "presetSavedApplied": "Preajuste guardado y aplicado",
         "presetLoadedSaved": "Preajuste cargado y guardado",
         "presetExportBuiltIn": "No se pueden exportar preajustes integrados",

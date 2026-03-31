@@ -75,6 +75,7 @@ async function loadDisplayState() {
     };
     renderDisplayCard();
 }
+window.loadDisplayState = loadDisplayState;
 
 async function saveDisplay() {
     await runDisplayBackend('save', displayPendingState.hbm, displayPendingState.cabc);

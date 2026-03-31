@@ -54,6 +54,7 @@ async function loadChargingState() {
     };
     renderChargingCard();
 }
+window.loadChargingState = loadChargingState;
 
 async function saveCharging() {
     await runChargingBackend('save', chargingPendingState.bypass, chargingPendingState.fast);

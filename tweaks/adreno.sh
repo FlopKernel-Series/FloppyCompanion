@@ -53,12 +53,6 @@ get_current() {
 get_saved() {
     if [ -f "$CONFIG_FILE" ]; then
         cat "$CONFIG_FILE"
-    else
-        echo "adrenoboost=0"
-        echo "idler_active=N"
-        echo "idler_downdifferential=20"
-        echo "idler_idlewait=15"
-        echo "idler_idleworkload=5000"
     fi
 }
 

@@ -30,9 +30,6 @@ get_current() {
 get_saved() {
     if [ -f "$CONFIG_FILE" ]; then
         cat "$CONFIG_FILE"
-    else
-        echo "hbm=0"
-        echo "cabc=0"
     fi
 }
 
