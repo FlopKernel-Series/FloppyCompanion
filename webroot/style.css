@@ -1641,6 +1641,9 @@ body {
     border-radius: 100px;
     font-size: 14px;
     font-weight: 500;
+    cursor: default;
+    white-space: nowrap;
+    box-shadow: none;
 }
 
 #managed-device-name {
@@ -2032,24 +2035,35 @@ body {
 }
 
 .link-row {
-    display: flex;
-    align-items: center;
-    gap: 12px;
     text-decoration: none;
     color: var(--md-sys-color-primary);
     font-weight: 500;
     font-size: 14px;
-    padding: 8px 0;
+    min-inline-size: 0;
+    white-space: normal;
 }
 
 .link-row:active {
     opacity: 0.7;
 }
 
+.link-list.beer .list > li > a.link-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    color: var(--md-sys-color-primary);
+}
+
+.link-list.beer .list > li > a.link-row > span,
+.link-list.beer .list > li > a.link-row > .max {
+    color: inherit;
+}
+
 .link-icon {
     width: 20px;
     height: 20px;
-    fill: var(--md-sys-color-primary);
+    fill: currentColor;
     flex-shrink: 0;
 }
 
@@ -2844,13 +2858,13 @@ body {
 }
 
 .credits-list li {
-    padding: 8px 0;
     display: flex;
     align-items: center;
     flex-wrap: wrap;
     border-bottom: none;
     font-size: 14px;
     color: var(--md-sys-color-on-surface);
+    white-space: normal;
 }
 
 .credits-list li:last-child {
