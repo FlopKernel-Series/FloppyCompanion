@@ -107,7 +107,7 @@ function renderZramCard() {
 
         algos.forEach(algo => {
             const btn = document.createElement('button');
-            btn.className = 'option-btn';
+            btn.className = 'option-btn chip medium';
             btn.dataset.algo = algo;
             btn.textContent = algo;
 

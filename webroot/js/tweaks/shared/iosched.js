@@ -97,13 +97,13 @@ function renderIoCard() {
 
         // Schedulers List (Chips)
         const chipsContainer = document.createElement('div');
-        chipsContainer.className = 'option-grid small-grid'; // Reusing grid style
+        chipsContainer.className = 'option-grid beer small-grid'; // Reusing grid style
 
         const algos = (dev.available || '').split(',');
         algos.forEach(algo => {
             if (!algo) return;
             const btn = document.createElement('button');
-            btn.className = 'option-btn small-btn'; // Add small-btn style
+            btn.className = 'option-btn chip small small-btn'; // Add small-btn style
             btn.textContent = algo;
 
             if (algo === ioschedPendingState[dev.device]) {

@@ -1034,16 +1034,11 @@ body {
 }
 
 .option-btn {
-    padding: 8px 16px;
-    border: 1px solid var(--md-sys-color-outline);
-    border-radius: 18px;
-    /* Pill/chip shape */
-    background-color: transparent;
-    color: var(--md-sys-color-on-surface);
-    font-size: 13px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.15s;
+    min-width: 0;
+    box-sizing: border-box;
+    justify-content: center;
+    text-align: center;
+    line-height: 1.2;
 }
 
 .option-btn:active {
@@ -1056,10 +1051,20 @@ body {
     border-color: transparent;
 }
 
+.option-btn.small-btn {
+    --_size: 1.875rem;
+    --_padding: 0.625rem;
+    font-size: 0.75rem;
+}
+
 .mode-num {
-    opacity: 0.5;
+    opacity: 0.6;
     font-size: 0.9em;
     margin-inline-start: 2px;
+}
+
+.option-btn.selected .mode-num {
+    opacity: 0.72;
 }
 
 .tweak-description {
@@ -1491,30 +1496,30 @@ body {
 }
 
 .tweak-action-btn {
-    padding: 8px 14px;
     flex: 1 1 auto;
     min-width: 0;
+    box-sizing: border-box;
+    inline-size: auto;
     text-align: center;
-    border: none;
-    border-radius: var(--md-sys-shape-corner-medium);
-    font-size: 14px;
-    font-weight: 500;
     cursor: pointer;
-    transition: all 0.15s;
 }
 
 .tweak-action-btn:active {
     transform: scale(0.97);
 }
 
-.tweak-action-btn.primary {
-    background-color: var(--md-sys-color-primary);
-    color: var(--md-sys-color-on-primary);
+.tweak-actions.beer .tweak-action-btn {
+    flex: 1 1 0;
+    min-inline-size: 0;
+    white-space: nowrap;
 }
 
-.tweak-action-btn.secondary {
-    background-color: var(--md-sys-color-surface-variant);
-    color: var(--md-sys-color-on-surface-variant);
+.tweak-actions.beer .action-secondary {
+    flex: 0.9 1 0;
+}
+
+.tweak-actions.beer .action-primary {
+    flex: 1.2 1 0;
 }
 
 .pending-indicator {
