@@ -251,11 +251,11 @@
             "disabled": "Deshabilitado"
         },
         "undervolt": {
-  "title": "Undervolt",
-  "little": "Cluster Pequeño",
-  "big": "Cluster Grande",
-  "prime": "Cluster Prime",
-  "gpu": "GPU",
+            "title": "Undervolt",
+            "little": "Cluster Pequeño",
+            "big": "Cluster Grande",
+            "prime": "Cluster Prime",
+            "gpu": "GPU",
             "unlockRange": "Desbloquear rango completo",
             "notice": "Los ajustes de undervolt fueron borrados porque habilitaste o cambiaste el Modo Unlocked. Esto previene crasheos por configuraciones de undervolt incompatibles.",
             "highValueWarning": "Valores por encima del 10% casi seguramente causarán un crasheo inmediato. Podrías entrar en un bootloop hasta desactivar el módulo.",
