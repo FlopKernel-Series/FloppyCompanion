@@ -1275,7 +1275,7 @@ body {
     gap: 12px;
 }
 
-.styled-slider {
+.styled-slider:not(.beer-slider-input) {
     flex-grow: 1;
     -webkit-appearance: none;
     appearance: none;
@@ -1291,7 +1291,7 @@ body {
     touch-action: none;
 }
 
-.styled-slider::-webkit-slider-runnable-track {
+.styled-slider:not(.beer-slider-input)::-webkit-slider-runnable-track {
     width: 100%;
     height: 4px;
     background: var(--md-sys-color-surface-variant);
@@ -1310,7 +1310,7 @@ body {
     margin-bottom: 2px;
 }
 
-.styled-slider::-webkit-slider-thumb {
+.styled-slider:not(.beer-slider-input)::-webkit-slider-thumb {
     -webkit-appearance: none;
     width: 20px;
     height: 20px;
@@ -1324,13 +1324,13 @@ body {
     /* Center thumb: (4px track - 20px thumb) / 2 */
 }
 
-.styled-slider::-webkit-slider-thumb:active {
+.styled-slider:not(.beer-slider-input)::-webkit-slider-thumb:active {
     transform: scale(1.2);
 }
 
 /* Visual Ticks Logic */
 /* Ticks are generated via JS (SVG Data URI) and set to --track-ticks variable */
-.styled-slider::-webkit-slider-runnable-track {
+.styled-slider:not(.beer-slider-input)::-webkit-slider-runnable-track {
     background:
         var(--track-ticks, none),
         /* SVG Ticks */
@@ -1346,6 +1346,136 @@ body {
     background-position: center, center;
     background-repeat: no-repeat;
     border-radius: 2px;
+}
+
+/* Hybrid BeerCSS slider styling for stepped tweak ranges */
+beer-css.tweak-slider-scope {
+    display: block;
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+beer-css.tweak-slider-scope .tweak-beer-slider {
+    --_track: 0.375rem;
+    --tweak-slider-thumb-size: 1.25rem;
+    --_thumb: var(--tweak-slider-thumb-size);
+    position: relative;
+    display: flex;
+    align-items: center !important;
+    inline-size: 100%;
+    min-width: 0;
+    block-size: max(var(--tweak-slider-thumb-size), 2rem);
+    margin: 0;
+    color: var(--md-sys-color-primary);
+}
+
+beer-css.tweak-slider-scope .tweak-beer-slider::before {
+    inset: calc(50% - (var(--_track) / 2)) 0 auto 0;
+    block-size: var(--_track);
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--md-sys-color-outline-variant) 82%, var(--md-sys-color-surface) 18%);
+    clip-path: none;
+}
+
+beer-css.tweak-slider-scope .tweak-beer-slider::after {
+    content: "";
+    position: absolute;
+    inset: calc(50% - (var(--_track) / 2)) calc(var(--tweak-slider-thumb-size) / 2) auto calc(var(--tweak-slider-thumb-size) / 2);
+    block-size: var(--_track);
+    border-radius: 999px;
+    background-image: var(--track-ticks, none);
+    background-size: 100% 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+    opacity: 0.7;
+    pointer-events: none;
+    z-index: 2;
+}
+
+beer-css.tweak-slider-scope .tweak-beer-slider > span:not([class]) {
+    inset: calc(50% - (var(--_track) / 2)) auto auto 0;
+    inline-size: calc(100% - var(--_end, 100%));
+    block-size: var(--_track);
+    border-radius: 999px;
+    background: var(--md-sys-color-primary);
+    color: var(--md-sys-color-primary);
+    z-index: 1;
+}
+
+beer-css.tweak-slider-scope .tweak-beer-slider > input.beer-slider-input {
+    appearance: none;
+    -webkit-appearance: none;
+    inline-size: 100%;
+    block-size: var(--tweak-slider-thumb-size);
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    background: none;
+    box-shadow: none;
+    border: none;
+    outline: none;
+    position: relative;
+    z-index: 3;
+    pointer-events: none;
+    touch-action: none;
+}
+
+beer-css.tweak-slider-scope .tweak-beer-slider > input.beer-slider-input:only-of-type {
+    pointer-events: none;
+}
+
+beer-css.tweak-slider-scope .tweak-beer-slider > input.beer-slider-input::-webkit-slider-runnable-track {
+    -webkit-appearance: none;
+    appearance: none;
+    block-size: var(--_track);
+    background: transparent;
+    border: none;
+}
+
+beer-css.tweak-slider-scope .tweak-beer-slider > input.beer-slider-input::-moz-range-track {
+    block-size: var(--_track);
+    background: transparent;
+    border: none;
+}
+
+beer-css.tweak-slider-scope .tweak-beer-slider > input.beer-slider-input::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    inline-size: var(--tweak-slider-thumb-size);
+    block-size: var(--tweak-slider-thumb-size);
+    border-radius: 50%;
+    background: var(--md-sys-color-primary);
+    border: none;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.32);
+    margin-top: calc((var(--_track) - var(--tweak-slider-thumb-size)) / 2);
+    pointer-events: auto;
+    transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+
+beer-css.tweak-slider-scope .tweak-beer-slider > input.beer-slider-input::-webkit-slider-thumb:active {
+    transform: scale(1.08);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.34);
+}
+
+beer-css.tweak-slider-scope .tweak-beer-slider > input.beer-slider-input::-moz-range-thumb {
+    inline-size: var(--tweak-slider-thumb-size);
+    block-size: var(--tweak-slider-thumb-size);
+    border-radius: 50%;
+    background: var(--md-sys-color-primary);
+    border: none;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.32);
+    pointer-events: auto;
+}
+
+beer-css.tweak-slider-scope .tweak-beer-slider > input.beer-slider-input:disabled::-webkit-slider-thumb,
+beer-css.tweak-slider-scope .tweak-beer-slider > input.beer-slider-input:disabled::-moz-range-thumb {
+    background: var(--md-sys-color-outline);
+    box-shadow: none;
+}
+
+beer-css.tweak-slider-scope .tweak-beer-slider:has(> input.beer-slider-input:disabled) > span:not([class]) {
+    background: var(--md-sys-color-outline);
+    color: var(--md-sys-color-outline);
 }
 
 /* Info/Warning Notice */

@@ -24,6 +24,86 @@ function getTweakVar(name) {
     return getTweakVarStore()[name];
 }
 
+function parseCssLengthToPixels(value) {
+    const raw = String(value || '').trim();
+    if (!raw) return 0;
+
+    if (raw.endsWith('rem')) {
+        const root = parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
+        return (parseFloat(raw) || 0) * root;
+    }
+
+    return parseFloat(raw) || 0;
+}
+
+function syncBeerRangeSlider(input) {
+    if (!input || input.type !== 'range') return;
+
+    const shell = input.closest('.tweak-beer-slider');
+    if (!shell) return;
+
+    const width = input.offsetWidth || shell.offsetWidth;
+    if (!width) return;
+
+    const min = parseFloat(input.min);
+    const max = parseFloat(input.max);
+    const value = parseFloat(input.value);
+    const safeMin = Number.isFinite(min) ? min : 0;
+    const safeMax = Number.isFinite(max) && max !== safeMin ? max : 100;
+    const safeValue = Number.isFinite(value) ? value : safeMin;
+    const percent = ((safeValue - safeMin) * 100) / (safeMax - safeMin);
+
+    const thumbSize = parseCssLengthToPixels(
+        getComputedStyle(shell).getPropertyValue('--tweak-slider-thumb-size')
+    ) || 20;
+    const thumbPercent = (thumbSize * 100) / width;
+    const adjusted = Math.max(
+        0,
+        Math.min(100, percent + (thumbPercent / 2) - ((thumbPercent * percent) / 100))
+    );
+
+    requestAnimationFrame(() => {
+        shell.style.setProperty('--_start', '0%');
+        shell.style.setProperty('--_end', `${100 - adjusted}%`);
+        shell.style.setProperty('--_value1', `'${input.value}'`);
+    });
+}
+
+function syncBeerRangeSliders(root = document) {
+    const scope = root && typeof root.querySelectorAll === 'function' ? root : document;
+    scope.querySelectorAll('.tweak-beer-slider > input[type="range"]').forEach(syncBeerRangeSlider);
+}
+
+window.syncBeerRangeSlider = syncBeerRangeSlider;
+window.syncBeerRangeSliders = syncBeerRangeSliders;
+
+if (!window.__beerRangeSliderSyncBound) {
+    window.__beerRangeSliderSyncBound = true;
+
+    document.addEventListener('input', (event) => {
+        const target = event.target;
+        if (!(target instanceof HTMLInputElement) || !target.matches('.beer-slider-input')) return;
+        syncBeerRangeSlider(target);
+    });
+
+    let resizeFrame = 0;
+    window.addEventListener('resize', () => {
+        if (resizeFrame) cancelAnimationFrame(resizeFrame);
+        resizeFrame = requestAnimationFrame(() => {
+            resizeFrame = 0;
+            syncBeerRangeSliders();
+        });
+    });
+
+    document.addEventListener('tabChanged', () => {
+        requestAnimationFrame(() => {
+            requestAnimationFrame(() => syncBeerRangeSliders());
+        });
+    });
+
+    requestAnimationFrame(() => syncBeerRangeSliders());
+}
+
 function truthy(value) {
     return value === true || value === 'true' || value === 1 || value === '1' || value === 'yes';
 }

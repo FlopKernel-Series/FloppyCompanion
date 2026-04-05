@@ -173,6 +173,7 @@ function renderUndervoltCard() {
 
 function updateSliderTicks(slider, isUnlocked) {
     if (!slider) return;
+    const sliderShell = slider.closest('.tweak-beer-slider') || slider;
 
     // Get color from CSS variable
     const color = getComputedStyle(document.body).getPropertyValue('--md-sys-color-outline').trim() || '#747775';
@@ -197,7 +198,11 @@ function updateSliderTicks(slider, isUnlocked) {
     const svg = `<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'>${lines.join('')}</svg>`;
     const encoded = `url("data:image/svg+xml,${encodeURIComponent(svg)}")`;
 
-    slider.style.setProperty('--track-ticks', encoded);
+    sliderShell.style.setProperty('--track-ticks', encoded);
+
+    if (window.syncBeerRangeSlider) {
+        window.syncBeerRangeSlider(slider);
+    }
 }
 
 function updateUndervoltPendingIndicator() {

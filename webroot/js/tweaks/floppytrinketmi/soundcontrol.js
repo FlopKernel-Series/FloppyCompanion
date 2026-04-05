@@ -40,6 +40,10 @@ function renderSoundControlCard() {
     if (sliderMic) sliderMic.value = scPendingState.mic;
     if (inputMic) inputMic.value = scPendingState.mic;
 
+    [sliderHp, sliderHpL, sliderHpR, sliderMic].forEach((slider) => {
+        if (slider) updateSoundControlSliderTicks(slider);
+    });
+
     updateSoundControlPendingIndicator();
 }
 
@@ -135,6 +139,7 @@ async function applySoundControl() {
 
 function updateSoundControlSliderTicks(slider) {
     if (!slider) return;
+    const sliderShell = slider.closest('.tweak-beer-slider') || slider;
     const color = getComputedStyle(document.body).getPropertyValue('--md-sys-color-outline').trim() || '#747775';
     const ticks = 21; // 0-20 = 21 ticks
 
@@ -149,7 +154,11 @@ function updateSoundControlSliderTicks(slider) {
 
     const svg = `<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'>${lines.join('')}</svg>`;
     const encoded = `url("data:image/svg+xml,${encodeURIComponent(svg)}")`;
-    slider.style.setProperty('--track-ticks', encoded);
+    sliderShell.style.setProperty('--track-ticks', encoded);
+
+    if (window.syncBeerRangeSlider) {
+        window.syncBeerRangeSlider(slider);
+    }
 }
 
 function initSoundControlTweak() {
@@ -202,6 +211,7 @@ function initSoundControlTweak() {
         scPendingState.hp_r = String(val);
         if (sliderHp) sliderHp.value = val;
         if (inputHp) inputHp.value = val;
+        if (sliderHp && window.syncBeerRangeSlider) window.syncBeerRangeSlider(sliderHp);
         updateSoundControlPendingIndicator();
     }
 
@@ -217,6 +227,7 @@ function initSoundControlTweak() {
         scPendingState.hp_l = String(val);
         if (sliderHpL) sliderHpL.value = val;
         if (inputHpL) inputHpL.value = val;
+        if (sliderHpL && window.syncBeerRangeSlider) window.syncBeerRangeSlider(sliderHpL);
         updateSoundControlPendingIndicator();
     }
 
@@ -232,6 +243,7 @@ function initSoundControlTweak() {
         scPendingState.hp_r = String(val);
         if (sliderHpR) sliderHpR.value = val;
         if (inputHpR) inputHpR.value = val;
+        if (sliderHpR && window.syncBeerRangeSlider) window.syncBeerRangeSlider(sliderHpR);
         updateSoundControlPendingIndicator();
     }
 
@@ -247,6 +259,7 @@ function initSoundControlTweak() {
         scPendingState.mic = String(val);
         if (sliderMic) sliderMic.value = val;
         if (inputMic) inputMic.value = val;
+        if (sliderMic && window.syncBeerRangeSlider) window.syncBeerRangeSlider(sliderMic);
         updateSoundControlPendingIndicator();
     }
 
