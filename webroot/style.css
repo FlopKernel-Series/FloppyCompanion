@@ -9,6 +9,8 @@
     --md-sys-color-on-primary-container: #1f1f1f;
     --md-sys-color-secondary-container: #e8eaed;
     --md-sys-color-on-secondary-container: #1f1f1f;
+    --md-sys-color-background: #fdfdf8;
+    --md-sys-color-on-background: #191c1a;
     --md-sys-color-surface: #fbfdf9;
     --md-sys-color-on-surface: #191c1a;
     --md-sys-color-surface-variant: #e1e3de;
@@ -49,7 +51,9 @@ body.theme-detect-anim {
         --md-sys-color-on-primary-container: #e8eaed;
         --md-sys-color-secondary-container: #3a3d41;
         --md-sys-color-on-secondary-container: #e8eaed;
-        --md-sys-color-surface: #191c1a;
+        --md-sys-color-background: #101412;
+        --md-sys-color-on-background: #e1e3e0;
+        --md-sys-color-surface: #171b18;
         --md-sys-color-on-surface: #e1e3e0;
         --md-sys-color-surface-variant: #444745;
         --md-sys-color-on-surface-variant: #c4c7c5;
@@ -74,6 +78,8 @@ body.theme-light {
     --md-sys-color-on-primary-container: #1f1f1f;
     --md-sys-color-secondary-container: #e8eaed;
     --md-sys-color-on-secondary-container: #1f1f1f;
+    --md-sys-color-background: #fdfdf8;
+    --md-sys-color-on-background: #191c1a;
     --md-sys-color-surface: #fbfdf9;
     --md-sys-color-on-surface: #191c1a;
     --md-sys-color-surface-variant: #e1e3de;
@@ -96,7 +102,9 @@ body.theme-dark {
     --md-sys-color-on-primary-container: #e8eaed;
     --md-sys-color-secondary-container: #3a3d41;
     --md-sys-color-on-secondary-container: #e8eaed;
-    --md-sys-color-surface: #191c1a;
+    --md-sys-color-background: #101412;
+    --md-sys-color-on-background: #e1e3e0;
+    --md-sys-color-surface: #171b18;
     --md-sys-color-on-surface: #e1e3e0;
     --md-sys-color-surface-variant: #444745;
     --md-sys-color-on-surface-variant: #c4c7c5;
@@ -119,6 +127,10 @@ body.theme-exynos-blue {
     --md-sys-color-on-primary-container: #00164d;
     --md-sys-color-secondary-container: #dce1ff;
     --md-sys-color-on-secondary-container: #00164d;
+    --md-sys-color-background: #fcfbff;
+    --md-sys-color-on-background: #171c26;
+    --md-sys-color-surface: #fbf8ff;
+    --md-sys-color-on-surface: #171c26;
     --md-sys-color-surface-container-low: #f7f8ff;
     --md-sys-color-surface-container: #f0f4ff;
     --md-sys-color-surface-container-high: #ffffff;
@@ -133,6 +145,10 @@ body.theme-exynos-blue {
         --md-sys-color-on-primary-container: #dce1ff;
         --md-sys-color-secondary-container: #b6c4ff;
         --md-sys-color-on-secondary-container: #00287d;
+        --md-sys-color-background: #11131a;
+        --md-sys-color-on-background: #e1e2f3;
+        --md-sys-color-surface: #151822;
+        --md-sys-color-on-surface: #e1e2f3;
         --md-sys-color-surface-container-low: #161a22;
         --md-sys-color-surface-container: #1b2029;
         --md-sys-color-surface-container-high: #232935;
@@ -147,6 +163,10 @@ body.theme-dark.theme-exynos-blue {
     --md-sys-color-on-primary-container: #dce1ff;
     --md-sys-color-secondary-container: #b6c4ff;
     --md-sys-color-on-secondary-container: #00287d;
+    --md-sys-color-background: #11131a;
+    --md-sys-color-on-background: #e1e2f3;
+    --md-sys-color-surface: #151822;
+    --md-sys-color-on-surface: #e1e2f3;
     --md-sys-color-surface-container-low: #161a22;
     --md-sys-color-surface-container: #1b2029;
     --md-sys-color-surface-container-high: #232935;
@@ -160,6 +180,10 @@ body.theme-light.theme-exynos-blue {
     --md-sys-color-on-primary-container: #00164d;
     --md-sys-color-secondary-container: #dce1ff;
     --md-sys-color-on-secondary-container: #00164d;
+    --md-sys-color-background: #fcfbff;
+    --md-sys-color-on-background: #171c26;
+    --md-sys-color-surface: #fbf8ff;
+    --md-sys-color-on-surface: #171c26;
     --md-sys-color-surface-container-low: #f7f8ff;
     --md-sys-color-surface-container: #f0f4ff;
     --md-sys-color-surface-container-high: #ffffff;
@@ -174,6 +198,10 @@ body.theme-orange {
     --md-sys-color-on-primary-container: #351000;
     --md-sys-color-secondary-container: #ffdbcc;
     --md-sys-color-on-secondary-container: #351000;
+    --md-sys-color-background: #fffbf9;
+    --md-sys-color-on-background: #251914;
+    --md-sys-color-surface: #fff8f6;
+    --md-sys-color-on-surface: #251914;
     --md-sys-color-surface-container-low: #fffaf8;
     --md-sys-color-surface-container: #fff8f5;
     /* Light orange tint */
@@ -189,6 +217,10 @@ body.theme-orange {
         --md-sys-color-on-primary-container: #ffdbcc;
         --md-sys-color-secondary-container: #763300;
         --md-sys-color-on-secondary-container: #ffdbcc;
+        --md-sys-color-background: #171210;
+        --md-sys-color-on-background: #f0dfd9;
+        --md-sys-color-surface: #1d1714;
+        --md-sys-color-on-surface: #f0dfd9;
         --md-sys-color-surface-container-low: #241c19;
         --md-sys-color-surface-container: #2b211d;
         --md-sys-color-surface-container-high: #342823;
@@ -204,6 +236,10 @@ body.theme-dark.theme-orange {
     --md-sys-color-on-primary-container: #ffdbcc;
     --md-sys-color-secondary-container: #763300;
     --md-sys-color-on-secondary-container: #ffdbcc;
+    --md-sys-color-background: #171210;
+    --md-sys-color-on-background: #f0dfd9;
+    --md-sys-color-surface: #1d1714;
+    --md-sys-color-on-surface: #f0dfd9;
     --md-sys-color-surface-container-low: #241c19;
     --md-sys-color-surface-container: #2b211d;
     --md-sys-color-surface-container-high: #342823;
@@ -217,6 +253,10 @@ body.theme-light.theme-orange {
     --md-sys-color-on-primary-container: #351000;
     --md-sys-color-secondary-container: #ffdbcc;
     --md-sys-color-on-secondary-container: #351000;
+    --md-sys-color-background: #fffbf9;
+    --md-sys-color-on-background: #251914;
+    --md-sys-color-surface: #fff8f6;
+    --md-sys-color-on-surface: #251914;
     --md-sys-color-surface-container-low: #fffaf8;
     --md-sys-color-surface-container: #fff8f5;
     --md-sys-color-surface-container-high: #ffffff;
@@ -295,8 +335,8 @@ beer-css {
     --on-tertiary: var(--md-sys-color-on-primary);
     --tertiary-container: var(--md-sys-color-primary-container);
     --on-tertiary-container: var(--md-sys-color-on-primary-container);
-    --background: var(--md-sys-color-surface);
-    --on-background: var(--md-sys-color-on-surface);
+    --background: var(--md-sys-color-background);
+    --on-background: var(--md-sys-color-on-background);
     --surface: var(--md-sys-color-surface);
     --on-surface: var(--md-sys-color-on-surface);
     --surface-variant: var(--md-sys-color-surface-variant);
@@ -306,8 +346,8 @@ beer-css {
     --inverse-surface: var(--md-sys-color-inverse-surface);
     --inverse-on-surface: var(--md-sys-color-inverse-on-surface);
     --inverse-primary: var(--md-sys-color-primary-container);
-    --surface-container-lowest: var(--md-sys-color-surface);
-    --surface-container-low: var(--md-sys-color-surface);
+    --surface-container-lowest: var(--md-sys-color-background);
+    --surface-container-low: var(--md-sys-color-surface-container-low);
     --surface-container: var(--md-sys-color-surface-container);
     --surface-container-high: var(--md-sys-color-surface-container-high);
     --surface-container-highest: var(--md-sys-color-surface-container-high);
@@ -580,8 +620,8 @@ beer-css {
 body {
     font-family: 'Roboto', sans-serif;
     /* Fallback, KSU usually provides system fonts */
-    background-color: var(--md-sys-color-surface);
-    color: var(--md-sys-color-on-surface);
+    background-color: var(--md-sys-color-background);
+    color: var(--md-sys-color-on-background);
 
     height: 100vh;
     padding: 0;
