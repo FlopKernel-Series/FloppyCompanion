@@ -42,6 +42,44 @@ MAGISK_URL="https://github.com/topjohnwu/Magisk/releases/download/${TAG}/${MAGIS
 TOOLS_DIR="$MODULE_DIR/tools"
 FKFEAT_DIR="$TOOLS_DIR/fkfeat"
 
+prune_beercss_vendor() {
+    local webroot_dir="$1"
+    local beercss_dir="$webroot_dir/vendor/beercss"
+    local beercss_cdn_dir="$beercss_dir/dist/cdn"
+
+    [ -d "$beercss_dir" ] || return 0
+
+    if [ ! -d "$beercss_cdn_dir" ]; then
+        echo "BeerCSS vendor checkout found but missing dist/cdn at $beercss_cdn_dir" >&2
+        exit 1
+    fi
+
+    echo "Pruning BeerCSS vendor files to runtime assets..."
+
+    # Keep only the packaged runtime payload, not the upstream repo sources/docs.
+    find "$beercss_dir" -mindepth 1 -maxdepth 1 \
+        ! -name "LICENSE" \
+        ! -name "dist" \
+        -exec rm -rf {} +
+
+    find "$beercss_dir/dist" -mindepth 1 -maxdepth 1 \
+        ! -name "cdn" \
+        -exec rm -rf {} +
+
+    # Retain only the minified CDN assets we are likely to reference at runtime,
+    # plus fonts and SVG assets required by the BeerCSS stylesheets.
+    find "$beercss_cdn_dir" -mindepth 1 -maxdepth 1 \
+        ! -name "beer.min.css" \
+        ! -name "beer.scoped.min.css" \
+        ! -name "beer.min.js" \
+        ! -name "material-symbols-outlined.woff2" \
+        ! -name "material-symbols-rounded.woff2" \
+        ! -name "material-symbols-sharp.woff2" \
+        ! -name "material-symbols-subset.woff2" \
+        ! -name "*.svg" \
+        -exec rm -f {} +
+}
+
 # Prepare tools directory
 mkdir -p "$TOOLS_DIR"
 
@@ -89,6 +127,7 @@ cp customize.sh "$TEMP_DIR/"
 cp features_backend.sh "$TEMP_DIR/"
 cp -r tweaks "$TEMP_DIR/"
 cp -r webroot "$TEMP_DIR/"
+prune_beercss_vendor "$TEMP_DIR/webroot"
 mkdir -p "$TEMP_DIR/tools"
 cp "$TOOLS_DIR/magiskboot" "$TEMP_DIR/tools/"
 
