@@ -1000,13 +1000,13 @@
                                         Mode</span>
                                 </div>
                                 <div class="mode-toggle-row">
-                                    <div class="segmented-control">
+                                    <nav class="segmented-control beer group connected" role="radiogroup" aria-label="Dirty pages mode">
                                         <input type="radio" name="mem-dirty-mode" id="mem-mode-ratio" value="ratio"
                                             checked>
-                                        <label for="mem-mode-ratio">Ratio</label>
+                                        <label class="button small responsive left-round" for="mem-mode-ratio">Ratio</label>
                                         <input type="radio" name="mem-dirty-mode" id="mem-mode-bytes" value="bytes">
-                                        <label for="mem-mode-bytes">Bytes</label>
-                                    </div>
+                                        <label class="button small responsive right-round" for="mem-mode-bytes">Bytes</label>
+                                    </nav>
                                 </div>
                                 <div id="mem-group-ratio">
                                     <div class="tweak-row">
@@ -1369,12 +1369,12 @@
                         </div>
                         <div class="card-content">
                             <div class="monitor-cpu-controls">
-                                <div class="segmented-control monitor-cpu-toggle" role="radiogroup" aria-label="CPU view">
+                                <nav class="segmented-control beer group connected monitor-cpu-toggle" role="radiogroup" aria-label="CPU view">
                                     <input type="radio" name="monitor-cpu-view" id="monitor-cpu-view-cluster" value="cluster" checked>
-                                    <label for="monitor-cpu-view-cluster" data-i18n="monitor.cpu.viewCluster">Per cluster</label>
+                                    <label class="button small responsive left-round" for="monitor-cpu-view-cluster" data-i18n="monitor.cpu.viewCluster">Per cluster</label>
                                     <input type="radio" name="monitor-cpu-view" id="monitor-cpu-view-core" value="core">
-                                    <label for="monitor-cpu-view-core" data-i18n="monitor.cpu.viewCore">Per core</label>
-                                </div>
+                                    <label class="button small responsive right-round" for="monitor-cpu-view-core" data-i18n="monitor.cpu.viewCore">Per core</label>
+                                </nav>
                             </div>
 
                             <div class="monitor-section">
@@ -1534,11 +1534,11 @@
     </div>
 
     <!-- Floating Action Buttons (outside slider so they don't scroll) -->
-    <div class="fab-container" id="fab-container">
-        <button class="fab" id="fab-refresh" aria-label="Refresh">
+    <div class="fab-container beer" id="fab-container">
+        <button class="fab circle extra fill" id="fab-refresh" aria-label="Refresh">
             <svg class="icon-svg" viewBox="0 0 24 24" data-icon="refresh"></svg>
         </button>
-        <button class="fab primary" id="fab-apply" aria-label="Apply" style="display: none;">
+        <button class="fab circle extra" id="fab-apply" aria-label="Apply" style="display: none;">
             <svg class="icon-svg" viewBox="0 0 24 24" data-icon="check"></svg>
         </button>
     </div>

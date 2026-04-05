@@ -1921,7 +1921,7 @@ body {
     border-radius: 16px;
 }
 
-.monitor-cpu-toggle.segmented-control label {
+.monitor-cpu-toggle.segmented-control label.button {
     padding: 8px 10px;
     font-size: 12px;
     border-radius: 12px;
@@ -2479,28 +2479,14 @@ body {
 }
 
 .fab {
-    width: 56px;
-    height: 56px;
-    border-radius: 16px;
-    /* Material 3 container shape */
-    border: none;
-    background-color: var(--md-sys-color-secondary-container);
-    color: var(--md-sys-color-on-secondary-container);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: transform 0.2s;
-}
-
-.fab.primary {
-    background-color: var(--md-sys-color-primary);
-    color: var(--md-sys-color-on-primary);
+    transition: transform 0.2s, box-shadow 0.2s;
+    -webkit-tap-highlight-color: transparent;
 }
 
 .fab:active {
     transform: scale(0.95);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.22);
 }
 
 .fab .icon-svg {
@@ -2773,33 +2759,55 @@ body {
 /* Segmented Control */
 .segmented-control {
     display: flex;
-    background-color: var(--md-sys-color-surface-container-high);
-    border-radius: 20px;
-    padding: 4px;
     width: 100%;
     margin-bottom: 16px;
 }
 
-.segmented-control input[type="radio"] {
-    display: none;
+.segmented-control.beer.group {
+    background-color: var(--md-sys-color-surface-container-high) !important;
+    border-radius: 20px;
+    padding: 4px;
+    gap: 4px;
 }
 
-.segmented-control label {
+.segmented-control input[type="radio"] {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    border: 0;
+    opacity: 0;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.segmented-control label.button {
     flex: 1;
     text-align: center;
-    padding: 10px;
+    justify-content: center;
+    padding: 10px 12px;
     font-size: 14px;
     font-weight: 500;
     border-radius: 16px;
     cursor: pointer;
-    color: var(--md-sys-color-on-surface-variant);
-    transition: all 0.2s;
+    color: var(--md-sys-color-on-surface-variant) !important;
+    background-color: transparent !important;
+    box-shadow: none !important;
+    transition: background-color 0.2s ease, color 0.2s ease, outline-color 0.2s ease;
+    min-inline-size: 0;
+    white-space: nowrap;
+    min-height: 40px;
 }
 
-.segmented-control input[type="radio"]:checked+label {
-    background-color: var(--md-sys-color-secondary-container);
-    color: var(--md-sys-color-on-secondary-container);
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+.segmented-control input[type="radio"]:checked + label.button {
+    background-color: var(--md-sys-color-secondary-container) !important;
+    color: var(--md-sys-color-on-secondary-container) !important;
+}
+
+.segmented-control input[type="radio"]:focus-visible + label.button {
+    outline: 2px solid rgba(var(--md-sys-color-primary-rgb), 0.42);
+    outline-offset: 2px;
 }
 
 .tweak-subsection {
