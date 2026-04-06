@@ -6,6 +6,14 @@
             "url": "https://github.com/Flopster101"
         }
     ],
+    "third_party": [
+        {
+            "name": "BeerCSS",
+            "role": "about.roleBeerCss",
+            "license": "MIT License",
+            "url": "https://www.beercss.com/"
+        }
+    ],
     "translations": {
         "en": {
             "contributors": [

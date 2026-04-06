@@ -792,6 +792,11 @@ async function init() {
                     renderProjectCredits(projectCreditsList, creditsData);
                 }
 
+                const thirdPartyCreditsList = document.getElementById('third-party-credits-list');
+                if (thirdPartyCreditsList) {
+                    renderThirdPartyCredits(thirdPartyCreditsList, creditsData);
+                }
+
                 if (translationCreditsList) {
                     renderTranslationCredits(translationCreditsList, creditsData);
                 }
@@ -889,6 +894,51 @@ function renderTranslationCredits(container, data) {
     container.innerHTML = html;
 
     // Add click handlers for links
+    container.querySelectorAll('.credits-link').forEach(a => {
+        a.addEventListener('click', (e) => {
+            e.preventDefault();
+            const url = a.dataset.url;
+            if (window.exec) {
+                window.exec(`am start -a android.intent.action.VIEW -d "${url}"`);
+            } else {
+                window.open(url, '_blank');
+            }
+        });
+    });
+}
+
+function renderThirdPartyCredits(container, data) {
+    const card = document.getElementById('third-party-credits-card');
+    if (!data.third_party || data.third_party.length === 0) {
+        if (card) card.style.display = 'none';
+        return;
+    }
+
+    if (card) card.style.display = '';
+
+    let html = '<ul class="credits-list">';
+    for (const entry of data.third_party) {
+        let heading = entry.url
+            ? `<a href="#" class="credits-link" data-url="${entry.url}"><strong>${entry.name}</strong></a>`
+            : `<strong>${entry.name}</strong>`;
+
+        if (entry.role) {
+            heading += ` <span class="credits-role">(<span data-i18n="${entry.role}">${entry.role}</span>)</span>`;
+        }
+
+        let meta = [];
+        if (entry.license) meta.push(entry.license);
+
+        html += '<li class="credits-list-item-block">';
+        html += `<div>${heading}</div>`;
+        if (meta.length > 0) {
+            html += `<div class="credits-meta">${meta.join(' · ')}</div>`;
+        }
+        html += '</li>';
+    }
+    html += '</ul>';
+    container.innerHTML = html;
+
     container.querySelectorAll('.credits-link').forEach(a => {
         a.addEventListener('click', (e) => {
             e.preventDefault();

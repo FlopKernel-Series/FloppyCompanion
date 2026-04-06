@@ -3472,6 +3472,12 @@ beer-css.tweak-slider-scope .tweak-beer-slider:has(> input.beer-slider-input:dis
     border-bottom: none;
 }
 
+.credits-list-item-block {
+    align-items: flex-start !important;
+    flex-direction: column;
+    gap: 4px;
+}
+
 .credits-link {
     color: var(--md-sys-color-on-surface);
     text-decoration: none;
@@ -3485,6 +3491,11 @@ beer-css.tweak-slider-scope .tweak-beer-slider:has(> input.beer-slider-input:dis
 
 .credits-role {
     margin-inline-start: 6px;
+    font-size: 13px;
+    color: var(--md-sys-color-on-surface-variant);
+}
+
+.credits-meta {
     font-size: 13px;
     color: var(--md-sys-color-on-surface-variant);
 }
