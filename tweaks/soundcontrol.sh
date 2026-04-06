@@ -48,6 +48,30 @@ get_saved() {
 
 # Save config
 save() {
+    if [ "$#" -eq 0 ]; then
+        rm -f "$CONFIG_FILE"
+        echo "saved"
+        return 0
+    fi
+
+    if echo "$1" | grep -q '='; then
+        mkdir -p "$(dirname "$CONFIG_FILE")"
+        : > "$CONFIG_FILE"
+
+        for arg in "$@"; do
+            key="${arg%%=*}"
+            val="${arg#*=}"
+            [ -n "$key" ] && [ -n "$val" ] && echo "$key=$val" >> "$CONFIG_FILE"
+        done
+
+        if [ ! -s "$CONFIG_FILE" ]; then
+            rm -f "$CONFIG_FILE"
+        fi
+
+        echo "saved"
+        return 0
+    fi
+
     local hp_l="$1"
     local hp_r="$2"
     local mic="$3"
@@ -97,6 +121,11 @@ apply_saved() {
     apply "$hp_l" "$hp_r" "$mic"
 }
 
+clear_saved() {
+    rm -f "$CONFIG_FILE"
+    echo "cleared"
+}
+
 # Main action handler
 case "$1" in
     is_available)
@@ -109,7 +138,8 @@ case "$1" in
         get_saved
         ;;
     save)
-        save "$2" "$3" "$4"
+        shift
+        save "$@"
         ;;
     apply)
         apply "$2" "$3" "$4"
@@ -117,8 +147,11 @@ case "$1" in
     apply_saved)
         apply_saved
         ;;
+    clear_saved)
+        clear_saved
+        ;;
     *)
-        echo "usage: $0 {is_available|get_current|get_saved|save|apply|apply_saved}"
+        echo "usage: $0 {is_available|get_current|get_saved|save|apply|apply_saved|clear_saved}"
         exit 1
         ;;
 esac

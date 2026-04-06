@@ -52,6 +52,50 @@ fi
 # Create presets directory
 mkdir -p "$DATA_DIR/presets"
 
+sanitize_int() {
+    value="$1"
+    fallback="$2"
+
+    if echo "$value" | grep -Eq '^-?[0-9]+$'; then
+        echo "$value"
+    else
+        echo "$fallback"
+    fi
+}
+
+capture_soundcontrol_defaults() {
+    sc_attempt=0
+    sc_zero_stable_count=0
+
+    # On FloppyTrinketMi the sound control nodes can expose a transient boot
+    # value before settling to the steady-state default. Wait for the settled
+    # 0 dB state instead of snapshotting the transient value.
+    while [ "$sc_attempt" -lt 30 ]; do
+        sc_hp_raw=$(cat /sys/kernel/sound_control/headphone_gain 2>/dev/null | tr -d '\r')
+        sc_mic_raw=$(cat /sys/kernel/sound_control/mic_gain 2>/dev/null | tr -d '\r\n')
+        sc_raw_hp_l=$(sanitize_int "$(echo "$sc_hp_raw" | awk '{print $1}')" "0")
+        sc_raw_hp_r=$(sanitize_int "$(echo "$sc_hp_raw" | awk '{print $2}')" "0")
+        sc_raw_mic=$(sanitize_int "$sc_mic_raw" "0")
+
+        SOUND_HP_L="$sc_raw_hp_l"
+        SOUND_HP_R="$sc_raw_hp_r"
+        SOUND_MIC="$sc_raw_mic"
+
+        if [ "$SOUND_HP_L,$SOUND_HP_R,$SOUND_MIC" = "0,0,0" ]; then
+            sc_zero_stable_count=$((sc_zero_stable_count + 1))
+        else
+            sc_zero_stable_count=0
+        fi
+
+        if [ "$sc_zero_stable_count" -ge 2 ]; then
+            break
+        fi
+
+        sc_attempt=$((sc_attempt + 1))
+        sleep 1
+    done
+}
+
 # --- ZRAM Defaults ---
 ZRAM_DEV=""
 if [ -e /dev/block/zram0 ]; then
@@ -78,6 +122,15 @@ else
     ZRAM_DISKSIZE="0"
     ZRAM_ALGO="lz4"
     ZRAM_ENABLED="0"
+fi
+
+# --- Sound Control Defaults (FloppyTrinketMi only) ---
+SOUND_HP_L="0"
+SOUND_HP_R="0"
+SOUND_MIC="0"
+
+if [ "$IS_TRINKET" = "1" ]; then
+    capture_soundcontrol_defaults
 fi
 
 # --- Output JSON ---
@@ -211,9 +264,9 @@ EOF_EXYNOS
     cat << EOF_TRINKET
 ,
     "soundcontrol": {
-      "hp_l": "$(cat /sys/kernel/sound_control/headphone_gain 2>/dev/null | awk '{print $1}' || echo 0)",
-      "hp_r": "$(cat /sys/kernel/sound_control/headphone_gain 2>/dev/null | awk '{print $2}' || echo 0)",
-      "mic": "$(cat /sys/kernel/sound_control/mic_gain 2>/dev/null || echo 0)"
+      "hp_l": "$SOUND_HP_L",
+      "hp_r": "$SOUND_HP_R",
+      "mic": "$SOUND_MIC"
     },
     "charging": {
       "bypass": "$(cat /sys/class/power_supply/battery/input_suspend 2>/dev/null || echo 0)",

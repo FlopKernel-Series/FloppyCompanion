@@ -1,12 +1,21 @@
 // Sound Control Tweak
 
 let scCurrentState = { hp_l: '0', hp_r: '0', mic: '0' };
-let scSavedState = { hp_l: '0', hp_r: '0', mic: '0' };
+let scSavedState = {};
 let scPendingState = { hp_l: '0', hp_r: '0', mic: '0' };
 let scSplitMode = false;
 let scReferenceState = { hp_l: '0', hp_r: '0', mic: '0' };
+let scDefaultState = { hp_l: '0', hp_r: '0', mic: '0' };
 
 const runSoundControlBackend = (...args) => window.runTweakBackend('soundcontrol', ...args);
+
+function normalizeSoundControlState(state = {}) {
+    return {
+        hp_l: state.hp_l || '0',
+        hp_r: state.hp_r || '0',
+        mic: state.mic || '0'
+    };
+}
 
 function renderSoundControlCard() {
     // Update value labels from current state
@@ -78,23 +87,24 @@ function toggleSoundControlSplitMode(split) {
 
 async function loadSoundControlState() {
     const { current, saved } = await window.loadTweakState('soundcontrol');
-    scCurrentState = {
-        hp_l: current.hp_l || '0',
-        hp_r: current.hp_r || '0',
-        mic: current.mic || '0'
-    };
+    scCurrentState = normalizeSoundControlState(current);
+    scDefaultState = normalizeSoundControlState(window.getDefaultTweakPreset('soundcontrol') || {});
+    scSavedState = window.buildSparseStateAgainstDefaults(saved, scDefaultState);
 
-    scSavedState = { ...saved };
+    const { reference, hasSaved } = window.resolveTweakReference(scCurrentState, scSavedState, scDefaultState);
 
-    const defSound = window.getDefaultTweakPreset('soundcontrol');
-    scPendingState = window.initPendingState(scCurrentState, scSavedState, defSound);
-
-    const { reference } = window.resolveTweakReference(scCurrentState, scSavedState, defSound);
-    scReferenceState = {
-        hp_l: reference.hp_l || '0',
-        hp_r: reference.hp_r || '0',
-        mic: reference.mic || '0'
-    };
+    // This card controls live mixer state, so when there is no explicit saved
+    // override we should stage the current kernel values, not a captured
+    // baseline snapshot from boot.
+    if (hasSaved) {
+        scPendingState = normalizeSoundControlState(
+            window.initPendingState(scCurrentState, scSavedState, scDefaultState)
+        );
+        scReferenceState = normalizeSoundControlState(reference);
+    } else {
+        scPendingState = normalizeSoundControlState(scCurrentState);
+        scReferenceState = normalizeSoundControlState(scCurrentState);
+    }
 
     // Check if L and R are different - if so, enable split mode
     if (scPendingState.hp_l !== scPendingState.hp_r) {
@@ -108,10 +118,22 @@ async function loadSoundControlState() {
 window.loadSoundControlState = loadSoundControlState;
 
 async function saveSoundControl() {
-    await runSoundControlBackend('save', scPendingState.hp_l, scPendingState.hp_r, scPendingState.mic);
-    scSavedState = { ...scPendingState };
-    scReferenceState = { ...scSavedState };
-    updateSoundControlPendingIndicator();
+    const sparseState = window.buildSparseStateAgainstDefaults(scPendingState, scDefaultState);
+    if (Object.keys(sparseState).length === 0) {
+        await runSoundControlBackend('clear_saved');
+        scSavedState = {};
+        scReferenceState = normalizeSoundControlState(scCurrentState);
+        scPendingState = normalizeSoundControlState(scCurrentState);
+        renderSoundControlCard();
+    } else {
+        await runSoundControlBackend('save', ...Object.entries(sparseState).map(([key, value]) => `${key}=${value}`));
+        scSavedState = { ...sparseState };
+        const effectiveReferenceState = window.initPendingState(scCurrentState, scSavedState, scDefaultState);
+        scReferenceState = normalizeSoundControlState(effectiveReferenceState);
+        scPendingState = normalizeSoundControlState(effectiveReferenceState);
+        renderSoundControlCard();
+    }
+
     showToast(window.t ? window.t('toast.settingsSaved') : 'Saved');
 }
 
