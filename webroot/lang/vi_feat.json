@@ -43,6 +43,10 @@
         "title": "Diệt Bảo vệ Khởi tạo",
         "desc": "Cho phép Power HAL và các tập lệnh khởi tạo sửa đổi các thiết lập kernel. Bật tùy chọn này nếu bạn muốn ROM điều khiển hiệu năng."
     },
+    "init_protection": {
+        "title": "Bảo vệ Khởi tạo",
+        "desc": "Ngăn chặn Power HAL và các tập lệnh khởi tạo sửa đổi các thiết lập kernel. Tắt tùy chọn này nếu bạn muốn ROM điều khiển hiệu năng."
+    },
     "legacy_timestamp_source": {
         "title": "Dấu thời gian Cũ",
         "desc": "Khắc phục sự cố thời lượng quay video trên các ROM có HAL camera cũ."
@@ -66,6 +70,28 @@
             "5": {
                 "label": "Giả mạo đầy đủ",
                 "desc": "Giả mạo uname cho một số dịch vụ liên quan đến BPF."
+            }
+        }
+    },
+    "mass_storage_hack": {
+        "title": "Hack hỗ trợ Lưu trữ Lớn",
+        "desc": "Tiêm xử lý thiết bị mass_storage vào tập lệnh init.exynos2100.usb.rc của nhà cung cấp để cho phép các ứng dụng như DriveDroid hoạt động."
+    },
+    "selinux_mode": {
+        "title": "Buộc chế độ SELinux",
+        "desc": "Buộc chế độ SELinux. Dành cho nhà phát triển.",
+        "options": {
+            "0": {
+                "label": "Mặc định",
+                "desc": "Sử dụng chế độ SELinux mặc định của kernel."
+            },
+            "1": {
+                "label": "Luôn Thực thi",
+                "desc": "Buộc chế độ Thực thi SELinux khi khởi động."
+            },
+            "2": {
+                "label": "Luôn Cho phép",
+                "desc": "Buộc chế độ Cho phép SELinux khi khởi động"
             }
         }
     }

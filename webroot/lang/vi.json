@@ -210,6 +210,14 @@
             "desc1": "Điều tiết gốc. Tần số: 2288 → 2132 → 2002 MHz. Đây là chế độ mặc định.",
             "desc2": "Tần số điều tiết tùy chỉnh. Đặt giới hạn điều tiết của riêng bạn ở KHz.",
             "desc3": "Điều tiết ít mạnh mẽ hơn. Tần số: 2400 → 2288 → 2208 MHz. Chạy nóng hơn."
+       },
+        "thermalControl": {
+            "title": "Kiểm soát Nhiệt",
+            "little": "Nhỏ",
+            "big": "Lớn",
+            "prime": "Chính",
+            "g3d": "G3D",
+            "performanceMode": "Chế độ Hiệu năng"
         },
         "undervolt": {
             "title": "Giảm điện áp",
@@ -298,6 +306,8 @@
             "display": "HBM tăng cường độ sáng tối đa dưới ánh nắng mặt trời. CABC điều chỉnh đèn nền dựa trên nội dung để tiết kiệm điện năng.",
             "ioScheduler": "Thuật toán được sử dụng để sắp xếp và hợp nhất các yêu cầu I/O. Ảnh hưởng đến hiệu năng lưu trữ và độ trễ.",
             "thermal": "Điều khiển điều tiết CPU ở Cụm Lớn. Chế độ 3 là hiệu năng mạnh mẽ, Chế độ 1 giống như gốc, Chế độ 0 tắt điều tiết (nguy hiểm!).",
+            "thermalControl": "Điều chỉnh các giá trị bù nhiệt độ CPU và G3D so với các mặc định của kernel đã được ghi lại. Giá trị cao hơn sẽ làm giảm điều tiết, giá trị thấp hơn sẽ làm nó mạnh mẽ hơn. Các giá trị bù này được ghi lại và áp dụng sau khi khởi động hoàn tất.",
+            "thermalControlPerformance": "Đặt tất cả các giá trị bù nhiệt về 0°C, nghĩa là các giá trị điều tiết mặc định của ECT được sử dụng.",
             "undervolt": "Giảm điện áp để tiết kiệm điện năng và giảm nhiệt. Không khuyến nghị sử dụng với Ép xung (Chế độ Mở khóa).",
             "blockEd3": "Tắt Chế độ Phát hiện Tai 3, chế độ này ngăn màn hình giảm tốc độ làm mới khi cảm biến tiệm cận ảo được kích hoạt. Đồng thời làm cảm biến tiệm cận giảm độ nhạy.",
             "gpuClkLock": "Khi được bật, ngăn tần số tối thiểu/tối đa của GPU thay đổi. Hữu ích để khóa xung GPU trong một phạm vi cụ thể.",
@@ -319,7 +329,9 @@
         "description": "Mô-đun đồng hành để cấu hình FloppyKernel.",
         "moduleLinks": "Các liên kết mô-đun",
         "projectCredits": "Ghi nhận dự án",
+        "thirdPartyCredits": "Ghi nhận Bên thứ ba",
         "roleFlopster": "Nhà phát triển của mô-đun và FloppyKernel",
+        "roleBeerCss": "Framework Giao diện Người dùng MD3",
         "kernelLinksTemplate": "Các liên kết {name}",
         "translationCredits": "Ghi nhận dịch thuật",
         "repository": "Kho",
@@ -370,6 +382,8 @@
         "readonlyBody": "<p>Thao tác này cho phép vá các tính năng được đánh dấu là chỉ đọc.</p><p><strong>Chỉ sử dụng cho thử nghiệm. Những thay đổi sẽ KHÔNG được lưu.</strong></p>",
         "applyChangesTitle": "Áp dụng các thay đổi?",
         "applyChangesBody": "<p>Thao tác này sẽ flash kernel đã được vá tính năng vào thiết bị của bạn.</p><p><strong>Việc này liên quan đến rủi ro.</strong></p>",
+        "thermalControlPerformanceTitle": "Bật chế độ Hiệu năng?",
+        "thermalControlPerformanceBody": "<p>Thao tác này đặt tất cả các giá trị bù nhiệt về <strong>0°C</strong>, sử dụng các giá trị điều tiết mặc định của ECT.</p><p><strong>Điều này có thể gây ra quá nhiệt đáng kể.</strong></p>",
         "rebootPendingBody": "<p>Bạn có chắc mình muốn {action}?</p><p><strong>Bạn có những thay đổi chưa được áp dụng sẽ bị mất!</strong></p>",
         "processingKernel": "Đang xử lý Kernel..."
     }
