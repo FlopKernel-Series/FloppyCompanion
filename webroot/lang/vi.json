@@ -234,6 +234,7 @@
         "misc": {
             "title": "Tinh chỉnh Floppy1280 Linh tinh",
             "blockEd3": "Chế độ Phát hiện Chặn Tai 3",
+            "esgShortBurst": "Chế độ Bùng nổ ESG",
             "gpuClkLock": "Khoá Xung GPU",
             "throttlersProtection": "Bảo vệ Điều tiết",
             "gpuUnlock": "Ép xung GPU",
@@ -308,6 +309,7 @@
             "thermal": "Điều khiển điều tiết CPU ở Cụm Lớn. Chế độ 3 là hiệu năng mạnh mẽ, Chế độ 1 giống như gốc, Chế độ 0 tắt điều tiết (nguy hiểm!).",
             "thermalControl": "Điều chỉnh các giá trị bù nhiệt độ CPU và G3D so với các mặc định của kernel đã được ghi lại. Giá trị cao hơn sẽ làm giảm điều tiết, giá trị thấp hơn sẽ làm nó mạnh mẽ hơn. Các giá trị bù này được ghi lại và áp dụng sau khi khởi động hoàn tất.",
             "thermalControlPerformance": "Đặt tất cả các giá trị bù nhiệt về 0°C, nghĩa là các giá trị điều tiết mặc định của ECT được sử dụng.",
+            "esgShortBurst": "Làm cho Bước Năng lượng EMS phản ứng nhanh hơn với các đợt công việc ngắn. Nó tăng hiệu năng trong khoảng 1 mili giây, giảm ngưỡng bận, và tăng mức tăng cường đánh thức sau I/O ban đầu để công việc bùng nổ nhận được hiệu năng CPU sớm hơn.",
             "undervolt": "Giảm điện áp để tiết kiệm điện năng và giảm nhiệt. Không khuyến nghị sử dụng với Ép xung (Chế độ Mở khóa).",
             "blockEd3": "Tắt Chế độ Phát hiện Tai 3, chế độ này ngăn màn hình giảm tốc độ làm mới khi cảm biến tiệm cận ảo được kích hoạt. Đồng thời làm cảm biến tiệm cận giảm độ nhạy.",
             "gpuClkLock": "Khi được bật, ngăn tần số tối thiểu/tối đa của GPU thay đổi. Hữu ích để khóa xung GPU trong một phạm vi cụ thể.",
