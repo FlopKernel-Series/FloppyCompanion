@@ -168,8 +168,9 @@ function initNavigation() {
     let isDragging = false;
     let isHorizontalSwipe = null; // null = undetermined, true = horizontal, false = vertical
 
-    const minSwipeDistance = 80;
-    const swipeAngleThreshold = 0.5; // Horizontal movement threshold
+    const minSwipeDistance = 100;
+    const swipeAngleThreshold = 1.5; // Require a strongly horizontal gesture to avoid accidental tab changes.
+    const swipeStartThreshold = 16;
 
     const sliderContainer = document.querySelector('.slider-container');
     const sliderTrack = document.getElementById('slider-track');
@@ -202,7 +203,7 @@ function initNavigation() {
         const diffY = Math.abs(currentY - startY);
 
         // Determine swipe direction on first significant movement
-        if (isHorizontalSwipe === null && (diffX > 10 || diffY > 10)) {
+        if (isHorizontalSwipe === null && (diffX > swipeStartThreshold || diffY > swipeStartThreshold)) {
             isHorizontalSwipe = diffX > diffY * swipeAngleThreshold;
         }
 
