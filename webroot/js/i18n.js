@@ -165,13 +165,7 @@ const I18N = {
 
     // Get translation by dot-notation key
     t(key, replacements = {}) {
-        const keys = key.split('.');
-        let value = this.getNestedValue(this.strings, keys);
-
-        // Fallback to English if not found
-        if (value === undefined) {
-            value = this.getNestedValue(this.fallbackStrings, keys);
-        }
+        let value = this.resolveTranslationValue(key);
 
         // Return key if still not found
         if (value === undefined) {
@@ -184,6 +178,31 @@ const I18N = {
             Object.keys(replacements).forEach(k => {
                 value = value.replace(`{${k}}`, replacements[k]);
             });
+        }
+
+        return value;
+    },
+
+    resolveTranslationValue(key, seen = new Set()) {
+        if (!key || typeof key !== 'string') return undefined;
+
+        if (seen.has(key)) {
+            console.warn(`Circular translation reference: ${[...seen, key].join(' -> ')}`);
+            return undefined;
+        }
+
+        seen.add(key);
+
+        const keys = key.split('.');
+        let value = this.getNestedValue(this.strings, keys);
+
+        // Fallback to English if not found
+        if (value === undefined) {
+            value = this.getNestedValue(this.fallbackStrings, keys);
+        }
+
+        if (typeof value === 'string' && /^@[A-Za-z0-9_.-]+$/.test(value)) {
+            return this.resolveTranslationValue(value.slice(1), seen);
         }
 
         return value;
