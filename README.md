@@ -31,9 +31,15 @@ Note: If you spoof the kernel version (SusFS, BRENE), feature detection and patc
 ## Features
 - FloppyKernel feature toggles (per device family)
 - Common kernel tweaks (ZRAM, VM, I/O scheduler)
-- Platform-specific tweak panels (thermal, undervolt, charging, display, GPU)
+- Platform-specific tweak panels (thermal, thermal control, undervolt, charging, display, GPU)
 - Preset save/load/apply system
 - BeerCSS-powered Material Design 3 WebUI with i18n support
+
+## Supported Tweaks
+- Common tweaks: ZRAM, Memory / VM, LMKD, I/O scheduler.
+- Floppy1280: Thermal, Undervolt, Misc Exynos.
+- Floppy2100: Thermal Control, Undervolt, Misc Exynos.
+- FloppyTrinketMi: Sound Control, Charging, Display, Adreno, Misc Trinket.
 
 ## Usage
 1. Install the module through KernelSU Manager.
