@@ -50,6 +50,11 @@ Alternative (CI builds via nightly.link):
 
 ## Screenshots
 <p>
+        <img src="docs/images/exy2100/floppy2100_home.jpg" width="240" />
+        <img src="docs/images/exy2100/floppy2100_feat.jpg" width="240" />
+        <img src="docs/images/exy2100/floppy2100_tweaks.jpg" width="240" />
+</p>
+<p>
         <img src="docs/images/exy1280/floppy1280_home.jpg" width="240" />
         <img src="docs/images/exy1280/floppy1280_feat.jpg" width="240" />
         <img src="docs/images/exy1280/floppy1280_tweaks.jpg" width="240" />
