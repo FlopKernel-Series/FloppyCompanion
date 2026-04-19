@@ -1,5 +1,30 @@
 All notable changes to FloppyCompanion will be documented in this file.
 
+## v1.1.0
+- Support for FloppyKernel for **Exynos 2100**.
+- New improved BeerCSS-based MD3 user interface!
+- Introduced WebUI simulator (for developers).
+- i18n language system overhaul.
+- Fixed several bugs in Tweaks.
+#### PRs:
+* module: lang: Update Turkish translations by @NotZezu in https://github.com/FlopKernel-Series/FloppyCompanion/pull/10
+* module: lang: Update Ukrainian translations by @NiFate in https://github.com/FlopKernel-Series/FloppyCompanion/pull/11
+* Add Arabic translation because I CAN by @maydoxx in https://github.com/FlopKernel-Series/FloppyCompanion/pull/12
+* add azerbaijani language by @akifakif32 in https://github.com/FlopKernel-Series/FloppyCompanion/pull/14
+* Update README.md by @maydoxx in https://github.com/FlopKernel-Series/FloppyCompanion/pull/15
+* Update TRANSLATORS.md by @maydoxx in https://github.com/FlopKernel-Series/FloppyCompanion/pull/17
+* lang: tweaks/lmkd: Adding lmkd prop settings for the Ukrainian language by @NiFate in https://github.com/FlopKernel-Series/FloppyCompanion/pull/16
+* Add Vietnamese language by @ThePrimalPea in https://github.com/FlopKernel-Series/FloppyCompanion/pull/18
+* Update Vietnamese translation by @ThePrimalPea in https://github.com/FlopKernel-Series/FloppyCompanion/pull/19
+* Sync Vietnamese to source by @ThePrimalPea in https://github.com/FlopKernel-Series/FloppyCompanion/pull/20
+* Minor fix by @ThePrimalPea in https://github.com/FlopKernel-Series/FloppyCompanion/pull/21
+* Update ru.json by @golkov1993 in https://github.com/FlopKernel-Series/FloppyCompanion/pull/23
+* Update Vietnamese by @ThePrimalPea in https://github.com/FlopKernel-Series/FloppyCompanion/pull/22
+* Updated and added new strings in to Russian by @golkov1993 in https://github.com/FlopKernel-Series/FloppyCompanion/pull/24
+* lang: uk: Update translation by @NiFate in https://github.com/FlopKernel-Series/FloppyCompanion/pull/25
+* Update Vietnamese by @ThePrimalPea in https://github.com/FlopKernel-Series/FloppyCompanion/pull/26
+* Shorten 'Сохранить и применить' to 'Сохр./Прим.' by @LegacyFreeman in https://github.com/FlopKernel-Series/FloppyCompanion/pull/27
+
 ## v1.0.2
 
 - A ton of UI backend improvements for stability.
