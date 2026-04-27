@@ -386,6 +386,10 @@
         "applyChangesBody": "<p>Thao tác này sẽ flash kernel đã được vá tính năng vào thiết bị của bạn.</p><p><strong>Việc này liên quan đến rủi ro.</strong></p>",
         "thermalControlPerformanceTitle": "Bật chế độ Hiệu năng?",
         "thermalControlPerformanceBody": "<p>Thao tác này đặt tất cả các giá trị bù nhiệt về <strong>0°C</strong>, sử dụng các giá trị điều tiết mặc định của ECT.</p><p><strong>Điều này có thể gây ra quá nhiệt đáng kể.</strong></p>",
+        "throttlersProtectionOffsetsEnableTitle": "Đặt giá trị bù nhiệt được khuyến nghị?",
+        "throttlersProtectionOffsetsEnableBody": "<p>Bảo vệ Điều tiết đã được bật. Các giá trị bù được khuyến nghị giúp tránh hiện tượng quá nhiệt vì ROM không còn có thể điều chỉnh hiệu năng của SoC nữa.</p><p>Việc này sẽ đặt Lớn và Chính về <strong>-10°C</strong>, Nhỏ về <strong>-8°C</strong>, và G3D về <strong>-13°C</strong>.</p>",
+        "throttlersProtectionOffsetsDisableTitle": "Đặt lại giá trị bù nhiệt về 0°C?",
+        "throttlersProtectionOffsetsDisableBody": "<p>Bảo vệ Điều tiết đã bị tắt. Đặt lại tất cả các giá trị bù nhiệt về <strong>0°C</strong> được khuyến nghị vì ROM sẽ quản lý việc điều tiết lần nữa.</p>",
         "rebootPendingBody": "<p>Bạn có chắc mình muốn {action}?</p><p><strong>Bạn có những thay đổi chưa được áp dụng sẽ bị mất!</strong></p>",
         "processingKernel": "Đang xử lý Kernel..."
     }
