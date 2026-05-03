@@ -111,6 +111,15 @@
             "enabled": "Activado",
             "disabled": "Desactivado",
             "noData": "No hay datos de GPU"
+        },
+        "thermal": {
+            "title": "Térmicos",
+            "zonesSection": "Zonas térmicas",
+            "zone": "Zona",
+            "current": "Actual",
+            "min": "Mín",
+            "max": "Máx",
+            "noData": "No hay datos térmicos"
         }
     },
     "tweaks": {

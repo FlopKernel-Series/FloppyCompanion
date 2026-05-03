@@ -1752,6 +1752,29 @@
                             </div>
                         </div>
                     </div>
+
+                    <div class="card section-shell monitor-card collapsed" id="monitor-thermal-card">
+                        <div class="card-header">
+                            <span class="card-title" data-i18n="monitor.thermal.title">Thermal</span>
+                            <button id="monitor-thermal-toggle" class="icon-button monitor-toggle" aria-label="Toggle Thermal" aria-expanded="false">
+                                <svg class="icon-svg" viewBox="0 0 24 24" data-icon="expand_more"></svg>
+                            </button>
+                        </div>
+                        <div class="card-content">
+                            <div class="monitor-section">
+                                <div class="monitor-section-title" data-i18n="monitor.thermal.zonesSection">Thermal Zones</div>
+                                <div class="monitor-thermal-table">
+                                    <div class="monitor-thermal-row monitor-thermal-header">
+                                        <span class="monitor-thermal-cell" data-i18n="monitor.thermal.zone">Zone</span>
+                                        <span class="monitor-thermal-cell" data-i18n="monitor.thermal.current">Current</span>
+                                        <span class="monitor-thermal-cell" data-i18n="monitor.thermal.min">Min</span>
+                                        <span class="monitor-thermal-cell" data-i18n="monitor.thermal.max">Max</span>
+                                    </div>
+                                    <div id="monitor-thermal-list" class="monitor-thermal-body"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 

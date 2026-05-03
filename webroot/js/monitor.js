@@ -14,6 +14,7 @@
     let lastUseBytes = false;
     let cpuViewMode = 'cluster';
     let isMonitorActive = false;
+    let thermalMinMax = {}; // Track min/max per thermal zone
 
     function clamp(value, min, max) {
         return Math.min(Math.max(value, min), max);
@@ -753,6 +754,33 @@
         };
     }
 
+    async function fetchThermalData() {
+        const cmd = `for zone in /sys/class/thermal/thermal_zone*; do ` +
+            `[ -d "$zone" ] || continue; ` +
+            `type=$(cat "$zone/type" 2>/dev/null); ` +
+            `temp=$(cat "$zone/temp" 2>/dev/null); ` +
+            `echo "$type|$temp"; ` +
+            `done`;
+        const output = await window.exec(cmd);
+        if (!output) return null;
+        const lines = output.trim().split('\n').filter(Boolean);
+        const zones = [];
+        for (const line of lines) {
+            const parts = line.split('|');
+            if (parts.length >= 2) {
+                const type = parts[0].trim();
+                const temp = parseInt(parts[1], 10);
+                if (type && !isNaN(temp)) {
+                    zones.push({
+                        type,
+                        temp: temp / 1000
+                    });
+                }
+            }
+        }
+        return zones;
+    }
+
     function parseZramAlgorithm(raw) {
         const match = raw.match(/\[([^\]]+)\]/);
         if (match) return match[1];
@@ -957,16 +985,59 @@
         }
     }
 
+    function updateThermalUI(data) {
+        if (!data || !Array.isArray(data)) {
+            const list = document.getElementById('monitor-thermal-list');
+            if (list) list.innerHTML = `<div class="monitor-thermal-row"><span class="monitor-thermal-cell" colspan="4">${t('monitor.thermal.noData')}</span></div>`;
+            return;
+        }
+
+        const list = document.getElementById('monitor-thermal-list');
+        if (!list) return;
+
+        let html = '';
+        for (const zone of data) {
+            const temp = zone.temp;
+            const type = zone.type;
+
+            // Initialize min/max to current temp on first read, then track
+            if (!thermalMinMax[type]) {
+                thermalMinMax[type] = { min: temp, max: temp };
+            } else {
+                if (temp < thermalMinMax[type].min) thermalMinMax[type].min = temp;
+                if (temp > thermalMinMax[type].max) thermalMinMax[type].max = temp;
+            }
+
+            const min = thermalMinMax[type].min.toFixed(1);
+            const max = thermalMinMax[type].max.toFixed(1);
+            const current = temp.toFixed(1);
+            const isHigh = temp >= 70;
+            const tempClass = isHigh ? 'warning-text' : '';
+
+            html += `
+                <div class="monitor-thermal-row">
+                    <span class="monitor-thermal-cell">${type}</span>
+                    <span class="monitor-thermal-cell ${tempClass}">${current}°C</span>
+                    <span class="monitor-thermal-cell">${min}°C</span>
+                    <span class="monitor-thermal-cell">${max}°C</span>
+                </div>
+            `;
+        }
+        list.innerHTML = html;
+    }
+
     async function refreshMonitor() {
         if (!isMonitorActive || document.hidden) return;
-        const [memData, cpuData, gpuData] = await Promise.all([
+        const [memData, cpuData, gpuData, thermalData] = await Promise.all([
             fetchMonitorData(),
             fetchCpuData(),
-            fetchGpuData()
+            fetchGpuData(),
+            fetchThermalData()
         ]);
         updateMonitorUI(memData);
         updateCpuUI(cpuData);
         updateGpuUI(gpuData);
+        updateThermalUI(thermalData);
     }
 
     function startMonitorUpdates() {
@@ -988,6 +1059,7 @@
         // Reset history arrays
         memHistory = new Array(HISTORY_POINTS).fill(null);
         swapHistory = new Array(HISTORY_POINTS).fill(null);
+        thermalMinMax = {}; // Reset thermal min/max tracking
 
         const memCanvas = document.getElementById('monitor-mem-graph');
         const swapCanvas = document.getElementById('monitor-swap-graph');
@@ -1000,6 +1072,7 @@
         setupCollapse('monitor-memory-card', 'monitor-memory-toggle');
         setupCollapse('monitor-cpu-card', 'monitor-cpu-toggle');
         setupCollapse('monitor-gpu-card', 'monitor-gpu-toggle');
+        setupCollapse('monitor-thermal-card', 'monitor-thermal-toggle');
 
         document.addEventListener('tabChanged', (event) => {
             const idx = event?.detail?.index;

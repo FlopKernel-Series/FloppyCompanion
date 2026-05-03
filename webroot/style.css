@@ -2568,6 +2568,47 @@ beer-css.tweak-slider-scope .tweak-beer-slider:has(> input.beer-slider-input:dis
     padding: 6px 0;
 }
 
+.monitor-thermal-table {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.monitor-thermal-row {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 8px;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--md-sys-color-surface-variant);
+}
+
+.monitor-thermal-row:last-child {
+    border-bottom: none;
+}
+
+.monitor-thermal-header {
+    font-weight: 500;
+    color: var(--md-sys-color-on-surface-variant);
+    font-size: 13px;
+}
+
+.monitor-thermal-body {
+    display: flex;
+    flex-direction: column;
+}
+
+.monitor-thermal-cell {
+    font-size: 14px;
+    color: var(--md-sys-color-on-surface);
+    text-align: left;
+    font-weight: 600;
+}
+
+.monitor-thermal-cell:nth-child(1) {
+    color: var(--md-sys-color-on-surface-variant);
+    font-weight: 500;
+}
+
 .card-header {
     display: flex;
     position: relative;
