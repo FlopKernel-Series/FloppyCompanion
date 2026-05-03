@@ -92,6 +92,7 @@ The module zip will be emitted by the build script in the repo directory.
 FloppyCompanion currently supports:
 - English
 - Spanish
+- Polish
 - Portuguese (Brazil)
 - Turkish
 - Ukrainian
