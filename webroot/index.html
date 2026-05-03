@@ -638,6 +638,29 @@
 
                     <template id="tpl-exynos">
                         <div class="card-content">
+                            <div class="tweak-row" id="misc-row-htpr">
+                                <div class="tweak-info-col">
+                                    <span class="tweak-label">
+                                        <span data-i18n="tweaks.misc.htpr">HTPR</span>
+                                        <div class="status-icon-wrapper beer">
+                                            <button type="button" class="status-icon-button icon-button transparent circle"
+                                                aria-label="Info" onclick="toggleBubble('bubble-misc-htpr', event)">
+                                                <svg class="status-icon info small" data-icon="info_outline"
+                                                    width="12" height="12" style="width: 12px; height: 12px;"></svg>
+                                            </button>
+                                            <div id="bubble-misc-htpr" class="status-bubble center hidden"
+                                                data-i18n="tweaks.tooltip.htpr"></div>
+                                        </div>
+                                    </span>
+                                    <span class="tweak-val" id="misc-val-htpr">--</span>
+                                </div>
+                                <div class="tweak-switch-container beer switch-scope">
+                                    <label class="switch">
+                                        <input type="checkbox" id="misc-htpr-switch">
+                                        <span></span>
+                                    </label>
+                                </div>
+                            </div>
                             <div class="tweak-row" id="misc-row-esgshortburst">
                                 <div class="tweak-info-col">
                                     <span class="tweak-label">

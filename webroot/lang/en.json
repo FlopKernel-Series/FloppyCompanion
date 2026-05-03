@@ -234,6 +234,7 @@
         "misc": {
             "title": "Misc Floppy1280 Tweaks",
             "blockEd3": "Block Ear Detect Mode 3",
+            "htpr": "High Touch Polling Rate",
             "esgShortBurst": "ESG Bursty Mode",
             "gpuClkLock": "@monitor.gpu.gpuClockLock",
             "throttlersProtection": "Throttling Protection",
@@ -312,6 +313,7 @@
             "esgShortBurst": "Makes EMS Energy Step react faster to short bursts of work. It ramps performance up in about 1 ms, lowers the busy threshold, and raises the initial post-I/O wake boost floor so bursty work gets CPU performance sooner.",
             "undervolt": "Reduces voltage to save power and reduce heat. Not recommended with Overclocking (Unlocked Mode).",
             "blockEd3": "Disables Ear Detect Mode 3, which prevents the display from lowering its refresh rate when the virtual proximity sensor is engaged. Also makes the proximity sensor less sensitive.",
+            "htpr": "Enables 240Hz touch sampling.",
             "gpuClkLock": "When enabled, prevents the GPU min/max frequencies from being changed. Useful for locking GPU clocks to a specific range.",
             "throttlersProtection": "When enabled, userspace (the ROM's services and processes) is blocked from throttling the CPU and GPU, so that only kernel-level throttling happens.",
             "gpuUnlock": "Enables GPU overclocking immediately. Only works in Superfloppy overclock modes (1, 2, 3). Greyed out if Unlocked Mode is disabled or in non-OC modes.",

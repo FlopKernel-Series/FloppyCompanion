@@ -205,6 +205,7 @@ window.clearTweakPersistence = async function (tweakId) {
     }
 
     if (tweakId === 'exynos') {
+        await window.runTweakBackend('misc', 'clear_saved_key', 'htpr');
         await window.runTweakBackend('misc', 'clear_saved_key', 'esg_short_burst');
         await window.runTweakBackend('misc', 'clear_saved_key', 'gpu_clklck');
         await window.runTweakBackend('misc', 'clear_saved_key', 'gpu_unlock');
