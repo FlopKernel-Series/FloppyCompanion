@@ -5,6 +5,7 @@
 MODDIR="${0%/*}/.."
 DATA_DIR="/data/adb/floppy_companion"
 OUTPUT_FILE="$DATA_DIR/presets/.defaults.json"
+TMP_OUTPUT_FILE="$OUTPUT_FILE.tmp.$$"
 DEFAULT_OVERRIDES_FILE="$MODDIR/tweaks/default_overrides.sh"
 
 # Detect kernel family (best-effort, aligned with WebUI logic)
@@ -52,6 +53,7 @@ fi
 
 # Create presets directory
 mkdir -p "$DATA_DIR/presets"
+rm -f "$OUTPUT_FILE" "$TMP_OUTPUT_FILE"
 
 apply_predefined_tweak_defaults() {
     return 1
@@ -93,7 +95,7 @@ SOUND_HP_R="0"
 SOUND_MIC="0"
 
 # --- Output JSON ---
-cat > "$OUTPUT_FILE" << EOF
+cat > "$TMP_OUTPUT_FILE" << EOF
 {
   "name": "Default",
   "version": 1,
@@ -283,4 +285,5 @@ EOF_TRINKET
 }
 EOF
 
+mv -f "$TMP_OUTPUT_FILE" "$OUTPUT_FILE"
 echo "Defaults captured to $OUTPUT_FILE"

@@ -19,7 +19,6 @@ let currentPresetName = 'Default';
 let currentPresetBuiltIn = true;
 let availablePresets = []; // List of { name, builtIn, path }
 let defaultPresetData = null; // Captured from kernel
-let defaultPresetLoadPromise = null;
 let presetsInitPromise = null;
 
 // =============================================================================
@@ -53,24 +52,17 @@ async function loadAvailablePresets() {
 
 // Load Default preset (kernel defaults captured at boot)
 async function loadDefaultPreset() {
-    if (defaultPresetData) return defaultPresetData;
-    if (defaultPresetLoadPromise) return defaultPresetLoadPromise;
+    const defaultPath = '/data/adb/floppy_companion/presets/.defaults.json';
+    const content = await exec(`cat "${defaultPath}" 2>/dev/null || echo "{}"`);
 
-    defaultPresetLoadPromise = (async () => {
-        const defaultPath = '/data/adb/floppy_companion/presets/.defaults.json';
-        const content = await exec(`cat "${defaultPath}" 2>/dev/null || echo "{}"`);
+    try {
+        defaultPresetData = JSON.parse(content);
+    } catch (e) {
+        console.error('Failed to parse defaults:', e);
+        defaultPresetData = { tweaks: {} };
+    }
 
-        try {
-            defaultPresetData = JSON.parse(content);
-        } catch (e) {
-            console.error('Failed to parse defaults:', e);
-            defaultPresetData = { tweaks: {} };
-        }
-
-        return defaultPresetData;
-    })();
-
-    return defaultPresetLoadPromise;
+    return defaultPresetData;
 }
 
 async function clearAllTweakConfigs() {
@@ -203,7 +195,7 @@ async function handleLoadPreset() {
     // Get preset data
     let presetData;
     if (currentPresetName === 'Default') {
-        presetData = defaultPresetData;
+        presetData = await loadDefaultPreset();
     } else {
         const preset = availablePresets.find(p => p.name === currentPresetName);
         if (preset && preset.path) {
