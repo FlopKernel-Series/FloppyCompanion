@@ -10,6 +10,7 @@ const I18N = {
     availableLanguages: [
         { code: 'en', name: 'English', dir: 'ltr' },
         { code: 'es', name: 'Español', dir: 'ltr' },
+        { code: 'pl', name: 'Polski', dir: 'ltr' },
         { code: 'pt_BR', name: 'Português (Brasil)', dir: 'ltr' },
         { code: 'tr', name: 'Türkçe', dir: 'ltr' },
         { code: 'vi', name: 'Tiếng Việt', dir: 'ltr' },

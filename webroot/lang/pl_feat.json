@@ -1,0 +1,98 @@
+{
+    "1280": {
+        "superfloppy": {
+            "title": "Tryb Odblokowany",
+            "desc": "Dostrojenia zegara CPU i GPU dla FloppyKernel.",
+            "options": {
+                "1": {
+                    "label": "Włączony (Overclock)",
+                    "desc": "CL0 = 2.2 GHz (OC), CL1 = 2.496 GHz (OC), GPU = 1.209 GHz (OC), UV wyłączony."
+                },
+                "2": {
+                    "label": "MegaFloppy (Overclock, ryzykowne)",
+                    "desc": "CL0 = 2.2 GHz (OC), CL1 = 2.6 GHz (OC), GPU = 1.209 GHz (OC), UV wyłączony."
+                },
+                "3": {
+                    "label": "UltraFloppy (Overclock, ryzykowne)",
+                    "desc": "CL0 = 2.2 GHz (OC), CL1 = 2.704 GHz (OC), GPU = 1.209 GHz (OC), UV wyłączony."
+                },
+                "4": {
+                    "label": "CoolFloppy (Underclock)",
+                    "desc": "CL0 = 2.0 GHz (stock), CL1 = 2.112 GHz (UC), GPU = 897 MHz (stock), UV włączony."
+                },
+                "5": {
+                    "label": "BalancedFloppy (Overclock)",
+                    "desc": "CL0 = 2.2 GHz (OC), CL1 = 2.4 GHz (stock), GPU = 897 MHz (stock), UV wyłączony."
+                }
+            }
+        }
+    },
+    "force_perm": {
+        "title": "Wymuś Permissive",
+        "desc": "Wymuś tryb SELinux Permissive. Dla developerów."
+    },
+    "ems_efficient": {
+        "title": "Tryb EMS Efficient",
+        "desc": "Włącz tryb EMS efficient. Zmniejsza wydajność i poprawia baterię."
+    },
+    "aosp_mode": {
+        "title": "Tryb AOSP",
+        "desc": "Włącz hacki specyficzne dla AOSP."
+    },
+    "no_init_protection": {
+        "title": "Wyłącz Ochronę Init",
+        "desc": "Zezwól Power HALom i skryptom init na modyfikację pokręteł jądra. Włącz, jeśli chcesz, aby ROM kontrolował wydajność."
+    },
+    "init_protection": {
+        "title": "Ochrona Init",
+        "desc": "Zapobiegaj Power HALom i skryptom init modyfikacji pokręteł jądra. Wyłącz, jeśli chcesz, aby ROM kontrolował wydajność."
+    },
+    "legacy_timestamp_source": {
+        "title": "Legacy Timestamp",
+        "desc": "Naprawia problemy z długością nagrywania wideo na ROMach z legacy camera HALami."
+    },
+    "no_msm_perf_boost": {
+        "title": "Wyłącz Boost MSM",
+        "desc": "Zapobiegaj MSM Performance nadpisywaniu minimalnych/maksymalnych częstotliwości CPU. Może zmniejszyć responsywność."
+    },
+    "warm_reboot": {
+        "title": "Wymuś Ciepły Restart",
+        "desc": "Zachowaj RAM przy restarcie, aby łatwiej zbierać logi. Zalecane tylko do debugowania, może spowodować zepsuty WiFi."
+    },
+    "uname_bpf_spoof": {
+        "title": "Fałszowanie BPF",
+        "desc": "Fałszuj wersję Linux dla wsparcia BPF. Zarządzane zewnętrznie; zmiana tego ręcznie może spowodować bootloop.",
+        "options": {
+            "1": {
+                "label": "Częściowe fałszowanie",
+                "desc": "Fałszuje uname tylko dla netbpfload."
+            },
+            "5": {
+                "label": "Pełne fałszowanie",
+                "desc": "Fałszuje uname dla kilku usług związanych z bpf."
+            }
+        }
+    },
+    "mass_storage_hack": {
+        "title": "Hack wsparcia Mass Storage",
+        "desc": "Wstrzykuje obsługę gadżetu mass_storage do skryptu init.exynos2100.usb.rc w vendorze, aby pozwolić aplikacjom jak DriveDroid działać."
+    },
+    "selinux_mode": {
+        "title": "Wymuś tryb SELinux",
+        "desc": "Wymuś tryb SELinux. Dla developerów.",
+        "options": {
+            "0": {
+                "label": "Domyślny",
+                "desc": "Użyj domyślnego trybu SELinux jądra."
+            },
+            "1": {
+                "label": "Zawsze Enforcing",
+                "desc": "Wymuś tryb SELinux Enforcing przy boot."
+            },
+            "2": {
+                "label": "Zawsze Permissive",
+                "desc": "Wymuś tryb SELinux Permissive przy boot."
+            }
+        }
+    }
+}
