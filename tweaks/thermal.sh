@@ -26,14 +26,16 @@ get_current() {
         return
     fi
     
-    local mode=$(cat "$THERMAL_NODE" 2>/dev/null || echo "")
-    local custom_freq=""
+    mode=$(cat "$THERMAL_NODE" 2>/dev/null || echo "")
+    custom_freq=""
     if [ -f "$CUSTOM_FREQ_NODE" ]; then
         custom_freq=$(cat "$CUSTOM_FREQ_NODE" 2>/dev/null || echo "")
     fi
     
     echo "mode=$mode"
     echo "custom_freq=$custom_freq"
+
+    unset mode custom_freq
 }
 
 # Get saved config
@@ -55,8 +57,8 @@ save() {
     fi
 
     if echo "$1" | grep -q '='; then
-        local mode=""
-        local custom_freq=""
+        mode=""
+        custom_freq=""
 
         for arg in "$@"; do
             key="${arg%%=*}"
@@ -81,8 +83,8 @@ save() {
         return 0
     fi
 
-    local mode="$1"
-    local custom_freq="$2"
+    mode="$1"
+    custom_freq="$2"
 
     mkdir -p "$(dirname "$CONFIG_FILE")"
     cat > "$CONFIG_FILE" << EOF
@@ -90,12 +92,14 @@ mode=$mode
 custom_freq=$custom_freq
 EOF
     echo "saved"
+
+    unset mode custom_freq
 }
 
 # Apply thermal mode immediately
 apply() {
-    local mode="$1"
-    local custom_freq="$2"
+    mode="$1"
+    custom_freq="$2"
     
     if [ ! -f "$THERMAL_NODE" ]; then
         echo "error: Thermal control not available"
@@ -113,6 +117,8 @@ apply() {
     fi
     
     echo "applied"
+
+    unset mode custom_freq
 }
 
 # Apply saved config (called at boot)
@@ -121,12 +127,14 @@ apply_saved() {
         return 0
     fi
     
-    local mode=$(grep '^mode=' "$CONFIG_FILE" | cut -d= -f2)
-    local custom_freq=$(grep '^custom_freq=' "$CONFIG_FILE" | cut -d= -f2)
+    mode=$(grep '^mode=' "$CONFIG_FILE" | cut -d= -f2)
+    custom_freq=$(grep '^custom_freq=' "$CONFIG_FILE" | cut -d= -f2)
     
     if [ -n "$mode" ]; then
         apply "$mode" "$custom_freq"
     fi
+
+    unset mode custom_freq
 }
 
 # Main action handler

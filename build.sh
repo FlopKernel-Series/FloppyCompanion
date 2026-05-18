@@ -27,10 +27,9 @@ fi
 
 # Get Version from module.prop
 VERSION=$(grep "^version=" "$MODULE_DIR/module.prop" | cut -d= -f2)
-VERSION_CODE=$(grep "^versionCode=" "$MODULE_DIR/module.prop" | cut -d= -f2)
 
 # Construct Filename
-ZIP_NAME="FloppyCompanion-${VERSION}-${HASH}-${TIMESTAMP}.zip"
+ZIP_NAME="FloppyCompanion-$VERSION-$HASH-$TIMESTAMP.zip"
 ZIP_PATH="$OUTPUT_DIR/$ZIP_NAME"
 
 # --- Magiskboot Handling ---
@@ -39,8 +38,8 @@ LATEST_URL=$(curl -sI https://github.com/topjohnwu/Magisk/releases/latest | grep
 TAG=${LATEST_URL##*/}
 echo "Latest tag: $TAG"
 
-MAGISK_APK="Magisk-${TAG}.apk"
-MAGISK_URL="https://github.com/topjohnwu/Magisk/releases/download/${TAG}/${MAGISK_APK}"
+MAGISK_APK="Magisk-$TAG.apk"
+MAGISK_URL="https://github.com/topjohnwu/Magisk/releases/download/$TAG/$MAGISK_APK"
 TOOLS_DIR="$MODULE_DIR/tools"
 FKFEAT_DIR="$TOOLS_DIR/fkfeat"
 
@@ -49,7 +48,9 @@ prune_beercss_vendor() {
     local beercss_dir="$webroot_dir/vendor/beercss"
     local beercss_cdn_dir="$beercss_dir/dist/cdn"
 
-    [ -d "$beercss_dir" ] || return 0
+    if [ -d "$beercss_dir" ]; then
+        return 0
+    fi
 
     if [ ! -d "$beercss_cdn_dir" ]; then
         echo "BeerCSS vendor checkout found but missing dist/cdn at $beercss_cdn_dir" >&2
@@ -85,7 +86,9 @@ prune_beercss_vendor() {
 prune_simulator_assets() {
     local webroot_dir="$1"
 
-    [ -d "$webroot_dir" ] || return 0
+    if [ -d "$webroot_dir" ]; then
+        return 0
+    fi
 
     echo "Removing simulator-only assets from package payload..."
     rm -f "$webroot_dir/simulator.html"
@@ -117,57 +120,69 @@ curl -L -o "../$MAGISK_APK" "$MAGISK_URL" 2>/dev/null
 
 # Extract ARM64 magiskboot
 echo "Extracting magiskboot (arm64)..."
+if [[ -f "$TOOLS_DIR/magiskboot" ]]; then
+    rm -f "$TOOLS_DIR/magiskboot"
+fi
 unzip -p "../$MAGISK_APK" "lib/arm64-v8a/libmagiskboot.so" > "$TOOLS_DIR/magiskboot"
 chmod +x "$TOOLS_DIR/magiskboot"
 
 # Build Zip
 echo "Packaging $ZIP_NAME..."
-cd "$MODULE_DIR" || exit 1
 
 # Temporarily update module.prop version to include git hash
 ORIGINAL_VERSION="$VERSION"
-NEW_VERSION="${VERSION}-${HASH}"
-sed -i "s/^version=.*/version=${NEW_VERSION}/" module.prop
+NEW_VERSION="$VERSION-$HASH"
+sed -i "s/^version=.*/version=$NEW_VERSION/" "$MODULE_DIR/module.prop"
 
 # Create temporary directory for module files
 TEMP_DIR=$(mktemp -d)
-trap "rm -rf $TEMP_DIR" EXIT
+trap 'rm -rf "$TEMP_DIR"' EXIT
 
 # Copy module files
-cp module.prop "$TEMP_DIR/"
-cp LICENSE "$TEMP_DIR/"
-cp service.sh "$TEMP_DIR/"
-cp uninstall.sh "$TEMP_DIR/"
-cp persistence.sh "$TEMP_DIR/"
-cp customize.sh "$TEMP_DIR/"
-cp features_backend.sh "$TEMP_DIR/"
-cp -r tweaks "$TEMP_DIR/"
-cp -r webroot "$TEMP_DIR/"
+for i in "LICENSE" "customize.sh" "features_backend.sh" \
+    "module.prop" "persistence.sh" "service.sh" "tweaks" \
+    "uninstall.sh" "webroot"; do
+   cp -rfa "$MODULE_DIR/$i" "$TEMP_DIR"
+done
+
 prune_beercss_vendor "$TEMP_DIR/webroot"
 prune_simulator_assets "$TEMP_DIR/webroot"
-mkdir -p "$TEMP_DIR/tools"
-cp "$TOOLS_DIR/magiskboot" "$TEMP_DIR/tools/"
+
+if [[ ! -d "$TEMP_DIR/tools" ]]; then
+    mkdir -p "$TEMP_DIR/tools"
+fi
+
+if [[ ! -f "$TEMP_DIR/tools/magiskboot" ]]; then
+    cp -a "$TOOLS_DIR/magiskboot" "$TEMP_DIR/tools/magiskboot"  
+fi
 
 if [ ! -x "$FKFEAT_DIR/fkfeatctl" ]; then
     echo "Built fkfeat binary missing at $FKFEAT_DIR/fkfeatctl" >&2
     exit 1
 fi
 
-mkdir -p "$TEMP_DIR/tools/fkfeat"
-cp "$FKFEAT_DIR/fkfeatctl" "$TEMP_DIR/tools/fkfeat/"
+if [[ ! -d "$TEMP_DIR/tools/fkfeat" ]]; then
+    mkdir -p "$TEMP_DIR/tools/fkfeat"
+fi
+
+if [[ ! -f "$TEMP_DIR/tools/fkfeat/fkfeatctl" ]]; then
+    cp -a "$FKFEAT_DIR/fkfeatctl" "$TEMP_DIR/tools/fkfeat/fkfeatctl"
+fi
+
 chmod 755 "$TEMP_DIR/tools/magiskboot" "$TEMP_DIR/tools/fkfeat/fkfeatctl"
 
 # Create zip from temporary directory
+(
 cd "$TEMP_DIR" || exit 1
 zip -r "$ZIP_PATH" . > /dev/null
+) || exit 1
 
 # Restore original module.prop version
-cd "$MODULE_DIR" || exit 1
-sed -i "s/^version=.*/version=${ORIGINAL_VERSION}/" module.prop
+sed -i "s/^version=.*/version=$ORIGINAL_VERSION/" "$MODULE_DIR/module.prop"
 
 # Cleanup tools binary
 rm -f "$TOOLS_DIR/magiskboot"
-if [ -z "$(ls -A $TOOLS_DIR 2>/dev/null)" ]; then
+if [ -z "$(ls -A "$TOOLS_DIR" 2>/dev/null)" ]; then
     rmdir "$TOOLS_DIR" 2>/dev/null || true
 fi
 

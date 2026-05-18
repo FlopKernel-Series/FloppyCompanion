@@ -7,7 +7,6 @@ TOOLS="$MODDIR/tools"
 MAGISKBOOT="$TOOLS/magiskboot"
 FKFEAT="$TOOLS/fkfeat/fkfeatctl"
 WORK_DIR="/data/local/tmp/fc_work"
-BOOT_BLOCK="/dev/block/by-name/boot"
 LOG_FILE="$MODDIR/.patch_log"
 
 log() {
@@ -41,19 +40,20 @@ check_fkfeat() {
 
 # Helper: Resolve Boot Device (handling A/B slots)
 get_boot_device() {
-    local SLOT=$(getprop ro.boot.slot_suffix 2>/dev/null)
-    
+    SLOT=$(getprop ro.boot.slot_suffix 2>/dev/null)
+
     # Use generic /dev/block/by-name
     if [ -n "$SLOT" ]; then
          echo "/dev/block/by-name/boot$SLOT"
     else
          echo "/dev/block/by-name/boot"
     fi
+
+    unset SLOT
 }
 
 get_kernel_feature_value() {
-    local KEY="$1"
-    strings kernel | grep -E "^${KEY}=[0-9]+$" | head -1 | cut -d= -f2
+    strings kernel | grep -E "^$1=[0-9]+$" | head -1 | cut -d= -f2
 }
 
 case "$1" in
@@ -63,7 +63,7 @@ case "$1" in
         
         cleanup
         mkdir -p "$WORK_DIR"
-        cd "$WORK_DIR"
+        cd "$WORK_DIR" || exit 1
         
         BOOT_DEV=$(get_boot_device)
         log "Target boot device: $BOOT_DEV"
@@ -167,10 +167,10 @@ case "$1" in
                 if echo " $NEW_CMDLINE " | grep -q " ${KEY}="; then
                     # Replace existing: match start-of-line OR space before key
                     # capture the separator (\1) to preserve it
-                    NEW_CMDLINE=$(echo "$NEW_CMDLINE" | sed -E "s/(^|[[:space:]])${KEY}=[^[:space:]]*/\1${KEY}=${VAL}/g")
+                    NEW_CMDLINE=$(echo "$NEW_CMDLINE" | sed -E "s/(^|[[:space:]])$KEY=[^[:space:]]*/\1$KEY=$VAL/g")
                 else
                     # Append new if not present
-                    NEW_CMDLINE="$NEW_CMDLINE ${KEY}=${VAL}"
+                    NEW_CMDLINE="$NEW_CMDLINE $KEY=$VAL"
                 fi
             done
             
@@ -195,7 +195,7 @@ case "$1" in
             for ARG in "$@"; do
                 KEY="${ARG%%=*}"
                 VAL="${ARG#*=}"
-                NEW_CMDLINE=$(echo "$NEW_CMDLINE" | sed -E "s/${KEY}=[0-9]+/${KEY}=${VAL}/g")
+                NEW_CMDLINE=$(echo "$NEW_CMDLINE" | sed -E "s/$KEY=[0-9]+/$KEY=$VAL/g")
             done
             
             log "Old: $CURRENT_CMDLINE"
@@ -234,8 +234,8 @@ case "$1" in
                     continue
                 fi
 
-                OLD_TOKEN="${KEY}=${CURRENT_VAL}"
-                NEW_TOKEN="${KEY}=${VAL}"
+                OLD_TOKEN="$KEY=$CURRENT_VAL"
+                NEW_TOKEN="$KEY=$VAL"
 
                 log "Old: $OLD_TOKEN"
                 log "New: $NEW_TOKEN"

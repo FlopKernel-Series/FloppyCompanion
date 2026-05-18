@@ -7,7 +7,7 @@
 MODDIR="${0%/*}"
 
 # Wait for boot to complete
-while [ "$(getprop sys.boot_completed)" != "1" ]; do
+while [ "$(getprop sys.boot_completed)" != 1 ]; do
     sleep 1
 done
 
@@ -47,17 +47,17 @@ resolve_kernel_name() {
             echo "FloppyTrinketMi"
             ;;
         *)
-            echo "$(echo "$1" | grep -o 'Floppy[A-Za-z0-9]*' | head -n 1)"
+            echo "$1" | grep -o 'Floppy[A-Za-z0-9]*' | head -n 1
             ;;
     esac
 }
 
 update_module_prop_description() {
-    local prop_file="$1"
-    local description_value="$2"
-    local overlay_dir="$DATA_DIR/runtime"
-    local overlay_file="$overlay_dir/module.prop"
-    local tmp_file
+    prop_file="$1"
+    description_value="$2"
+    overlay_dir="$DATA_DIR/runtime"
+    overlay_file="$overlay_dir/module.prop"
+    tmp_file
 
     [ -f "$prop_file" ] || return 1
 
@@ -104,6 +104,8 @@ update_module_prop_description() {
     chcon --reference="$prop_file" "$overlay_file" 2>/dev/null || true
 
     mount -o bind "$overlay_file" "$prop_file" 2>/dev/null || mount --bind "$overlay_file" "$prop_file" 2>/dev/null || return 1
+
+    unset prop_file description_value overlay_dir overlay_file tmp_file
 
     return 0
 }
@@ -258,7 +260,7 @@ if echo "$KERN_VER" | grep -q "Floppy"; then
         fi
     fi
     
-    if [ "$UNSUPPORTED" = "1" ]; then
+    if [ "$UNSUPPORTED" = 1 ]; then
         STATUS="⚠️"
         INFO="$INFO (Unsupported)"
     fi

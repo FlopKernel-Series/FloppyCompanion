@@ -26,19 +26,20 @@ is_integer() {
 }
 
 sanitize_int() {
-    local value="$1"
-    local fallback="$2"
+    value="$1"
+    fallback="$2"
 
     if is_integer "$value"; then
         echo "$value"
     else
         echo "$fallback"
     fi
+
+    unset value fallback
 }
 
 clamp_c() {
-    local value
-    value=$(sanitize_int "$1" "0")
+    value=$(sanitize_int "$1" 0)
 
     if [ "$value" -lt "$OFFSET_MIN_C" ]; then
         value="$OFFSET_MIN_C"
@@ -49,29 +50,33 @@ clamp_c() {
     fi
 
     echo "$value"
+
+    unset value
 }
 
 read_offset_node_mc() {
-    local node="$1"
-    local fallback="$2"
-    local value=""
+    node="$1"
+    fallback="$2"
+    value=""
 
     if [ -e "$node" ]; then
         value=$(cat "$node" 2>/dev/null || echo "")
     fi
 
     sanitize_int "$value" "$fallback"
+
+    unset node fallback value
 }
 
 read_offset_node_c() {
-    local raw
     raw=$(read_offset_node_mc "$1" "$2")
     echo $((raw / 1000))
+    unset raw
 }
 
 read_defaults_value() {
-    local section="$1"
-    local key="$2"
+    section="$1"
+    key="$2"
 
     if [ ! -f "$DEFAULTS_FILE" ]; then
         return 1
@@ -100,21 +105,24 @@ read_defaults_value() {
             }
         }
     ' "$DEFAULTS_FILE" 2>/dev/null
+
+    unset section key
 }
 
 resolve_default_setting_c() {
-    local key="$1"
-    local node="$2"
-    local fallback_mc="$3"
-    local value
-
+    key="$1"
+    node="$2"
+    fallback_mc="$3"
     value=$(read_defaults_value "thermal_control" "$key")
+
     if [ -n "$value" ]; then
         sanitize_int "$value" "$((fallback_mc / 1000))"
         return 0
     fi
 
     read_offset_node_c "$node" "$fallback_mc"
+
+    unset key node fallback_mc value
 }
 
 is_available() {
@@ -156,7 +164,7 @@ save() {
                 continue
             fi
             if [ "$key" = "performance_mode" ]; then
-                echo "$key=$(sanitize_int "$val" "0")" >> "$CONFIG_FILE"
+                echo "$key=$(sanitize_int "$val" 0)" >> "$CONFIG_FILE"
             else
                 echo "$key=$(clamp_c "$val")" >> "$CONFIG_FILE"
             fi
@@ -169,11 +177,6 @@ save() {
         echo "saved"
         return 0
     fi
-
-    local little
-    local big
-    local prime
-    local g3d
 
     little=$(clamp_c "$1")
     big=$(clamp_c "$2")
@@ -188,14 +191,11 @@ prime=$prime
 g3d=$g3d
 EOF
     echo "saved"
+
+    unset little big prime g3d
 }
 
 apply() {
-    local little
-    local big
-    local prime
-    local g3d
-
     if ! thermal_control_available; then
         echo "error: Thermal control not available"
         return 1
@@ -223,21 +223,16 @@ apply() {
     fi
 
     echo "applied"
+
+    unset little big prime g3d
 }
 
 apply_saved() {
-    local little
-    local big
-    local prime
-    local g3d
-    local performance_mode
-    local saved_value
-
     little=$(resolve_default_setting_c "little" "$LITTLE_NODE" "-8000")
     big=$(resolve_default_setting_c "big" "$MID_NODE" "-10000")
     prime=$(resolve_default_setting_c "prime" "$BIG_NODE" "-10000")
     g3d=$(resolve_default_setting_c "g3d" "$G3D_NODE" "-13000")
-    performance_mode="0"
+    performance_mode=0
 
     if [ -f "$CONFIG_FILE" ]; then
         saved_value=$(grep '^little=' "$CONFIG_FILE" | cut -d= -f2)
@@ -253,17 +248,19 @@ apply_saved() {
         [ -n "$saved_value" ] && g3d=$(clamp_c "$saved_value")
 
         saved_value=$(grep '^performance_mode=' "$CONFIG_FILE" | cut -d= -f2)
-        [ -n "$saved_value" ] && performance_mode=$(sanitize_int "$saved_value" "0")
+        [ -n "$saved_value" ] && performance_mode=$(sanitize_int "$saved_value" 0)
     fi
 
-    if [ "$performance_mode" = "1" ]; then
-        little="0"
-        big="0"
-        prime="0"
-        g3d="0"
+    if [ "$performance_mode" = 1 ]; then
+        little=0
+        big=0
+        prime=0
+        g3d=0
     fi
 
     apply "$little" "$big" "$prime" "$g3d"
+
+    unset little big prime g3d performance_mode
 }
 
 clear_saved() {
@@ -274,11 +271,6 @@ clear_saved() {
 emit_defaults_fragment() {
     thermal_control_available || return 1
 
-    local little
-    local big
-    local prime
-    local g3d
-
     little=$(read_offset_node_c "$LITTLE_NODE" "-8000")
     big=$(read_offset_node_c "$MID_NODE" "-10000")
     prime=$(read_offset_node_c "$BIG_NODE" "-10000")
@@ -286,19 +278,18 @@ emit_defaults_fragment() {
 
     cat << EOF
     "thermal_control": {
-      "performance_mode": "0",
+      "performance_mode": 0,
       "little": "$little",
       "big": "$big",
       "prime": "$prime",
       "g3d": "$g3d"
     }
 EOF
+
+    unset little big prime g3d
 }
 
 capture_settled_defaults() {
-    local tmp_file
-    local fragment
-
     thermal_control_available || return 0
     [ -f "$DEFAULTS_FILE" ] || return 0
 
@@ -329,18 +320,20 @@ capture_settled_defaults() {
         }
         { print }
     ' "$DEFAULTS_FILE" > "$tmp_file" && mv -f "$tmp_file" "$DEFAULTS_FILE"
+
+    unset fragment tmp_file
 }
 
 wait_for_boot_settle() {
-    local uptime_seconds=0
+    uptime_seconds=0
 
-    while [ "$(getprop sys.boot_completed)" != "1" ]; do
+    while [ "$(getprop sys.boot_completed)" != 1 ]; do
         sleep 1
     done
 
     while :; do
-        uptime_seconds=$(cut -d. -f1 /proc/uptime 2>/dev/null || echo "0")
-        uptime_seconds=$(sanitize_int "$uptime_seconds" "0")
+        uptime_seconds=$(cut -d. -f1 /proc/uptime 2>/dev/null || echo 0)
+        uptime_seconds=$(sanitize_int "$uptime_seconds" 0)
 
         if [ "$uptime_seconds" -ge "$BOOT_SETTLE_SECONDS" ]; then
             break
@@ -348,6 +341,8 @@ wait_for_boot_settle() {
 
         sleep 1
     done
+
+    unset uptime_seconds
 }
 
 sync_boot_state() {

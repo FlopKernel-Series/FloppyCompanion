@@ -21,18 +21,19 @@ resolve_gpu_node() {
 }
 
 has_any_uv_node() {
-    local gpu_node
     gpu_node=$(resolve_gpu_node)
     [ -f "$NODE_LITTLE" ] || [ -f "$NODE_BIG" ] || [ -f "$NODE_PRIME" ] || [ -f "$gpu_node" ]
+    unset gpu_node
 }
 
 read_node_or_zero() {
-    local node="$1"
+    node="$1"
     if [ -e "$node" ]; then
-        cat "$node" 2>/dev/null || echo "0"
+        cat "$node" 2>/dev/null || echo 0
     else
-        echo "0"
+        echo 0
     fi
+    unset node
 }
 
 # Check if undervolt control is available
@@ -45,17 +46,16 @@ is_available() {
 }
 
 get_capabilities() {
-    local gpu_node
     gpu_node=$(resolve_gpu_node)
     echo "little=$([ -f "$NODE_LITTLE" ] && echo 1 || echo 0)"
     echo "big=$([ -f "$NODE_BIG" ] && echo 1 || echo 0)"
     echo "prime=$([ -f "$NODE_PRIME" ] && echo 1 || echo 0)"
     echo "gpu=$([ -f "$gpu_node" ] && echo 1 || echo 0)"
+    unset gpu_node
 }
 
 # Get current values
 get_current() {
-    local gpu_node
     gpu_node=$(resolve_gpu_node)
 
     if ! has_any_uv_node; then
@@ -66,19 +66,17 @@ get_current() {
         return
     fi
 
-    local little
     little=$(read_node_or_zero "$NODE_LITTLE")
-    local big
     big=$(read_node_or_zero "$NODE_BIG")
-    local prime
     prime=$(read_node_or_zero "$NODE_PRIME")
-    local gpu
     gpu=$(read_node_or_zero "$gpu_node")
 
     echo "little=$little"
     echo "big=$big"
     echo "prime=$prime"
     echo "gpu=$gpu"
+
+    unset gpu_node little big prime gpu
 }
 
 # Get saved config
@@ -114,17 +112,17 @@ save() {
         return 0
     fi
 
-    local little="$1"
-    local big="$2"
-    local prime="$3"
-    local gpu="$4"
+    little="$1"
+    big="$2"
+    prime="$3"
+    gpu="$4"
     
     # Sanitize inputs (ensure they are numbers)
-    [ -z "$little" ] && little="0"
-    [ -z "$big" ] && big="0"
-    [ -z "$prime" ] && prime="0"
-    [ -z "$gpu" ] && gpu="0"
-    
+    [ -z "$little" ] && little=0
+    [ -z "$big" ] && big=0
+    [ -z "$prime" ] && prime=0
+    [ -z "$gpu" ] && gpu=0
+   
     mkdir -p "$(dirname "$CONFIG_FILE")"
     cat > "$CONFIG_FILE" << EOF
 little=$little
@@ -133,15 +131,16 @@ prime=$prime
 gpu=$gpu
 EOF
     echo "saved"
+
+    unset little big prime gpu
 }
 
 # Apply settings
 apply() {
-    local little="$1"
-    local big="$2"
-    local prime="$3"
-    local gpu="$4"
-    local gpu_node
+    little="$1"
+    big="$2"
+    prime="$3"
+    gpu="$4"
     gpu_node=$(resolve_gpu_node)
 
     if ! has_any_uv_node; then
@@ -170,6 +169,8 @@ apply() {
     fi
     
     echo "applied"
+
+    unset little big prime gpu gpu_node
 }
 
 # Apply saved config (called at boot)
@@ -178,12 +179,14 @@ apply_saved() {
         return 0
     fi
     
-    local little=$(grep '^little=' "$CONFIG_FILE" | cut -d= -f2)
-    local big=$(grep '^big=' "$CONFIG_FILE" | cut -d= -f2)
-    local prime=$(grep '^prime=' "$CONFIG_FILE" | cut -d= -f2)
-    local gpu=$(grep '^gpu=' "$CONFIG_FILE" | cut -d= -f2)
+    little=$(grep '^little=' "$CONFIG_FILE" | cut -d= -f2)
+    big=$(grep '^big=' "$CONFIG_FILE" | cut -d= -f2)
+    prime=$(grep '^prime=' "$CONFIG_FILE" | cut -d= -f2)
+    gpu=$(grep '^gpu=' "$CONFIG_FILE" | cut -d= -f2)
     
     apply "$little" "$big" "$prime" "$gpu"
+
+    unset little big prime gpu
 }
 
 # Clear saved config (for when Overclock is enabled)

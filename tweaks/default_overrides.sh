@@ -8,10 +8,13 @@ apply_predefined_tweak_defaults() {
 
     case "$tweak_id" in
         soundcontrol)
-            [ "$IS_TRINKET" = "1" ] || return 1
-            SOUND_HP_L="0"
-            SOUND_HP_R="0"
-            SOUND_MIC="0"
+            $IS_TRINKET || return 1
+            # shellcheck disable=SC2034
+            SOUND_HP_L=0
+            # shellcheck disable=SC2034
+            SOUND_HP_R=0
+            # shellcheck disable=SC2034
+            SOUND_MIC=0
             return 0
             ;;
     esac

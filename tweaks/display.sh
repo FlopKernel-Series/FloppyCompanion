@@ -38,8 +38,8 @@ get_saved() {
 save() {
     hbm="$1"
     cabc="$2"
-    [ -z "$hbm" ] && hbm="0"
-    [ -z "$cabc" ] && cabc="0"
+    [ -z "$hbm" ] && hbm=0
+    [ -z "$cabc" ] && cabc=0
 
     mkdir -p "$(dirname "$CONFIG_FILE")"
     cat > "$CONFIG_FILE" << EOF
@@ -52,8 +52,8 @@ EOF
 apply() {
     hbm="$1"
     cabc="$2"
-    [ -z "$hbm" ] && hbm="0"
-    [ -z "$cabc" ] && cabc="0"
+    [ -z "$hbm" ] && hbm=0
+    [ -z "$cabc" ] && cabc=0
 
     if [ -f "$NODE_HBM" ]; then
         echo "$hbm" > "$NODE_HBM" 2>/dev/null

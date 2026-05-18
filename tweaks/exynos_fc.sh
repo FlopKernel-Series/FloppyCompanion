@@ -30,7 +30,7 @@ node_for_key() {
 
 sanitize_freq() {
     case "$1" in
-        ''|*[!0-9]*) echo "0" ;;
+        ''|*[!0-9]*) echo 0 ;;
         *) echo "$1" ;;
     esac
 }
@@ -40,13 +40,14 @@ read_node_or_zero() {
     if [ -f "$node" ]; then
         sanitize_freq "$(cat "$node" 2>/dev/null)"
     else
-        echo "0"
+        echo 0
     fi
 }
 
 get_policy_for_cluster() {
     target="$1"
     idx=0
+    # shellcheck disable=SC2012
     for policy_num in $(ls -d "$CPUFREQ_DIR"/policy* 2>/dev/null | sed 's/.*policy//' | sort -n); do
         [ -d "$CPUFREQ_DIR/policy$policy_num" ] || continue
         if [ "$idx" = "$target" ]; then
@@ -139,6 +140,7 @@ apply() {
         is_valid_key "$key" || continue
         node=$(node_for_key "$key")
         [ -f "$node" ] || continue
+        # shellcheck disable=SC2005
         echo "$(sanitize_freq "$val")" > "$node" 2>/dev/null
     done
     echo "applied"

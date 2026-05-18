@@ -22,10 +22,10 @@ get_current() {
     bypass=""
     fast=""
     if [ -f "$NODE_BYPASS" ]; then
-        bypass=$(cat "$NODE_BYPASS" 2>/dev/null || echo "0")
+        bypass=$(cat "$NODE_BYPASS" 2>/dev/null || echo 0)
     fi
     if [ -f "$NODE_FAST" ]; then
-        fast=$(cat "$NODE_FAST" 2>/dev/null || echo "0")
+        fast=$(cat "$NODE_FAST" 2>/dev/null || echo 0)
     fi
     echo "bypass=$bypass"
     echo "fast=$fast"
@@ -42,8 +42,8 @@ get_saved() {
 save() {
     bypass="$1"
     fast="$2"
-    [ -z "$bypass" ] && bypass="0"
-    [ -z "$fast" ] && fast="0"
+    [ -z "$bypass" ] && bypass=0
+    [ -z "$fast" ] && fast=0
 
     mkdir -p "$(dirname "$CONFIG_FILE")"
     cat > "$CONFIG_FILE" << EOF
@@ -57,8 +57,8 @@ EOF
 apply() {
     bypass="$1"
     fast="$2"
-    [ -z "$bypass" ] && bypass="0"
-    [ -z "$fast" ] && fast="0"
+    [ -z "$bypass" ] && bypass=0
+    [ -z "$fast" ] && fast=0
 
     if [ -f "$NODE_BYPASS" ]; then
         echo "$bypass" > "$NODE_BYPASS" 2>/dev/null

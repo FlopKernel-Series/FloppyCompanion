@@ -11,10 +11,10 @@ MANAGED_KEYS="use_psi use_minfree_levels low medium critical critical_upgrade up
 normalize_bool() {
     case "$1" in
         1|true|TRUE|y|Y|yes|YES|on|ON)
-            echo "1"
+            echo 1
             ;;
         0|false|FALSE|n|N|no|NO|off|OFF)
-            echo "0"
+            echo 0
             ;;
         *)
             echo "$1"
@@ -23,7 +23,7 @@ normalize_bool() {
 }
 
 is_low_ram_device() {
-    [ "$(normalize_bool "$(getprop ro.config.low_ram 2>/dev/null)")" = "1" ]
+    [ "$(normalize_bool "$(getprop ro.config.low_ram 2>/dev/null)")" = 1 ]
 }
 
 has_memcg_v1() {
@@ -33,10 +33,10 @@ has_memcg_v1() {
 default_for() {
     case "$1" in
         use_psi)
-            echo "1"
+            echo 1
             ;;
         use_minfree_levels)
-            echo "0"
+            echo 0
             ;;
         *)
             echo ""
@@ -119,10 +119,10 @@ validate_args() {
         value="${arg#*=}"
 
         if ! has_memcg_v1; then
-            if [ "$key" = "use_minfree_levels" ] && [ "$(normalize_bool "$value")" = "1" ]; then
+            if [ "$key" = "use_minfree_levels" ] && [ "$(normalize_bool "$value")" = 1 ]; then
                 return 1
             fi
-            if [ "$key" = "use_psi" ] && [ "$(normalize_bool "$value")" = "0" ]; then
+            if [ "$key" = "use_psi" ] && [ "$(normalize_bool "$value")" = 0 ]; then
                 return 1
             fi
         fi
@@ -231,7 +231,7 @@ apply_saved() {
         fi
     done
 
-    if [ ! -f "$CONF_FILE" ] && [ "$has_custom" != "1" ]; then
+    if [ ! -f "$CONF_FILE" ] && [ "$has_custom" != 0 ]; then
         return 0
     fi
 
@@ -248,10 +248,10 @@ apply_saved() {
             key="${line%%=*}"
             value="${line#*=}"
             if ! has_memcg_v1; then
-                if [ "$key" = "use_minfree_levels" ] && [ "$(normalize_bool "$value")" = "1" ]; then
+                if [ "$key" = "use_minfree_levels" ] && [ "$(normalize_bool "$value")" = 1 ]; then
                     continue
                 fi
-                if [ "$key" = "use_psi" ] && [ "$(normalize_bool "$value")" = "0" ]; then
+                if [ "$key" = "use_psi" ] && [ "$(normalize_bool "$value")" = 0 ]; then
                     continue
                 fi
             fi
@@ -273,6 +273,7 @@ $line"
         OLD_IFS="$IFS"
         IFS='
 '
+        # shellcheck disable=SC2086
         apply_args $args
         IFS="$OLD_IFS"
     fi

@@ -29,21 +29,23 @@ get_devices() {
 # Get current scheduler info for a device
 # usage: get_scheduler <device_name>
 get_scheduler() {
-    local dev="$1"
-    local sched_file="/sys/block/$dev/queue/scheduler"
+    dev="$1"
+    sched_file="/sys/block/$dev/queue/scheduler"
     
     if [ ! -f "$sched_file" ]; then
         echo "error: device not found"
         return 1
     fi
     
-    local content=$(cat "$sched_file")
-    local active=$(echo "$content" | grep -o '\[.*\]' | tr -d '[]')
-    local available=$(echo "$content" | tr -d '[]' | tr ' ' ',')
+    content=$(cat "$sched_file")
+    active=$(echo "$content" | grep -o '\[.*\]' | tr -d '[]')
+    available=$(echo "$content" | tr -d '[]' | tr ' ' ',')
     
     echo "device=$dev"
     echo "active=$active"
     echo "available=$available"
+
+    unset dev sched_file content active available
 }
 
 # Get all devices with their schedulers
@@ -77,14 +79,16 @@ save() {
 # usage: apply "dev1=sched1" "dev2=sched2" ...
 apply() {
     for arg in "$@"; do
-        local dev="${arg%%=*}"
-        local sched="${arg#*=}"
+        dev="${arg%%=*}"
+        sched="${arg#*=}"
         
         if [ -f "/sys/block/$dev/queue/scheduler" ]; then
             echo "$sched" > "/sys/block/$dev/queue/scheduler" 2>/dev/null
         fi
     done
     echo "applied"
+
+    unset dev sched
 }
 
 # Apply saved config (called at boot)
