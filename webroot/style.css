@@ -881,15 +881,29 @@ body {
     overflow-x: hidden;
     overflow-y: auto;
     transform-origin: top right;
-    transform: scale(0.96) translateY(100%);
+
+    /* Animation base state */
+    opacity: 0 !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+    transform: scale(0.9) translateY(100%) !important;
+    transition: opacity 0.2s ease, transform 0.2s cubic-bezier(0.2, 0, 0, 1), visibility 0.2s !important;
 }
 
-.dropdown-menu.active {
+.dropdown-menu.fc-active {
+    opacity: 1 !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
     transform: scale(1) translateY(calc(100% + 8px)) !important;
 }
 
 .dropdown-item {
     color: inherit;
+}
+
+.dropdown-item.fc-selected {
+    background-color: var(--md-sys-color-secondary-container);
+    color: var(--md-sys-color-on-secondary-container);
 }
 
 .dropdown-item.hidden {

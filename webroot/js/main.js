@@ -77,6 +77,33 @@ async function init() {
         window.FC.icons.applyDataIcons(document);
     }
 
+    // --- Dropdown Management ---
+    function setupDropdown(btnId, menuId) {
+        const btn = document.getElementById(btnId);
+        const menu = document.getElementById(menuId);
+        if (!btn || !menu) return;
+
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopImmediatePropagation();
+
+            const wasActive = menu.classList.contains('fc-active');
+            // Close all other menus first
+            document.querySelectorAll('.dropdown-menu.fc-active').forEach(m => {
+                if (m !== menu) m.classList.remove('fc-active');
+            });
+            // Toggle this one
+            menu.classList.toggle('fc-active', !wasActive);
+        });
+    }
+
+    // Global click listener for dropdowns (handles clicking off)
+    document.addEventListener('click', (e) => {
+        if (!e.target.closest('.dropdown-container')) {
+            document.querySelectorAll('.dropdown-menu.fc-active').forEach(m => m.classList.remove('fc-active'));
+        }
+    }, { capture: true });
+
     // --- Language Dropdown Logic ---
     const langBtn = document.getElementById('lang-btn');
     const langMenu = document.getElementById('lang-menu');
@@ -90,7 +117,7 @@ async function init() {
             const item = document.createElement('li');
             item.className = 'dropdown-item';
             const isCurrent = I18N.currentLang === lang.code;
-            if (isCurrent) item.classList.add('active');
+            if (isCurrent) item.classList.add('fc-selected');
             item.dataset.lang = lang.code;
             item.setAttribute('role', 'menuitemradio');
             item.setAttribute('aria-checked', String(isCurrent));
@@ -113,29 +140,19 @@ async function init() {
             }, 50);
         }
 
-        langBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            langMenu.classList.toggle('active');
-        });
-
-        document.addEventListener('click', () => {
-            if (langMenu.classList.contains('active')) {
-                langMenu.classList.remove('active');
-            }
-        });
+        setupDropdown('lang-btn', 'lang-menu');
 
         // Use event delegation for dynamic items
         langMenu.addEventListener('click', async (e) => {
             const item = e.target.closest('.dropdown-item');
             if (!item) return;
 
-            e.stopPropagation();
             const lang = item.dataset.lang;
             if (lang && window.I18N) {
                 await I18N.setLanguage(lang);
                 populateLanguageMenu();
             }
-            langMenu.classList.remove('active');
+            langMenu.classList.remove('fc-active');
         });
     }
 
@@ -204,23 +221,11 @@ async function init() {
     const rebootMenu = document.getElementById('reboot-menu');
 
     if (rebootBtn && rebootMenu) {
-        // Toggle dropdown on button click
-        rebootBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            rebootMenu.classList.toggle('active');
-        });
-
-        // Close dropdown when clicking outside
-        document.addEventListener('click', () => {
-            if (rebootMenu.classList.contains('active')) {
-                rebootMenu.classList.remove('active');
-            }
-        });
+        setupDropdown('reboot-btn', 'reboot-menu');
 
         // Handle reboot menu item clicks
         rebootMenu.querySelectorAll('.dropdown-item').forEach(item => {
-            item.addEventListener('click', async (e) => {
-                e.stopPropagation();
+            item.addEventListener('click', async () => {
                 const action = item.dataset.action;
 
                 // Map action to command
@@ -236,7 +241,7 @@ async function init() {
                 if (!command) return;
 
                 // Close dropdown
-                rebootMenu.classList.remove('active');
+                rebootMenu.classList.remove('fc-active');
 
                 // Only confirm if there are pending changes
                 const actionName = item.textContent;

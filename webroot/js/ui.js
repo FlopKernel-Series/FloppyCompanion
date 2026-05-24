@@ -76,7 +76,7 @@ function updateSlide(index) {
             rebootContainer.style.pointerEvents = 'none';
             // Close dropdown when leaving tab
             if (rebootMenu) {
-                rebootMenu.classList.remove('active');
+                rebootMenu.classList.remove('fc-active');
             }
         }
     }
@@ -93,7 +93,7 @@ function updateSlide(index) {
             langContainer.style.opacity = '0';
             langContainer.style.pointerEvents = 'none';
             if (langMenu) {
-                langMenu.classList.remove('active');
+                langMenu.classList.remove('fc-active');
             }
         }
     }
