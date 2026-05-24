@@ -303,7 +303,7 @@ const I18N = {
                     console.warn('Invalid i18n params:', paramsAttr);
                 }
             }
-            
+
             const translation = this.t(key, params);
 
             // Check for data-i18n-attr for attribute translations

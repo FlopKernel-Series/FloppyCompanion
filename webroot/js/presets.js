@@ -389,10 +389,10 @@ async function handleDeletePreset() {
     }
 
     const title = window.t ? window.t('tweaks.deletePresetTitle') : 'Delete Preset';
-    const message = window.t 
-        ? window.t('tweaks.deletePresetConfirm').replace('{name}', currentPresetName) 
+    const message = window.t
+        ? window.t('tweaks.deletePresetConfirm').replace('{name}', currentPresetName)
         : `Are you sure you want to delete preset "${currentPresetName}"?`;
-    
+
     const confirmBtnText = window.t ? window.t('modal.delete') : 'Delete';
     const cancelBtnText = window.t ? window.t('modal.cancel') : 'Cancel';
 
@@ -411,13 +411,13 @@ async function handleDeletePreset() {
 
     // Execute delete
     await exec(`rm "${filePath}"`);
-    
+
     showToast(`Deleted "${currentPresetName}"`);
 
     // Reset to Default
     currentPresetName = 'Default';
     currentPresetBuiltIn = true;
-    
+
     // Reload list
     await loadAvailablePresets();
 }

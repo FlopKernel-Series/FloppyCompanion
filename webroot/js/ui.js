@@ -217,10 +217,10 @@ function initNavigation() {
         // Calculate resistance or limit
         const isRtl = document.documentElement.dir === 'rtl';
         const scalar = isRtl ? 1 : -1;
-        
+
         // Base translation based on current index (-20% steps for LTR, +20% for RTL)
-        const baseTranslate = currentIndex * 20 * scalar; 
-        
+        const baseTranslate = currentIndex * 20 * scalar;
+
         // Convert diff to percentage of container width
         const containerWidth = sliderContainer.offsetWidth;
         const diffPercent = (diff / containerWidth) * 100 / 5; // /5 because track is 500%

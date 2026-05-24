@@ -642,7 +642,7 @@
     function normalizeGpuKhz(value, explicitUnit) {
         const n = Number(value);
         if (isNaN(n) || n === 0) return '';
-        
+
         // Use explicit unit if provided
         if (explicitUnit === 'khz') return String(n);
         if (explicitUnit === 'mhz') return String(n * 1000);
@@ -651,8 +651,8 @@
         // Detect platform from global deviceInfo OR fallback check
         const info = window.deviceInfo || {};
         const isTrinket = info.isTrinketMi || window._fallbackIsTrinket;
-        const is1280 = info.is1280; 
-        
+        const is1280 = info.is1280;
+
         // Auto-detect unit based on magnitude
         // Hz: > 100,000,000 (e.g. 950,000,000) -> / 1000 -> kHz
         // kHz: 20,000 - 2,000,000 (e.g. 1,200,000) -> keep -> kHz
@@ -662,7 +662,7 @@
             // Likely Hz (Adreno devfreq path)
             return String(Math.round(n / 1000));
         }
-        
+
         if (n < 20000) {
             // Likely MHz (Adreno legacy or accidental Exynos path)
             return String(n * 1000);
@@ -700,9 +700,9 @@
                         cur: normalizeGpuKhz(parts[0]),
                         min: normalizeGpuKhz(parts[1]),
                         max: normalizeGpuKhz(parts[2]),
-                        gov: parts[3] || '', 
+                        gov: parts[3] || '',
                         unlock: parts[4] || '',
-                        clklck: parts[5] || '', 
+                        clklck: parts[5] || '',
                         model: model,
                         adrenoboost: '', idlerActive: '',
                         idlerDownDiff: '', idlerIdleWait: '', idlerWorkload: ''
@@ -715,7 +715,7 @@
         // Trinket / Adreno Path (Direct Sysfs Read)
         const ADRENO_DEVFREQ = '/sys/devices/platform/soc/5900000.qcom,kgsl-3d0/devfreq/5900000.qcom,kgsl-3d0';
         const ADRENO_IDLER = '/sys/module/adreno_idler/parameters';
-        
+
         const adrenoCmd = [
             `cat ${ADRENO_DEVFREQ}/cur_freq 2>/dev/null`,
             `cat ${ADRENO_DEVFREQ}/min_freq 2>/dev/null`,
@@ -736,16 +736,16 @@
         const parts = adrenoOut.split('__SEP__').map(p => p.trim());
         // Map parts to variables
         // [0]cur, [1]min, [2]max, [3]gov, [4]model, [5]boost, [6]active, [7]down, [8]wait, [9]work
-        
+
         const rawCur = parts[0];
         const normCur = normalizeGpuKhz(rawCur);
 
         return {
-            cur: normCur, 
+            cur: normCur,
             min: normalizeGpuKhz(parts[1]),
-            max: normalizeGpuKhz(parts[2]), 
+            max: normalizeGpuKhz(parts[2]),
             gov: parts[3] || '',
-            unlock: '', clklck: '', 
+            unlock: '', clklck: '',
             model: parts[4] || 'Adreno',
             adrenoboost: parts[5] || '',
             idlerActive: parts[6] || '',
@@ -1043,7 +1043,7 @@
 
             const boostLabels = ['Off', 'Low', 'Medium', 'High'];
             const boostSection = document.getElementById('monitor-gpu-adrenoboost-section');
-            
+
             if (isAdreno && boostSection) {
                 boostSection.style.display = 'block'; // Show section
                 const idx = Number(data.adrenoboost) || 0;
@@ -1054,7 +1054,7 @@
             const idlerSection = document.getElementById('monitor-gpu-idler-section');
             if (isAdreno && idlerSection) {
                 idlerSection.style.display = 'block'; // Show section
-                
+
                 const val = data.idlerActive === '' ? 'Empty' : (isEnabledValue(data.idlerActive) ? enabledLabel : disabledLabel);
                 setText('monitor-gpu-idler-active-value', val);
 

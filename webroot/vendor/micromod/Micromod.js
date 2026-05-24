@@ -542,7 +542,7 @@ function Channel( module, id ) {
 			}
 		}
 	}
-	
+
 	var volumeSlide = function( param ) {
 		var vol = volume + ( param >> 4 ) - ( param & 0xF );
 		if( vol > 64 ) vol = 64;
@@ -566,7 +566,7 @@ function Channel( module, id ) {
 	var vibrato = function() {
 		vibratoAdd = ( waveform( vibratoPhase, vibratoType ) * vibratoDepth ) >> 7;
 	}
-	
+
 	var tremolo = function() {
 		tremoloAdd = ( waveform( tremoloPhase, tremoloType ) * tremoloDepth ) >> 6;
 	}

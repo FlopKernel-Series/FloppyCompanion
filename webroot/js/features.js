@@ -456,7 +456,7 @@ function renderFeatures(schema, procCmdline) {
                 </div>
             </div>
             ${bodyControls}
-            
+
             <div class="feature-footer">
                  ${currentValueHtml}
                  <div class="status-icon-container">
