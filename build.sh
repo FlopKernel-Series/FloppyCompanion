@@ -7,6 +7,15 @@ set -euo pipefail
 MODULE_DIR="$(dirname "$(readlink -f "$0")")"
 OUTPUT_DIR="$MODULE_DIR/out"
 
+# Parse arguments
+UPLOAD_TG=false
+while getopts "t" opt; do
+    case $opt in
+        t) UPLOAD_TG=true ;;
+        *) echo "Usage: $0 [-t]" && exit 1 ;;
+    esac
+done
+
 # Create output directory
 mkdir -p "$OUTPUT_DIR"
 
@@ -17,7 +26,7 @@ TIMESTAMP=$(date +%Y%m%d_%H%M)
 HASH=""
 if git -C "$MODULE_DIR" rev-parse --git-dir > /dev/null 2>&1; then
     if git -C "$MODULE_DIR" rev-parse HEAD > /dev/null 2>&1; then
-        HASH=$(git -C "$MODULE_DIR" rev-parse --short HEAD)
+        HASH=$(git -C "$MODULE_DIR" rev-parse --short HEAD | tr -d '\r\n' | xargs)
     fi
 fi
 
@@ -26,8 +35,8 @@ if [ -z "$HASH" ]; then
 fi
 
 # Get Version from module.prop
-VERSION=$(grep "^version=" "$MODULE_DIR/module.prop" | cut -d= -f2)
-VERSION_CODE=$(grep "^versionCode=" "$MODULE_DIR/module.prop" | cut -d= -f2)
+VERSION=$(grep "^version=" "$MODULE_DIR/module.prop" | cut -d= -f2 | tr -d '\r\n' | xargs)
+VERSION_CODE=$(grep "^versionCode=" "$MODULE_DIR/module.prop" | cut -d= -f2 | tr -d '\r\n' | xargs)
 
 # Construct Filename
 ZIP_NAME="FloppyCompanion-${VERSION}-${HASH}-${TIMESTAMP}.zip"
@@ -35,7 +44,7 @@ ZIP_PATH="$OUTPUT_DIR/$ZIP_NAME"
 
 # --- Magiskboot Handling ---
 echo "Resolving latest Magisk version..."
-LATEST_URL=$(curl -sI https://github.com/topjohnwu/Magisk/releases/latest | grep -i "location:" | awk '{print $2}' | tr -d '\r')
+LATEST_URL=$(curl -sI https://github.com/topjohnwu/Magisk/releases/latest | grep -i "location:" | awk '{print $2}' | tr -d '\r\n' | xargs)
 TAG=${LATEST_URL##*/}
 echo "Latest tag: $TAG"
 
@@ -169,6 +178,49 @@ sed -i "s/^version=.*/version=${ORIGINAL_VERSION}/" module.prop
 rm -f "$TOOLS_DIR/magiskboot"
 if [ -z "$(ls -A $TOOLS_DIR 2>/dev/null)" ]; then
     rmdir "$TOOLS_DIR" 2>/dev/null || true
+fi
+
+# Telegram Upload
+if [ "$UPLOAD_TG" = true ]; then
+    TG_BOT_TOKEN="${TG_BOT_TOKEN:-$(cat ../bot_token 2>/dev/null | tr -d '\r\n' | xargs || true)}"
+    TG_CHAT_ID="${TG_CHAT_ID:-$(cat ../chat_id 2>/dev/null | tr -d '\r\n' | xargs || true)}"
+
+    if [ -n "$TG_BOT_TOKEN" ] && [ -n "$TG_CHAT_ID" ]; then
+        if [ ! -f "$ZIP_PATH" ]; then
+            echo "Error: Zip file not found at $ZIP_PATH"
+        else
+            echo "Uploading to Telegram..."
+            COMMIT_HASH=$(git -C "$MODULE_DIR" rev-parse HEAD | tr -d '\r\n' | xargs)
+            COMMIT_URL="https://github.com/FlopKernel-Series/FloppyCompanion/commit/$COMMIT_HASH"
+            BRANCH=$(git -C "$MODULE_DIR" rev-parse --abbrev-ref HEAD | tr -d '\r\n' | xargs)
+            COMMIT_SUBJECT=$(git -C "$MODULE_DIR" log -1 --format=%s | sed 's/&/\&amp;/g; s/</\&lt;/g; s/>/\&gt;/g')
+            BUILD_HOST="$(whoami)@$(hostname)"
+
+            CAPTION="<b>New FloppyCompanion CI Build!</b>
+Branch: <code>$BRANCH</code>
+Version: <code>$NEW_VERSION</code>
+Build host: <code>$BUILD_HOST</code>
+Commit: <code>${COMMIT_HASH:0:7}</code>
+
+<a href=\"$COMMIT_URL\">$COMMIT_SUBJECT</a>"
+
+            RESPONSE=$(curl -s \
+                 --form-string "chat_id=$TG_CHAT_ID" \
+                 -F "document=@$ZIP_PATH" \
+                 --form-string "caption=$CAPTION" \
+                 --form-string "parse_mode=HTML" \
+                 "https://api.telegram.org/bot$TG_BOT_TOKEN/sendDocument" 2>&1 || true)
+
+            if echo "$RESPONSE" | grep -q '"ok":true'; then
+                echo "Telegram upload successful."
+            else
+                echo "Telegram upload failed."
+                echo "$RESPONSE" | grep -v "Authorization"
+            fi
+        fi
+    else
+        echo "Telegram upload skipped: TG_BOT_TOKEN or TG_CHAT_ID is empty."
+    fi
 fi
 
 echo "Done! Output: $ZIP_PATH"

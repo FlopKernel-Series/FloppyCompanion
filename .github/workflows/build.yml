@@ -28,9 +28,12 @@ jobs:
           sudo apt-get install -y --no-install-recommends curl unzip zip make gcc-aarch64-linux-gnu libc6-dev-arm64-cross
 
       - name: Build zip (build.sh)
+        env:
+          TG_BOT_TOKEN: ${{ secrets.TG_BOT_TOKEN }}
+          TG_CHAT_ID: ${{ secrets.TG_CHAT_ID }}
         run: |
           chmod +x ./build.sh
-          ./build.sh
+          ./build.sh -t
 
       - name: Locate output zip
         id: out
