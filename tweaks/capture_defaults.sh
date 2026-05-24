@@ -242,6 +242,7 @@ $(      first=1
         printf '      "%s": "%s"' "$key" "$val"
         first=0
       }
+      append_exynos_entry "htpr" "/sys/class/sec/tsp/htpr_force"
       append_exynos_entry "gpu_clklck" "/sys/kernel/gpu/gpu_clklck"
       append_exynos_entry "gpu_unlock" "/sys/kernel/gpu/gpu_unlock"
       append_exynos_entry "throttlers_protection" "/sys/kernel/throttlers_protection"

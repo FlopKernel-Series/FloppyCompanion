@@ -15,11 +15,12 @@ GPU_UNLOCK_NODE="/sys/kernel/gpu/gpu_unlock"
 THROTTLERS_PROTECTION_NODE="/sys/kernel/throttlers_protection"
 ESG_SHORT_BURST_NODE="/sys/kernel/ems/energy_step/short_burst"
 TSP_CMD_NODE="/sys/class/sec/tsp/cmd"
+HTPR_FORCE_NODE="/sys/class/sec/tsp/htpr_force"
 
 # Check if misc tweaks are available
 is_available() {
     # Available if at least one node exists
-    if [ -f "$BLOCK_ED3_NODE" ] || [ -f "$TSP_CMD_NODE" ] || [ -f "$ESG_SHORT_BURST_NODE" ] || [ -f "$GPU_CLKLCK_NODE" ] || [ -f "$GPU_UNLOCK_NODE" ] || [ -f "$THROTTLERS_PROTECTION_NODE" ]; then
+    if [ -f "$BLOCK_ED3_NODE" ] || [ -f "$HTPR_FORCE_NODE" ] || [ -f "$TSP_CMD_NODE" ] || [ -f "$ESG_SHORT_BURST_NODE" ] || [ -f "$GPU_CLKLCK_NODE" ] || [ -f "$GPU_UNLOCK_NODE" ] || [ -f "$THROTTLERS_PROTECTION_NODE" ]; then
         echo "available=1"
     else
         echo "available=0"
@@ -28,7 +29,11 @@ is_available() {
 
 get_capabilities() {
     [ -f "$BLOCK_ED3_NODE" ] && echo "block_ed3=1" || echo "block_ed3=0"
-    [ -f "$TSP_CMD_NODE" ] && echo "htpr=1" || echo "htpr=0"
+    if [ -f "$HTPR_FORCE_NODE" ] || [ -f "$TSP_CMD_NODE" ]; then
+        echo "htpr=1"
+    else
+        echo "htpr=0"
+    fi
     [ -f "$ESG_SHORT_BURST_NODE" ] && echo "esg_short_burst=1" || echo "esg_short_burst=0"
     [ -f "$GPU_CLKLCK_NODE" ] && echo "gpu_clklck=1" || echo "gpu_clklck=0"
     [ -f "$GPU_UNLOCK_NODE" ] && echo "gpu_unlock=1" || echo "gpu_unlock=0"
@@ -48,7 +53,9 @@ get_current() {
         block_ed3=$(cat "$BLOCK_ED3_NODE" 2>/dev/null || echo "")
     fi
 
-    if [ -f "$TSP_CMD_NODE" ]; then
+    if [ -f "$HTPR_FORCE_NODE" ]; then
+        htpr=$(cat "$HTPR_FORCE_NODE" 2>/dev/null || echo "")
+    elif [ -f "$TSP_CMD_NODE" ]; then
         if [ -f "$HTPR_STATE_FILE" ]; then
             htpr=$(cat "$HTPR_STATE_FILE" 2>/dev/null || echo "0")
         else
@@ -131,7 +138,10 @@ apply() {
             fi
             ;;
         htpr)
-            if [ -f "$TSP_CMD_NODE" ]; then
+            if [ -f "$HTPR_FORCE_NODE" ]; then
+                echo "$value" > "$HTPR_FORCE_NODE" 2>/dev/null
+                echo "applied"
+            elif [ -f "$TSP_CMD_NODE" ]; then
                 if [ "$value" = "1" ]; then
                     echo "set_game_mode,1" >> "$TSP_CMD_NODE" 2>/dev/null
                 else
@@ -210,14 +220,18 @@ apply_saved() {
         echo "$block_ed3" > "$BLOCK_ED3_NODE" 2>/dev/null
     fi
 
-    if [ -n "$htpr" ] && [ -f "$TSP_CMD_NODE" ]; then
-        if [ "$htpr" = "1" ]; then
-            echo "set_game_mode,1" >> "$TSP_CMD_NODE" 2>/dev/null
-        else
-            echo "set_game_mode,0" >> "$TSP_CMD_NODE" 2>/dev/null
+    if [ -n "$htpr" ]; then
+        if [ -f "$HTPR_FORCE_NODE" ]; then
+            echo "$htpr" > "$HTPR_FORCE_NODE" 2>/dev/null
+        elif [ -f "$TSP_CMD_NODE" ]; then
+            if [ "$htpr" = "1" ]; then
+                echo "set_game_mode,1" >> "$TSP_CMD_NODE" 2>/dev/null
+            else
+                echo "set_game_mode,0" >> "$TSP_CMD_NODE" 2>/dev/null
+            fi
+            mkdir -p "$(dirname "$HTPR_STATE_FILE")"
+            echo "$htpr" > "$HTPR_STATE_FILE"
         fi
-        mkdir -p "$(dirname "$HTPR_STATE_FILE")"
-        echo "$htpr" > "$HTPR_STATE_FILE"
     fi
 
     if [ -n "$esg_short_burst" ] && [ -f "$ESG_SHORT_BURST_NODE" ]; then
