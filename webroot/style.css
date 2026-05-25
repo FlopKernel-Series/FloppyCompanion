@@ -3314,11 +3314,35 @@ beer-css.tweak-slider-scope .tweak-beer-slider:has(> input.beer-slider-input:dis
     flex-direction: column;
     gap: 6px;
     max-height: min(48vh, 360px);
-    overflow: auto;
+    overflow-x: hidden;
+    overflow-y: scroll;
+    scrollbar-gutter: stable;
+    scrollbar-width: thin;
+    scrollbar-color: var(--md-sys-color-outline) transparent;
     margin-top: 16px;
     padding: 0;
     list-style: none;
     text-align: start;
+}
+
+.language-choice-list::-webkit-scrollbar {
+    width: 10px;
+}
+
+.language-choice-list::-webkit-scrollbar-track {
+    background: color-mix(in srgb, var(--md-sys-color-surface-variant) 28%, transparent);
+    border-radius: 999px;
+}
+
+.language-choice-list::-webkit-scrollbar-thumb {
+    background: color-mix(in srgb, var(--md-sys-color-on-surface) 38%, transparent);
+    border-radius: 999px;
+    border: 2px solid transparent;
+    background-clip: content-box;
+}
+
+.language-choice-list::-webkit-scrollbar-thumb:hover {
+    background: color-mix(in srgb, var(--md-sys-color-on-surface) 55%, transparent);
 }
 
 .language-choice-item {
