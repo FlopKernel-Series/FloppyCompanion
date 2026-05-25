@@ -2468,6 +2468,7 @@ beer-css.tweak-slider-scope .tweak-beer-slider:has(> input.beer-slider-input:dis
 
 /* --- Monitor (Memory) --- */
 .monitor-card .card-content {
+    position: relative;
     display: flex;
     flex-direction: column;
     gap: 14px;
@@ -2475,6 +2476,37 @@ beer-css.tweak-slider-scope .tweak-beer-slider:has(> input.beer-slider-input:dis
     max-height: 5000px;
     opacity: 1;
     transition: max-height 0.25s ease, opacity 0.2s ease;
+}
+
+.monitor-card.monitor-loading .card-content {
+    min-height: 190px;
+}
+
+.monitor-card.monitor-loading .card-content > * {
+    visibility: hidden;
+}
+
+.monitor-card.monitor-loading .card-content::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: var(--md-sys-shape-corner-medium);
+    background:
+        linear-gradient(90deg, transparent, color-mix(in srgb, var(--md-sys-color-on-surface) 10%, transparent), transparent) -160% 0 / 60% 100% no-repeat,
+        linear-gradient(var(--md-sys-color-surface-container-high), var(--md-sys-color-surface-container-high)) 0 0 / 100% 52px no-repeat,
+        linear-gradient(var(--md-sys-color-surface-container-high), var(--md-sys-color-surface-container-high)) 0 66px / 100% 52px no-repeat,
+        linear-gradient(var(--md-sys-color-surface-container-high), var(--md-sys-color-surface-container-high)) 0 132px / 100% 52px no-repeat;
+    animation: fc-skeleton-sweep 1.15s ease-in-out infinite;
+}
+
+@keyframes fc-skeleton-sweep {
+    to {
+        background-position:
+            260% 0,
+            0 0,
+            0 66px,
+            0 132px;
+    }
 }
 
 .monitor-graph-block {

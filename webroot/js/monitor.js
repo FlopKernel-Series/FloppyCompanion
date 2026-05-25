@@ -17,6 +17,15 @@
     let cpuViewMode = 'cluster';
     let isMonitorActive = false;
     let thermalMinMax = {}; // Track min/max per thermal zone
+    const monitorCardIds = {
+        memory: 'monitor-memory-card',
+        cpu: 'monitor-cpu-card',
+        gpu: 'monitor-gpu-card',
+        thermal: 'monitor-thermal-card',
+        voltage: 'monitor-voltage-card'
+    };
+    const loadedCards = {};
+    const cardRequests = {};
 
     function clamp(value, min, max) {
         return Math.min(Math.max(value, min), max);
@@ -341,10 +350,29 @@
         if (el) el.textContent = text;
     }
 
+    function monitorCardKeyFromId(cardId) {
+        return Object.keys(monitorCardIds).find(key => monitorCardIds[key] === cardId) || '';
+    }
+
+    function isCardExpanded(key) {
+        const card = document.getElementById(monitorCardIds[key]);
+        return !!card && !card.classList.contains('collapsed') && card.style.display !== 'none';
+    }
+
+    function setCardLoading(key, loading) {
+        const card = document.getElementById(monitorCardIds[key]);
+        if (card) card.classList.toggle('monitor-loading', !!loading);
+    }
+
+    function waitForPaint() {
+        return new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+    }
+
     function setupCollapse(cardId, toggleId) {
         const card = document.getElementById(cardId);
         const toggle = document.getElementById(toggleId);
         if (!card || !toggle) return;
+        const key = monitorCardKeyFromId(cardId);
 
         const setState = (collapsed) => {
             card.classList.toggle('collapsed', collapsed);
@@ -356,6 +384,9 @@
         toggle.addEventListener('click', () => {
             const nextCollapsed = !card.classList.contains('collapsed');
             setState(nextCollapsed);
+            if (!nextCollapsed && key) {
+                refreshCard(key, { force: true });
+            }
         });
     }
 
@@ -1301,45 +1332,67 @@
         });
     }
 
-    async function refreshMonitor() {
+    async function refreshCard(key, options = {}) {
         if (!isMonitorActive || document.hidden) return;
-        const [memData, cpuData, gpuData, thermalData] = await Promise.all([
-            fetchMonitorData(),
-            fetchCpuData(),
-            fetchGpuData(),
-            fetchThermalData()
-        ]);
-        updateMonitorUI(memData);
-        updateCpuUI(cpuData);
-        updateGpuUI(gpuData);
-        updateThermalUI(thermalData);
+        if (!options.force && !isCardExpanded(key)) return;
+        if (cardRequests[key]) return cardRequests[key];
+
+        const firstLoad = !loadedCards[key];
+        if (firstLoad) {
+            setCardLoading(key, true);
+            await waitForPaint();
+        }
+
+        cardRequests[key] = (async () => {
+            try {
+                if (key === 'memory') {
+                    updateMonitorUI(await fetchMonitorData());
+                } else if (key === 'cpu') {
+                    updateCpuUI(await fetchCpuData());
+                } else if (key === 'gpu') {
+                    updateGpuUI(await fetchGpuData());
+                } else if (key === 'thermal') {
+                    const [thermalData, thermalControlData] = await Promise.all([
+                        fetchThermalData(),
+                        fetchThermalControlData()
+                    ]);
+                    updateThermalUI(thermalData);
+                    updateThermalControlUI(thermalControlData);
+                } else if (key === 'voltage') {
+                    updateVoltageUI(await fetchVoltageData());
+                }
+                loadedCards[key] = true;
+            } finally {
+                setCardLoading(key, false);
+                cardRequests[key] = null;
+            }
+        })();
+
+        return cardRequests[key];
+    }
+
+    function refreshExpandedMonitorCards() {
+        Object.keys(monitorCardIds).forEach(key => refreshCard(key));
     }
 
     async function refreshThermalControl() {
-        if (!isMonitorActive || document.hidden) return;
+        if (!isMonitorActive || document.hidden || !isCardExpanded('thermal')) return;
         const thermalControlData = await fetchThermalControlData();
         updateThermalControlUI(thermalControlData);
     }
 
     async function refreshVoltage() {
-        if (!isMonitorActive || document.hidden) return;
+        if (!isMonitorActive || document.hidden || !isCardExpanded('voltage')) return;
         const voltageData = await fetchVoltageData();
         updateVoltageUI(voltageData);
     }
 
     function startMonitorUpdates() {
         if (monitorTimer) return;
-        refreshMonitor();
-        monitorTimer = setInterval(refreshMonitor, UPDATE_INTERVAL_MS);
-        // Thermal control updates less frequently (every 5 seconds)
-        // Fetch immediately on first load, then start slow refresh
-        refreshThermalControl().then(() => {
-            thermalControlTimer = setInterval(refreshThermalControl, 5000);
-        });
-        // Voltage updates every 5 seconds
-        refreshVoltage().then(() => {
-            voltageTimer = setInterval(refreshVoltage, 5000);
-        });
+        refreshExpandedMonitorCards();
+        monitorTimer = setInterval(refreshExpandedMonitorCards, UPDATE_INTERVAL_MS);
+        thermalControlTimer = setInterval(refreshThermalControl, 5000);
+        voltageTimer = setInterval(refreshVoltage, 5000);
     }
 
     function stopMonitorUpdates() {
@@ -1360,6 +1413,10 @@
         const info = window.deviceInfo || {};
         const is2100 = info.is2100;
         const is1280 = info.is1280;
+        const voltageCard = document.getElementById('monitor-voltage-card');
+        if (voltageCard) {
+            voltageCard.style.display = (is2100 || is1280) ? 'block' : 'none';
+        }
 
         if (is2100) {
             document.getElementById('monitor-thermal-perf-mode-row').style.display = 'flex';
@@ -1441,7 +1498,7 @@
         if (clusterToggle && coreToggle) {
             const updateView = () => {
                 cpuViewMode = clusterToggle.checked ? 'cluster' : 'core';
-                refreshMonitor();
+                refreshCard('cpu', { force: true });
             };
             clusterToggle.addEventListener('change', updateView);
             coreToggle.addEventListener('change', updateView);
@@ -1455,14 +1512,12 @@
 
         document.addEventListener('languageChanged', () => {
             updateDirtyLabels(lastUseBytes);
-            refreshMonitor();
+            refreshExpandedMonitorCards();
         });
 
         document.addEventListener('deviceDetected', () => {
             updatePlatformVisibility();
-            refreshMonitor();
-            refreshThermalControl();
-            refreshVoltage();
+            refreshExpandedMonitorCards();
         });
     }
 

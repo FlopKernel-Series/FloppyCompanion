@@ -20,6 +20,36 @@
         html.fc-loading body {
             visibility: hidden;
         }
+
+        html.fc-loading::before,
+        html.fc-loading::after {
+            content: "";
+            position: fixed;
+            z-index: 99999;
+            pointer-events: none;
+        }
+
+        html.fc-loading::before {
+            inset: 0;
+            background: #191c1a;
+        }
+
+        html.fc-loading::after {
+            width: 42px;
+            height: 42px;
+            left: calc(50% - 21px);
+            top: calc(50% - 21px);
+            border: 4px solid rgba(232, 238, 232, 0.18);
+            border-top-color: #e8eaed;
+            border-radius: 50%;
+            animation: fc-launch-spin 0.9s linear infinite;
+        }
+
+        @keyframes fc-launch-spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
     </style>
 
     <link rel="stylesheet" href="vendor/beercss/dist/cdn/beer.scoped.min.css">

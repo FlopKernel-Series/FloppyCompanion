@@ -29,24 +29,30 @@ async function resolveDeviceInfo() {
     let isTrinketMi = false;
     let is1280 = false;
     let is2100 = false;
+    let uname = '';
 
-    // Try to read device info
-    const namePaths = [
-        '/sys/kernel/sec_detect/device_name',
-        '/sys/mi_detect/device_name'
-    ];
-    const modelPaths = [
-        '/sys/kernel/sec_detect/device_model',
-        '/sys/mi_detect/device_model'
-    ];
+    try {
+        const output = await exec([
+            'name=""',
+            'for p in /sys/kernel/sec_detect/device_name /sys/mi_detect/device_name; do [ -r "$p" ] || continue; name=$(cat "$p" 2>/dev/null); [ -n "$name" ] && break; done',
+            'model=""',
+            'for p in /sys/kernel/sec_detect/device_model /sys/mi_detect/device_model; do [ -r "$p" ] || continue; model=$(cat "$p" 2>/dev/null); [ -n "$model" ] && break; done',
+            'printf "name=%s\\nmodel=%s\\nuname=%s\\n" "$name" "$model" "$(uname -r)"'
+        ].join('; '));
 
-    for (const path of namePaths) {
-        deviceName = await exec(`cat ${path}`);
-        if (deviceName) break;
-    }
-    for (const path of modelPaths) {
-        deviceModel = await exec(`cat ${path}`);
-        if (deviceModel) break;
+        if (output) {
+            output.split('\n').forEach(line => {
+                const idx = line.indexOf('=');
+                if (idx < 0) return;
+                const key = line.slice(0, idx);
+                const value = line.slice(idx + 1).trim();
+                if (key === 'name') deviceName = value || null;
+                if (key === 'model') deviceModel = value || null;
+                if (key === 'uname') uname = value;
+            });
+        }
+    } catch (e) {
+        console.error("Failed to read device info", e);
     }
 
     if (deviceName) {
@@ -87,5 +93,6 @@ async function resolveDeviceInfo() {
         familyKey: familyKey,
         kernelName: kernelName,
         featuresSupported: featuresSupported,
+        uname: uname,
     };
 }

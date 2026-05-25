@@ -252,6 +252,36 @@ async function init() {
         populateThemeMenu();
     }
 
+    function applyNeutralTheme(mode) {
+        document.body.classList.remove(
+            'theme-light',
+            'theme-dark',
+            'theme-monet',
+            'theme-orange',
+            'theme-exynos-1280',
+            'theme-exynos-2100',
+            'light',
+            'dark'
+        );
+        document.documentElement.classList.remove('theme-monet');
+
+        const monetStyle = document.getElementById('fc-monet-style');
+        if (monetStyle) monetStyle.disabled = true;
+
+        if (mode === 'light') document.body.classList.add('theme-light');
+        if (mode === 'dark') document.body.classList.add('theme-dark');
+
+        const effectiveMode = (mode === 'dark')
+            ? 'dark'
+            : (mode === 'light'
+                ? 'light'
+                : ((systemDarkQuery && systemDarkQuery.matches) ? 'dark' : 'light'));
+        document.body.classList.add(effectiveMode);
+
+        updateThemeIcon(mode);
+        populateThemeMenu();
+    }
+
     function getThemeIconName(mode) {
         const theme = themeModes.find(item => item.mode === mode);
         return theme ? theme.icon : 'theme_auto';
@@ -518,8 +548,9 @@ PRESET_EOF`);
         deviceEl.textContent = unknownText();
     }
 
-    // Reveal only once assets are loaded, but BEFORE detection completes,
-    // so users can see the Detecting… chip and the subsequent transition.
+    // Reveal into a neutral placeholder UI before detection completes, then
+    // transition once to the resolved device/theme palette.
+    applyNeutralTheme(currentThemeMode);
     await waitForWindowLoad();
     if (document.fonts && document.fonts.ready) {
         try {
@@ -533,12 +564,12 @@ PRESET_EOF`);
     revealUI();
     const revealedAt = (typeof performance !== 'undefined' && performance.now) ? performance.now() : Date.now();
 
-    // Initialize Monet theme
-    await initMonet();
-    applyTheme(currentThemeMode);
-
-    const props = await getModuleProps();
-    const devInfo = await resolveDeviceInfo();
+    const monetReady = initMonet();
+    const detectionReady = Promise.all([
+        getModuleProps(),
+        resolveDeviceInfo()
+    ]);
+    const [, [props, devInfo]] = await Promise.all([monetReady, detectionReady]);
     window.deviceInfo = devInfo; // Expose globally for other modules (e.g. monitor.js)
     document.dispatchEvent(new CustomEvent('deviceDetected', { detail: devInfo }));
 
@@ -589,32 +620,25 @@ PRESET_EOF`);
         document.body.classList.add('theme-detect-anim');
         setTimeout(() => document.body.classList.remove('theme-detect-anim'), 1700);
     }
-
-    document.body.classList.remove('theme-orange', 'theme-exynos-1280', 'theme-exynos-2100');
-
-    // Helper to add flavor themes only if NOT in monet mode
-    const applyFlavorTheme = (className) => {
-        if (currentThemeMode !== 'monet') {
-            requestAnimationFrame(() => document.body.classList.add(className));
-        }
-    };
+    applyTheme(currentThemeMode);
 
     if (devInfo.isTrinketMi) {
-        applyFlavorTheme('theme-orange');
         swapManagedDeviceName('FloppyTrinketMi', { i18nKey: null });
         window.KERNEL_NAME = 'FloppyTrinketMi';
     } else if (devInfo.is2100) {
-        applyFlavorTheme('theme-exynos-2100');
         swapManagedDeviceName(devInfo.kernelName || 'FloppyKernel', { i18nKey: null });
         window.KERNEL_NAME = devInfo.kernelName || 'FloppyKernel';
     } else if (devInfo.is1280) {
-        applyFlavorTheme('theme-exynos-1280');
         swapManagedDeviceName(devInfo.kernelName || 'FloppyKernel', { i18nKey: null });
         window.KERNEL_NAME = devInfo.kernelName || 'FloppyKernel';
     } else {
         swapManagedDeviceName(unknownText(), { i18nKey: 'unknown' });
         window.KERNEL_NAME = 'FloppyKernel';
     }
+
+    setTimeout(() => {
+        maybeShowMonetChoicePrompt().catch(e => console.error('Failed to show Monet choice prompt:', e));
+    }, shouldAnimateDetectionTheme ? 900 : 300);
 
     // Features gate (future platforms can set devInfo.featuresSupported = false).
     const featuresSupported = !!devInfo.featuresSupported;
@@ -974,8 +998,6 @@ PRESET_EOF`);
             console.error('Failed to load credits:', e);
         }
     }
-
-    await maybeShowMonetChoicePrompt();
     } catch (e) {
         console.error('Init failed:', e);
         // Never leave the UI blank on unexpected errors.
