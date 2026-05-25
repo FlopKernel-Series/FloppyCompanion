@@ -177,6 +177,7 @@ async function init() {
         { mode: 'dark', label: 'Dark', icon: 'theme_dark' },
         { mode: 'monet', label: 'Dynamic colors', icon: 'palette' }
     ];
+    const monetPromptChoiceFile = '/data/adb/floppy_companion/config/.theme_choice_prompted';
 
     async function initMonet() {
         if (window.isMonetInitialized) return;
@@ -315,6 +316,40 @@ async function init() {
             applyTheme(currentThemeMode);
             themeMenu.classList.remove('fc-active');
         });
+    }
+
+    async function saveMonetPromptChoice(choice) {
+        const safeChoice = String(choice || 'default').replace(/[^a-z0-9_-]/gi, '_');
+        await exec(`mkdir -p "/data/adb/floppy_companion/config" && cat > "${monetPromptChoiceFile}" << 'PRESET_EOF'
+${safeChoice}
+PRESET_EOF`);
+    }
+
+    async function maybeShowMonetChoicePrompt() {
+        if (window.isMonetSupported !== true) return;
+
+        const alreadyAsked = await exec(`[ -f "${monetPromptChoiceFile}" ] && echo "ok"`);
+        if (alreadyAsked && alreadyAsked.trim() === 'ok') return;
+
+        const useMonet = await showConfirmModal({
+            title: 'Use dynamic colors?',
+            body: '<p>Dynamic colors use your system palette for this WebUI. You can keep the default device-family colors instead.</p>',
+            iconName: 'palette',
+            confirmText: 'Dynamic colors',
+            cancelText: 'Default colors'
+        });
+
+        if (useMonet) {
+            currentThemeMode = 'monet';
+            localStorage.setItem('theme_mode', currentThemeMode);
+            applyTheme(currentThemeMode);
+            await saveMonetPromptChoice('monet');
+        } else {
+            currentThemeMode = 'auto';
+            localStorage.setItem('theme_mode', currentThemeMode);
+            applyTheme(currentThemeMode);
+            await saveMonetPromptChoice('default');
+        }
     }
 
     // Init Theme
@@ -934,6 +969,8 @@ async function init() {
             console.error('Failed to load credits:', e);
         }
     }
+
+    await maybeShowMonetChoicePrompt();
     } catch (e) {
         console.error('Init failed:', e);
         // Never leave the UI blank on unexpected errors.
