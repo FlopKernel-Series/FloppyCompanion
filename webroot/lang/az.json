@@ -29,6 +29,10 @@
         "rebootDownload": "Download rejiminə keç",
         "rebootBootloader": "Bootloader rejiminə keç"
     },
+    "language": {
+        "title": "Dil",
+        "confirm": "Davam et"
+    },
     "features": {
         "title": "Xüsusiyyətlər",
         "kernelFeatures": "Kernel Xüsusiyyətləri",

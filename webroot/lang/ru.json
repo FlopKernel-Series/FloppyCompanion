@@ -29,6 +29,10 @@
         "rebootDownload": "Перезагрузить в Download",
         "rebootBootloader": "Перезагрузить в Bootloader"
     },
+    "language": {
+        "title": "Язык",
+        "confirm": "Продолжить"
+    },
     "features": {
         "title": "Настройки фич",
         "kernelFeatures": "Возможности ядра",

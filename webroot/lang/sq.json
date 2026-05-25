@@ -29,6 +29,10 @@
     "rebootDownload": "Rinis në Download",
     "rebootBootloader": "Rinis në Bootloader"
   },
+  "language": {
+    "title": "Gjuha",
+    "confirm": "Vazhdo"
+  },
   "features": {
     "title": "Veçoritë",
     "kernelFeatures": "Veçoritë e kernel-it",

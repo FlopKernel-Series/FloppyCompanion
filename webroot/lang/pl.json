@@ -29,6 +29,10 @@
         "rebootDownload": "Restart do Download",
         "rebootBootloader": "Restart do Bootloader"
     },
+    "language": {
+        "title": "Język",
+        "confirm": "Kontynuuj"
+    },
     "features": {
         "title": "Funkcje",
         "kernelFeatures": "Funkcje jądra",

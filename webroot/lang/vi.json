@@ -29,6 +29,10 @@
         "rebootDownload": "Khởi động lại vào Download",
         "rebootBootloader": "Khởi động lại vào Bootloader"
     },
+    "language": {
+        "title": "Ngôn ngữ",
+        "confirm": "Tiếp tục"
+    },
     "features": {
         "title": "Tính năng",
         "kernelFeatures": "Tính năng Kernel",

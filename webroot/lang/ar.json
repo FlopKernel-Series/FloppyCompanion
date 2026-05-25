@@ -29,6 +29,10 @@
         "rebootDownload": "إعادة التشغيل لوضع التنزيل (Download)",
         "rebootBootloader": "إعادة التشغيل لمحمل الإقلاع (Bootloader)"
     },
+    "language": {
+        "title": "اللغة",
+        "confirm": "متابعة"
+    },
     "features": {
         "title": "الميزات",
         "kernelFeatures": "ميزات النواة",

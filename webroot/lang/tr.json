@@ -29,6 +29,10 @@
         "rebootDownload": "Download'a Yeniden Başlat",
         "rebootBootloader": "Bootloader'a Yeniden Başlat"
     },
+    "language": {
+        "title": "Dil",
+        "confirm": "Devam et"
+    },
     "features": {
         "title": "Özellikler",
         "kernelFeatures": "Kernel Özellikleri",

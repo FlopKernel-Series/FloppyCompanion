@@ -29,6 +29,10 @@
         "rebootDownload": "Перезавантажити в Download",
         "rebootBootloader": "Перезавантажити в Bootloader"
     },
+    "language": {
+        "title": "Мова",
+        "confirm": "Продовжити"
+    },
     "features": {
         "title": "Функції",
         "kernelFeatures": "Функції ядра",

@@ -29,6 +29,10 @@
         "rebootDownload": "Reiniciar para Download",
         "rebootBootloader": "Reiniciar para Bootloader"
     },
+    "language": {
+        "title": "Idioma",
+        "confirm": "Continuar"
+    },
     "features": {
         "title": "Recursos",
         "kernelFeatures": "Recursos do Kernel",
