@@ -912,7 +912,7 @@ function renderProjectCredits(container, data) {
 
         if (person.role) {
             // Use data-i18n for automatic updates
-            content += ` <span class="credits-role">(<span data-i18n="${person.role}">${person.role}</span>)</span>`;
+            content += `<span class="credits-role" data-i18n="${person.role}">${person.role}</span>`;
         }
 
         html += `<li>${content}</li>`;
@@ -1003,7 +1003,7 @@ function renderThirdPartyCredits(container, data) {
             : `<strong>${entry.name}</strong>`;
 
         if (entry.role) {
-            heading += ` <span class="credits-role">(<span data-i18n="${entry.role}">${entry.role}</span>)</span>`;
+            heading += `<span class="credits-role" data-i18n="${entry.role}">${entry.role}</span>`;
         }
 
         let meta = [];
