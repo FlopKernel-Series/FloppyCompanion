@@ -10,6 +10,11 @@
     <style>
         html {
             background: #191c1a;
+            transition: background-color 0.4s ease;
+        }
+
+        html:not(.fc-loading) {
+            background: var(--md-sys-color-background);
         }
 
         html.fc-loading body {
@@ -34,9 +39,9 @@
                     <svg class="icon-svg" viewBox="0 0 24 24" data-icon="language"></svg>
                     <span id="lang-btn-label" class="lang-code-btn-label"></span>
                 </button>
-                <menu id="lang-menu" class="dropdown-menu no-wrap" role="menu" aria-label="Language">
+                <div id="lang-menu" class="dropdown-menu no-wrap" role="menu" aria-label="Language">
                     <!-- Language items will be populated dynamically by JS -->
-                </menu>
+                </div>
             </div>
             <!-- Reboot Dropdown (Features Tab Only) -->
             <div id="reboot-dropdown-container" class="dropdown-container"
@@ -45,7 +50,7 @@
                     <!-- restart_alt icon -->
                     <svg class="icon-svg" viewBox="0 0 24 24" data-icon="restart_alt"></svg>
                 </button>
-                <menu id="reboot-menu" class="dropdown-menu no-wrap" role="menu" aria-label="Reboot options">
+                <div id="reboot-menu" class="dropdown-menu no-wrap" role="menu" aria-label="Reboot options">
                     <li class="dropdown-item" role="menuitem" data-action="system" data-i18n="home.rebootSystem">Reboot System</li>
                     <li class="dropdown-item" role="menuitem" data-action="recovery" data-i18n="home.rebootRecovery">Reboot to Recovery
                     </li>
@@ -56,7 +61,7 @@
                     <li class="dropdown-item platform-trinket hidden" role="menuitem" data-action="bootloader"
                         data-i18n="home.rebootBootloader">Reboot to Bootloader
                     </li>
-                </menu>
+                </div>
             </div>
             <!-- Theme Toggle (About Tab Only) -->
             <button id="theme-toggle" class="icon-button transparent circle" style="opacity: 0; transition: opacity 0.3s;">

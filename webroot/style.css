@@ -407,12 +407,14 @@ body.theme-detect-anim .nav-item .icon {
         color var(--fc-theme-transition-duration) var(--fc-theme-transition-easing) var(--fc-theme-transition-delay);
 }
 
-/* Bridge the existing MD3 token set into BeerCSS variable names. */
-body,
-body.light,
-body.dark,
-.beer,
-beer-css {
+/* Bridge tokens into library variables. */
+/* Non-Monet: bridge internal tokens. */
+/* Monet: system variables in :root take priority. */
+body:not(.theme-monet),
+body.light:not(.theme-monet),
+body.dark:not(.theme-monet),
+body:not(.theme-monet) .beer,
+body:not(.theme-monet) beer-css {
     --font: 'Roboto', sans-serif;
     --primary: var(--md-sys-color-primary);
     --on-primary: var(--md-sys-color-on-primary);
@@ -446,12 +448,15 @@ beer-css {
     --on-error: #ffffff;
     --error-container: #ffdad6;
     --on-error-container: #410002;
+    --shadow: rgba(0, 0, 0, 0.24);
+    --scrim: rgba(0, 0, 0, 0.5);
+}
+
+:root {
     --md-sys-color-error: var(--error);
     --md-sys-color-on-error: var(--on-error);
     --md-sys-color-error-container: var(--error-container);
     --md-sys-color-on-error-container: var(--on-error-container);
-    --shadow: rgba(0, 0, 0, 0.24);
-    --scrim: rgba(0, 0, 0, 0.5);
 }
 
 
@@ -871,40 +876,52 @@ body {
 
 .dropdown-menu {
     position: absolute;
-    top: auto !important;
-    bottom: 0 !important;
-    inset-inline-end: 0 !important;
-    inset-inline-start: auto !important;
+    top: 100%;
+    inset-inline-end: 0;
+    inset-inline-start: auto;
     min-width: 200px;
     max-width: min(280px, calc(100vw - 32px));
     z-index: 200;
     overflow-x: hidden;
     overflow-y: auto;
     transform-origin: top right;
+    background-color: var(--md-sys-color-surface-container-high);
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    padding: 8px 0;
+    list-style: none;
+    display: flex !important;
+    flex-direction: column !important;
 
     /* Animation base state */
-    opacity: 0 !important;
-    visibility: hidden !important;
-    pointer-events: none !important;
-    transform: scale(0.9) translateY(100%) !important;
-    transition: opacity 0.2s ease, transform 0.2s cubic-bezier(0.2, 0, 0, 1), visibility 0.2s !important;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transform: scale(0.9) translateY(0);
+    transition: opacity 0.2s ease, transform 0.2s cubic-bezier(0.2, 0, 0, 1), visibility 0.2s;
 }
 
 .dropdown-menu.fc-active {
-    opacity: 1 !important;
-    visibility: visible !important;
-    pointer-events: auto !important;
-    transform: scale(1) translateY(calc(100% + 8px)) !important;
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transform: scale(1) translateY(8px);
 }
 
 .dropdown-item {
-    color: inherit;
+    color: var(--md-sys-color-on-surface);
+    padding: 12px 16px;
+    cursor: pointer;
     display: flex;
     justify-content: space-between;
     align-items: center;
     gap: 16px;
+    transition: background-color 0.2s;
 }
 
+.dropdown-item:hover {
+    background-color: var(--md-sys-color-surface-variant);
+}
 .dropdown-item.fc-selected {
     background-color: var(--md-sys-color-secondary-container);
     color: var(--md-sys-color-on-secondary-container);
@@ -2348,7 +2365,7 @@ beer-css.tweak-slider-scope .tweak-beer-slider:has(> input.beer-slider-input:dis
 
 .app-logo-svg path {
     fill: var(--md-sys-color-primary);
-    stroke: var(--md-sys-color-primary);
+    stroke: var(--md-sys-color-on-surface);
     stroke-width: 10px;
     stroke-linecap: round;
     stroke-linejoin: round;
@@ -3636,4 +3653,85 @@ beer-css.tweak-slider-scope .tweak-beer-slider:has(> input.beer-slider-input:dis
     font-style: italic;
     text-align: center;
     padding: 16px;
+}
+
+
+
+/* Monet Theme */
+/* Use --mo- prefix to avoid naming collisions */
+html.theme-monet body,
+html.theme-monet {
+    /* Internal token mapping */
+    --md-sys-color-primary: var(--mo-primary) !important;
+    --md-sys-color-primary-rgb: var(--primary-rgb) !important;
+    --md-sys-color-on-primary: var(--mo-onPrimary) !important;
+    --md-sys-color-primary-container: var(--mo-primaryContainer) !important;
+    --md-sys-color-on-primary-container: var(--mo-onPrimaryContainer) !important;
+    --md-sys-color-secondary-container: var(--mo-secondaryContainer) !important;
+    --md-sys-color-on-secondary-container: var(--mo-onSecondaryContainer) !important;
+    --md-sys-color-background: var(--mo-background) !important;
+    --md-sys-color-on-background: var(--mo-onBackground) !important;
+    --md-sys-color-surface: var(--mo-surface) !important;
+    --md-sys-color-on-surface: var(--mo-onSurface) !important;
+    --md-sys-color-surface-variant: var(--mo-surfaceVariant) !important;
+    --md-sys-color-on-surface-variant: var(--mo-onSurfaceVariant) !important;
+    --md-sys-color-outline: var(--mo-outline) !important;
+    --md-sys-color-outline-variant: var(--mo-outlineVariant) !important;
+    --md-sys-color-surface-container-low: var(--mo-surfaceContainerLow) !important;
+    --md-sys-color-surface-container: var(--mo-surfaceContainer) !important;
+    --md-sys-color-surface-container-high: var(--mo-surfaceContainerHigh) !important;
+    --md-sys-color-inverse-surface: var(--mo-inverseSurface) !important;
+    --md-sys-color-inverse-on-surface: var(--mo-inverseOnSurface) !important;
+
+    /* Library component overrides */
+    --primary: var(--mo-primary) !important;
+    --on-primary: var(--mo-onPrimary) !important;
+    --primary-container: var(--mo-primaryContainer) !important;
+    --on-primary-container: var(--mo-onPrimaryContainer) !important;
+    --secondary: var(--mo-secondary) !important;
+    --on-secondary: var(--mo-onSecondary) !important;
+    --secondary-container: var(--mo-secondaryContainer) !important;
+    --on-secondary-container: var(--mo-onSecondaryContainer) !important;
+    --tertiary: var(--mo-tertiary) !important;
+    --on-tertiary: var(--mo-onTertiary) !important;
+    --tertiary-container: var(--mo-tertiaryContainer) !important;
+    --on-tertiary-container: var(--mo-onTertiaryContainer) !important;
+    --background: var(--mo-background) !important;
+    --on-background: var(--mo-onBackground) !important;
+    --surface: var(--mo-surface) !important;
+    --on-surface: var(--mo-onSurface) !important;
+    --surface-variant: var(--mo-surfaceVariant) !important;
+    --on-surface-variant: var(--mo-onSurfaceVariant) !important;
+    --outline: var(--mo-outline) !important;
+    --outline-variant: var(--mo-outlineVariant) !important;
+    --inverse-surface: var(--mo-inverseSurface) !important;
+    --inverse-on-surface: var(--mo-inverseOnSurface) !important;
+    --inverse-primary: var(--mo-inversePrimary) !important;
+    --surface-dim: var(--mo-surfaceDim) !important;
+    --surface-bright: var(--mo-surfaceBright) !important;
+    --surface-container-lowest: var(--mo-surfaceContainerLowest) !important;
+    --surface-container-low: var(--mo-surfaceContainerLow) !important;
+    --surface-container: var(--mo-surfaceContainer) !important;
+    --surface-container-high: var(--mo-surfaceContainerHigh) !important;
+    --surface-container-highest: var(--mo-surfaceContainerHighest) !important;
+    --error: var(--mo-error) !important;
+    --on-error: var(--mo-onError) !important;
+    --error-container: var(--mo-errorContainer) !important;
+    --on-error-container: var(--mo-onErrorContainer) !important;
+
+    /* Terminal bridge */
+    --terminal-bg: var(--mo-surfaceContainerLowest) !important;
+    --terminal-text: var(--mo-primary) !important;
+}
+
+/* Hyperlinks and specific accents */
+html.theme-monet a,
+html.theme-monet .accent-text {
+    color: var(--mo-primary) !important;
+}
+
+/* Logo colors */
+html.theme-monet .app-logo-svg path {
+    fill: var(--mo-primary) !important;
+    stroke: var(--mo-onSurface) !important;
 }

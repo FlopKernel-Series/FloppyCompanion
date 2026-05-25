@@ -171,22 +171,75 @@ async function init() {
     const themeBtn = document.getElementById('theme-toggle');
     const systemDarkQuery = window.matchMedia ? window.matchMedia('(prefers-color-scheme: dark)') : null;
 
+    async function initMonet() {
+        if (window.isMonetInitialized) return;
+        try {
+            const response = await fetch('internal/colors.css');
+            if (!response.ok) throw new Error('Not available');
+            const cssText = await response.text();
+
+            // Use --mo- prefix to avoid naming collisions
+            const rebranded = cssText
+                .replace(/--([a-zA-Z0-9]+):/g, '--mo-$1:')
+                .replace(/var\(--([a-zA-Z0-9]+)\)/g, 'var(--mo-$1)');
+
+            const style = document.createElement('style');
+            style.id = 'fc-monet-style';
+            style.textContent = rebranded;
+            document.head.appendChild(style);
+
+            window.isMonetSupported = true;
+            window.isMonetInitialized = true;
+        } catch (e) {
+            window.isMonetSupported = false;
+        }
+    }
+
     function applyTheme(mode) {
-        document.body.classList.remove('theme-light', 'theme-dark', 'light', 'dark');
+        document.body.classList.remove('theme-light', 'theme-dark', 'theme-monet', 'light', 'dark');
+        document.documentElement.classList.remove('theme-monet');
+
+        const monetStyle = document.getElementById('fc-monet-style');
+        if (monetStyle) monetStyle.disabled = (mode !== 'monet');
+
         if (mode === 'light') document.body.classList.add('theme-light');
         if (mode === 'dark') document.body.classList.add('theme-dark');
-        const effectiveMode = mode === 'auto'
+        if (mode === 'monet') {
+            document.body.classList.add('theme-monet');
+            document.documentElement.classList.add('theme-monet');
+        }
+
+        const effectiveMode = (mode === 'auto')
             ? ((systemDarkQuery && systemDarkQuery.matches) ? 'dark' : 'light')
-            : mode;
+            : (mode === 'monet' ? (systemDarkQuery && systemDarkQuery.matches ? 'dark' : 'light') : mode);
+
         document.body.classList.add(effectiveMode);
-        // 'auto' does nothing (uses media query)
+
+        // Manage Device Flavor Themes (Orange, Blue, Green)
+        const devInfo = window.deviceInfo || {};
+        const flavorClasses = ['theme-orange', 'theme-exynos-1280', 'theme-exynos-2100'];
+
+        flavorClasses.forEach(cls => {
+            document.body.classList.remove(cls);
+            document.documentElement.classList.remove(cls);
+        });
+
+        if (mode !== 'monet') {
+            if (devInfo.is1280) document.body.classList.add('theme-exynos-1280');
+            else if (devInfo.is2100) document.body.classList.add('theme-exynos-2100');
+            else if (devInfo.isTrinketMi) document.body.classList.add('theme-orange');
+        }
 
         updateThemeIcon(mode);
     }
 
     function updateThemeIcon(mode) {
         if (!themeBtn) return;
-        const iconName = mode === 'auto' ? 'theme_auto' : (mode === 'light' ? 'theme_light' : 'theme_dark');
+        let iconName = 'theme_auto';
+        if (mode === 'light') iconName = 'theme_light';
+        else if (mode === 'dark') iconName = 'theme_dark';
+        else if (mode === 'monet') iconName = 'palette';
+
         const svg = themeBtn.querySelector('svg');
 
         if (svg && window.FC && window.FC.icons && window.FC.icons.applyToSvg) {
@@ -205,7 +258,10 @@ async function init() {
         themeBtn.addEventListener('click', () => {
             if (currentThemeMode === 'auto') currentThemeMode = 'light';
             else if (currentThemeMode === 'light') currentThemeMode = 'dark';
-            else currentThemeMode = 'auto';
+            else if (currentThemeMode === 'dark') {
+                // Skip monet if not supported
+                currentThemeMode = window.isMonetSupported ? 'monet' : 'auto';
+            } else currentThemeMode = 'auto';
 
             localStorage.setItem('theme_mode', currentThemeMode);
 
@@ -394,6 +450,9 @@ async function init() {
     revealUI();
     const revealedAt = (typeof performance !== 'undefined' && performance.now) ? performance.now() : Date.now();
 
+    // Initialize Monet theme
+    await initMonet();
+
     const props = await getModuleProps();
     const devInfo = await resolveDeviceInfo();
     window.deviceInfo = devInfo; // Expose globally for other modules (e.g. monitor.js)
@@ -449,16 +508,23 @@ async function init() {
 
     document.body.classList.remove('theme-orange', 'theme-exynos-1280', 'theme-exynos-2100');
 
+    // Helper to add flavor themes only if NOT in monet mode
+    const applyFlavorTheme = (className) => {
+        if (currentThemeMode !== 'monet') {
+            requestAnimationFrame(() => document.body.classList.add(className));
+        }
+    };
+
     if (devInfo.isTrinketMi) {
-        requestAnimationFrame(() => document.body.classList.add('theme-orange'));
+        applyFlavorTheme('theme-orange');
         swapManagedDeviceName('FloppyTrinketMi', { i18nKey: null });
         window.KERNEL_NAME = 'FloppyTrinketMi';
     } else if (devInfo.is2100) {
-        requestAnimationFrame(() => document.body.classList.add('theme-exynos-2100'));
+        applyFlavorTheme('theme-exynos-2100');
         swapManagedDeviceName(devInfo.kernelName || 'FloppyKernel', { i18nKey: null });
         window.KERNEL_NAME = devInfo.kernelName || 'FloppyKernel';
     } else if (devInfo.is1280) {
-        requestAnimationFrame(() => document.body.classList.add('theme-exynos-1280'));
+        applyFlavorTheme('theme-exynos-1280');
         swapManagedDeviceName(devInfo.kernelName || 'FloppyKernel', { i18nKey: null });
         window.KERNEL_NAME = devInfo.kernelName || 'FloppyKernel';
     } else {
