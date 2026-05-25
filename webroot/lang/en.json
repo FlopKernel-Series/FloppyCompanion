@@ -39,6 +39,10 @@
         "promptTitle": "Use dynamic colors?",
         "promptBody": "Dynamic colors use your system palette for this WebUI. You can keep the default device-family colors instead."
     },
+    "language": {
+        "title": "Language",
+        "confirm": "Continue"
+    },
     "features": {
         "title": "Features",
         "kernelFeatures": "Kernel Features",

@@ -107,6 +107,10 @@ async function init() {
     // --- Language Dropdown Logic ---
     const langBtn = document.getElementById('lang-btn');
     const langMenu = document.getElementById('lang-menu');
+    const languagePromptChoiceFile = '/data/adb/floppy_companion/config/.language_choice_prompted';
+    const languageChoiceModal = document.getElementById('language-choice-modal');
+    const languageChoiceList = document.getElementById('language-choice-list');
+    const languageChoiceConfirm = document.getElementById('language-choice-confirm');
 
     // Populate language dropdown dynamically
     function populateLanguageMenu() {
@@ -163,6 +167,68 @@ async function init() {
                 populateLanguageMenu();
             }
             langMenu.classList.remove('fc-active');
+        });
+    }
+
+    function populateLanguageChoiceList() {
+        if (!languageChoiceList || !window.I18N) return;
+
+        languageChoiceList.innerHTML = '';
+        I18N.availableLanguages.forEach(lang => {
+            const item = document.createElement('li');
+            const isCurrent = I18N.currentLang === lang.code;
+            item.className = 'language-choice-item';
+            if (isCurrent) item.classList.add('fc-selected');
+            item.dataset.lang = lang.code;
+            item.setAttribute('role', 'option');
+            item.setAttribute('aria-selected', String(isCurrent));
+            item.innerHTML = `
+                <span>${lang.name}</span>
+                <span class="lang-code-list-label">${lang.code}</span>
+            `;
+            languageChoiceList.appendChild(item);
+        });
+    }
+
+    async function saveLanguagePromptChoice() {
+        const safeLang = String(I18N.currentLang || 'en').replace(/[^a-z0-9_-]/gi, '_');
+        await exec(`mkdir -p "/data/adb/floppy_companion/config" && printf "%s\\n" "${safeLang}" > "${languagePromptChoiceFile}"`);
+    }
+
+    async function maybeShowLanguageChoicePrompt() {
+        if (!window.I18N || !languageChoiceModal || !languageChoiceList || !languageChoiceConfirm) return;
+
+        const alreadyAsked = await exec(`[ -f "${languagePromptChoiceFile}" ] && echo "ok"`);
+        if (alreadyAsked && alreadyAsked.trim() === 'ok') return;
+
+        if (!localStorage.getItem('floppy_lang') && I18N.currentLang !== 'en') {
+            await I18N.setLanguage('en');
+            populateLanguageMenu();
+        }
+
+        populateLanguageChoiceList();
+        languageChoiceModal.classList.remove('hidden');
+
+        return new Promise(resolve => {
+            const onListClick = async (e) => {
+                const item = e.target.closest('.language-choice-item');
+                if (!item || !item.dataset.lang) return;
+                await I18N.setLanguage(item.dataset.lang);
+                populateLanguageMenu();
+                populateLanguageChoiceList();
+            };
+
+            const oldConfirm = document.getElementById('language-choice-confirm');
+            const newConfirm = oldConfirm.cloneNode(true);
+            oldConfirm.parentNode.replaceChild(newConfirm, oldConfirm);
+
+            languageChoiceList.addEventListener('click', onListClick);
+            newConfirm.addEventListener('click', async () => {
+                languageChoiceList.removeEventListener('click', onListClick);
+                languageChoiceModal.classList.add('hidden');
+                await saveLanguagePromptChoice();
+                resolve();
+            });
         });
     }
 
@@ -385,6 +451,12 @@ PRESET_EOF`);
             applyTheme(currentThemeMode);
             await saveMonetPromptChoice('default');
         }
+    }
+
+    async function maybeShowStartupPrompts() {
+        await maybeShowLanguageChoicePrompt();
+        await sleep(250);
+        await maybeShowMonetChoicePrompt();
     }
 
     // Init Theme
@@ -637,7 +709,7 @@ PRESET_EOF`);
     }
 
     setTimeout(() => {
-        maybeShowMonetChoicePrompt().catch(e => console.error('Failed to show Monet choice prompt:', e));
+        maybeShowStartupPrompts().catch(e => console.error('Failed to show startup prompts:', e));
     }, shouldAnimateDetectionTheme ? 900 : 300);
 
     // Features gate (future platforms can set devInfo.featuresSupported = false).

@@ -3304,6 +3304,44 @@ beer-css.tweak-slider-scope .tweak-beer-slider:has(> input.beer-slider-input:dis
     font-size: 14px;
 }
 
+.language-choice-content {
+    max-width: 420px;
+}
+
+.language-choice-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    max-height: min(48vh, 360px);
+    overflow: auto;
+    margin-top: 16px;
+    padding: 0;
+    list-style: none;
+    text-align: start;
+}
+
+.language-choice-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    min-height: 48px;
+    padding: 10px 14px;
+    border-radius: 14px;
+    color: var(--md-sys-color-on-surface);
+    cursor: pointer;
+    user-select: none;
+}
+
+.language-choice-item.fc-selected {
+    background-color: var(--md-sys-color-secondary-container);
+    color: var(--md-sys-color-on-secondary-container);
+}
+
+.language-choice-item:active {
+    background-color: color-mix(in srgb, var(--md-sys-color-on-surface) 10%, transparent);
+}
+
 /* --- Features UI --- */
 .fab-container {
     position: fixed;

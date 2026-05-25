@@ -64,12 +64,14 @@
         <div class="header-actions">
             <!-- Language Selector (Home Tab Only) -->
             <div id="lang-dropdown-container" class="dropdown-container" style="opacity: 0; transition: opacity 0.3s;">
-                <button id="lang-btn" class="icon-button transparent" aria-label="Language">
+                <button id="lang-btn" class="icon-button transparent" aria-label="Language"
+                    data-i18n="language.title" data-i18n-attr="aria-label">
                     <!-- language/globe icon -->
                     <svg class="icon-svg" viewBox="0 0 24 24" data-icon="language"></svg>
                     <span id="lang-btn-label" class="lang-code-btn-label"></span>
                 </button>
-                <div id="lang-menu" class="dropdown-menu no-wrap" role="menu" aria-label="Language">
+                <div id="lang-menu" class="dropdown-menu no-wrap" role="menu" aria-label="Language"
+                    data-i18n="language.title" data-i18n-attr="aria-label">
                     <!-- Language items will be populated dynamically by JS -->
                 </div>
             </div>
@@ -1991,6 +1993,21 @@
                 <button class="btn-text transparent" id="confirm-modal-cancel">Cancel</button>
                 <button class="btn-tonal hidden" id="confirm-modal-extra">Extra</button>
                 <button class="btn-filled" id="confirm-modal-confirm">Confirm</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- First-run Language Modal -->
+    <div id="language-choice-modal" class="modal hidden" role="dialog" aria-modal="true"
+        aria-labelledby="language-choice-title">
+        <div class="modal-content language-choice-content">
+            <div class="modal-icon">
+                <svg class="icon-svg" viewBox="0 0 24 24" data-icon="language"></svg>
+            </div>
+            <h3 id="language-choice-title" data-i18n="language.title">Language</h3>
+            <ul id="language-choice-list" class="language-choice-list"></ul>
+            <div class="modal-actions beer">
+                <button class="btn-filled" id="language-choice-confirm" data-i18n="language.confirm">Continue</button>
             </div>
         </div>
     </div>
