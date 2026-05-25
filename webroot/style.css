@@ -28,6 +28,9 @@
     --terminal-bg: #eeeeee;
     --terminal-text: #1b5e20;
     /* Dark Green */
+    --fc-elevation-1: 0 1px 2px rgba(0, 0, 0, 0.06), 0 1px 3px rgba(0, 0, 0, 0.03);
+    --fc-elevation-2: 0 1px 3px rgba(0, 0, 0, 0.08), 0 3px 8px rgba(0, 0, 0, 0.04);
+    --fc-divider-color: color-mix(in srgb, var(--md-sys-color-outline-variant) 42%, transparent);
 
     /* Theme transition (used for smooth device-detection theme switch) */
     --fc-theme-transition-duration: 0ms;
@@ -66,6 +69,8 @@ body.theme-detect-anim {
         --md-sys-color-inverse-on-surface: #2f3033;
         --terminal-bg: #1e1e1e;
         --terminal-text: #00e676;
+        --fc-elevation-1: 0 1px 2px rgba(0, 0, 0, 0.18), 0 1px 3px rgba(0, 0, 0, 0.12);
+        --fc-elevation-2: 0 1px 3px rgba(0, 0, 0, 0.22), 0 3px 8px rgba(0, 0, 0, 0.14);
     }
 }
 
@@ -463,12 +468,13 @@ body:not(.theme-monet) beer-css {
 /* Feature Cards */
 .feature-card {
     position: relative;
-    background-color: var(--md-sys-color-surface-container-low);
-    border: 1px solid var(--md-sys-color-outline-variant);
+    background-color: var(--md-sys-color-surface-container-high);
+    border: 1px solid transparent;
     border-radius: 24px;
     padding: 18px;
     margin-bottom: 12px;
     overflow: hidden;
+    box-shadow: var(--fc-elevation-1);
 }
 
 .feature-header {
@@ -503,8 +509,8 @@ body:not(.theme-monet) beer-css {
     min-block-size: 24px;
     padding: 0 10px;
     border-radius: 999px;
-    background-color: var(--md-sys-color-surface-container-high);
-    border: 1px solid var(--md-sys-color-outline-variant);
+    background-color: color-mix(in srgb, var(--md-sys-color-surface-variant) 70%, transparent);
+    border: 1px solid transparent;
     font-family: monospace;
     font-size: 11px;
     color: var(--md-sys-color-on-surface-variant);
@@ -534,7 +540,7 @@ body:not(.theme-monet) beer-css {
     min-block-size: 30px;
     padding: 5px 10px;
     border-radius: 999px;
-    background-color: var(--md-sys-color-surface-container-high);
+    background-color: color-mix(in srgb, var(--md-sys-color-surface-variant) 70%, transparent);
     color: var(--md-sys-color-on-surface-variant);
     font-size: 11px;
     line-height: 1.2;
@@ -806,7 +812,7 @@ body {
     inset-inline-start: 0;
     inset-inline-end: 0;
     height: 64px;
-    background-color: var(--md-sys-color-surface);
+    background-color: color-mix(in srgb, var(--md-sys-color-surface) 84%, var(--md-sys-color-surface-container-low) 16%);
     display: flex;
     align-items: center;
     padding: 0 16px;
@@ -1002,8 +1008,9 @@ body {
     inset-inline-start: 0;
     inset-inline-end: 0;
     height: 80px;
-    background-color: var(--md-sys-color-surface);
-    border-top: 1px solid var(--md-sys-color-surface-variant);
+    background-color: var(--md-sys-color-surface-container);
+    border-top: 1px solid transparent;
+    box-shadow: 0 -1px 3px rgba(0, 0, 0, 0.10);
     display: flex;
     justify-content: space-around;
     align-items: center;
@@ -1091,7 +1098,7 @@ body {
     max-width: 72px;
     text-align: center;
     white-space: normal;
-    letter-spacing: -0.2px;
+    letter-spacing: 0;
 }
 
 /* Icon Utilities */
@@ -1260,10 +1267,10 @@ body {
     flex-direction: column;
     gap: 12px;
     padding: 16px;
-    background-color: var(--md-sys-color-surface-container);
-    border: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 82%, transparent);
+    background-color: color-mix(in srgb, var(--md-sys-color-surface-container) 88%, var(--md-sys-color-surface-container-high) 12%);
+    border: 1px solid transparent;
     border-radius: 28px;
-    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.07);
+    box-shadow: none;
     margin-bottom: 22px;
 }
 
@@ -1275,13 +1282,13 @@ body {
 
 .preset-selector-field {
     --_input: 2.2rem;
-    --_background: color-mix(in srgb, var(--md-sys-color-surface-container-high) 88%, var(--md-sys-color-surface) 12%);
+    --_background: color-mix(in srgb, var(--md-sys-color-surface-container-high) 72%, var(--md-sys-color-surface-container) 28%);
     flex: 1 1 auto;
     min-width: 0;
 }
 
 .preset-selector-field.border > select {
-    border-color: color-mix(in srgb, var(--md-sys-color-outline-variant) 86%, transparent);
+    border-color: transparent;
     color: var(--md-sys-color-on-surface);
 }
 
@@ -1338,10 +1345,10 @@ body {
     block-size: 40px;
     min-inline-size: 40px;
     padding: 0;
-    background-color: color-mix(in srgb, var(--md-sys-color-surface-container-high) 92%, var(--md-sys-color-surface) 8%);
+    background-color: var(--md-sys-color-surface-container-high);
     color: var(--md-sys-color-on-surface-variant);
-    border: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 76%, transparent);
-    border-radius: 14px;
+    border: 1px solid transparent;
+    border-radius: 16px;
     font-size: 13px;
     font-weight: 500;
     cursor: pointer;
@@ -1472,6 +1479,9 @@ body {
     justify-content: center;
     text-align: center;
     line-height: 1.2;
+    background-color: color-mix(in srgb, var(--md-sys-color-surface-container-high) 72%, var(--md-sys-color-surface-container) 28%) !important;
+    border-color: transparent !important;
+    color: var(--md-sys-color-on-surface-variant) !important;
 }
 
 .option-btn:active {
@@ -1479,9 +1489,9 @@ body {
 }
 
 .option-btn.selected {
-    background-color: var(--md-sys-color-secondary-container);
-    color: var(--md-sys-color-on-secondary-container);
-    border-color: transparent;
+    background-color: var(--md-sys-color-secondary-container) !important;
+    color: var(--md-sys-color-on-secondary-container) !important;
+    border-color: transparent !important;
 }
 
 .option-btn.small-btn {
@@ -1546,7 +1556,7 @@ body {
 }
 
 .tweak-separator {
-    border-bottom: 1px solid var(--md-sys-color-outline-variant);
+    border-bottom: 1px solid var(--fc-divider-color);
     padding-bottom: 10px;
     /* Space between content and separator line */
     margin-bottom: 2px;
@@ -1685,7 +1695,7 @@ beer-css.tweak-slider-scope .tweak-beer-slider:has(> input.beer-slider-input:dis
 /* Info/Warning Notice */
 .info-notice {
     background-color: var(--md-sys-color-surface-container-high);
-    border: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 74%, transparent);
+    border: 1px solid transparent;
     color: var(--md-sys-color-on-surface);
     padding: 14px;
     border-radius: 20px;
@@ -1867,7 +1877,7 @@ beer-css.tweak-slider-scope .tweak-beer-slider:has(> input.beer-slider-input:dis
 
 .beer.field.inline-input-field {
     --_input: 2.125rem;
-    --_background: var(--surface-container);
+    --_background: color-mix(in srgb, var(--md-sys-color-surface-container-high) 82%, var(--md-sys-color-surface-container) 18%);
 }
 
 .beer.field.inline-input-field[class*=round] {
@@ -1877,6 +1887,13 @@ beer-css.tweak-slider-scope .tweak-beer-slider:has(> input.beer-slider-input:dis
 .beer.field.inline-input-field> :is(input, textarea, select) {
     font-size: 0.875rem;
     font-variant-numeric: tabular-nums;
+    background-color: var(--_background);
+    border-color: transparent;
+}
+
+.beer.field.inline-input-field> :is(input, textarea, select):focus {
+    background-color: var(--md-sys-color-surface-container-high);
+    border-color: transparent;
 }
 
 .beer.field.inline-input-field:not(.suffix)>input {
@@ -1924,6 +1941,7 @@ beer-css.tweak-slider-scope .tweak-beer-slider:has(> input.beer-slider-input:dis
 
 .tweak-select-container.beer.field.inline-input-field.exynos-fc-select-field {
     --_input: 2.2rem;
+    --_background: color-mix(in srgb, var(--md-sys-color-surface-container-high) 82%, var(--md-sys-color-surface-container) 18%);
     flex: 0 0 7.8rem;
     inline-size: 7.8rem;
     max-inline-size: 7.8rem;
@@ -1935,11 +1953,19 @@ beer-css.tweak-slider-scope .tweak-beer-slider:has(> input.beer-slider-input:dis
     padding-inline-end: 2rem;
     font-size: 0.875rem;
     color: var(--md-sys-color-on-surface);
+    border-color: transparent;
+    background-color: var(--_background);
 }
 
 .tweak-select-container.beer.field.inline-input-field.exynos-fc-select-field > select:focus {
     padding-inline-start: 0.7375rem;
     padding-inline-end: 1.9375rem;
+    border-color: transparent;
+    background-color: var(--md-sys-color-surface-container-high);
+}
+
+.tweak-select-container.beer.field.inline-input-field.exynos-fc-select-field:focus-within {
+    box-shadow: 0 0 0 2px rgba(var(--md-sys-color-primary-rgb), 0.16);
 }
 
 .tweak-select-container.beer.field.inline-input-field.exynos-fc-select-field::after {
@@ -1956,6 +1982,10 @@ beer-css.tweak-slider-scope .tweak-beer-slider:has(> input.beer-slider-input:dis
     z-index: 2;
 }
 
+.tweak-select-container.beer.field.inline-input-field.exynos-fc-select-field:focus-within::after {
+    border-color: var(--md-sys-color-primary);
+}
+
 .custom-input-row.beer.field.inline-input-field.inline-input-field-suffix {
     flex: 0 0 4.2rem;
     inline-size: 4.2rem;
@@ -1965,7 +1995,7 @@ beer-css.tweak-slider-scope .tweak-beer-slider:has(> input.beer-slider-input:dis
 /* Preset bar endpoint overrides for BeerCSS-sized controls. */
 .beer.field.preset-selector-field {
     --_input: 2.2rem;
-    --_background: color-mix(in srgb, var(--md-sys-color-surface-container-high) 88%, var(--md-sys-color-surface) 12%);
+    --_background: color-mix(in srgb, var(--md-sys-color-surface-container-high) 72%, var(--md-sys-color-surface-container) 28%);
 }
 
 .beer.field.preset-selector-field>select {
@@ -1982,6 +2012,8 @@ beer-css.tweak-slider-scope .tweak-beer-slider:has(> input.beer-slider-input:dis
 .beer.field.preset-selector-field>select:focus {
     padding-inline: 0.875rem;
     padding-inline-end: 2.3125rem;
+    background-color: var(--md-sys-color-surface-container-high);
+    border-color: transparent;
 }
 
 .beer.field.preset-selector-field.fill>select {
@@ -1989,11 +2021,19 @@ beer-css.tweak-slider-scope .tweak-beer-slider:has(> input.beer-slider-input:dis
 }
 
 .beer.field.preset-selector-field.border>select {
-    border-color: color-mix(in srgb, var(--md-sys-color-outline-variant) 86%, transparent);
+    border-color: transparent;
 }
 
 .beer.field.preset-selector-field.border>select:focus {
-    border-color: color-mix(in srgb, var(--md-sys-color-primary) 54%, var(--md-sys-color-outline-variant) 46%);
+    border-color: transparent;
+}
+
+.beer.field.preset-selector-field:focus-within {
+    box-shadow: 0 0 0 2px rgba(var(--md-sys-color-primary-rgb), 0.16);
+}
+
+.beer.field.preset-selector-field:focus-within::after {
+    border-color: var(--md-sys-color-primary);
 }
 
 .preset-actions.beer {
@@ -2374,11 +2414,12 @@ beer-css.tweak-slider-scope .tweak-beer-slider:has(> input.beer-slider-input:dis
 /* Cards (Restored) */
 .card {
     position: relative;
-    background-color: var(--md-sys-color-surface);
-    border: 1px solid var(--md-sys-color-outline-variant);
+    background-color: var(--md-sys-color-surface-container);
+    border: 1px solid transparent;
     border-radius: 28px;
-    padding: 18px;
+    padding: 20px;
     margin-bottom: 18px;
+    box-shadow: var(--fc-elevation-1);
 }
 
 .section-shell {
@@ -2386,8 +2427,8 @@ beer-css.tweak-slider-scope .tweak-beer-slider:has(> input.beer-slider-input:dis
     z-index: 1;
     overflow: visible;
     background-color: var(--md-sys-color-surface-container);
-    border-color: color-mix(in srgb, var(--md-sys-color-outline-variant) 84%, transparent);
-    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.08);
+    border-color: transparent;
+    box-shadow: var(--fc-elevation-2);
 }
 
 .section-shell .card-header > .icon-svg {
@@ -2420,7 +2461,7 @@ beer-css.tweak-slider-scope .tweak-beer-slider:has(> input.beer-slider-input:dis
 
 .monitor-graph-block {
     background-color: var(--md-sys-color-surface-container-high);
-    border: 1px solid var(--md-sys-color-outline-variant);
+    border: 1px solid transparent;
     border-radius: var(--md-sys-shape-corner-medium);
     padding: 16px;
     overflow: hidden;
@@ -2484,7 +2525,7 @@ beer-css.tweak-slider-scope .tweak-beer-slider:has(> input.beer-slider-input:dis
 
 .monitor-section {
     background-color: var(--md-sys-color-surface-container-high);
-    border: 1px solid var(--md-sys-color-outline-variant);
+    border: 1px solid transparent;
     border-radius: var(--md-sys-shape-corner-medium);
     padding: 14px;
 }
@@ -2493,11 +2534,11 @@ beer-css.tweak-slider-scope .tweak-beer-slider:has(> input.beer-slider-input:dis
     font-size: 12px;
     font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.04em;
     color: var(--md-sys-color-primary);
     margin-bottom: 8px;
     padding-bottom: 8px;
-    border-bottom: 1px solid var(--md-sys-color-outline-variant);
+    border-bottom: 1px solid var(--fc-divider-color);
 }
 
 .monitor-stat-row {
@@ -2506,7 +2547,7 @@ beer-css.tweak-slider-scope .tweak-beer-slider:has(> input.beer-slider-input:dis
     align-items: center;
     font-size: 14px;
     padding: 8px 0;
-    border-bottom: 1px solid var(--md-sys-color-surface-variant);
+    border-bottom: 1px solid var(--fc-divider-color);
 }
 
 .monitor-stat-row:last-child {
@@ -2601,7 +2642,7 @@ beer-css.tweak-slider-scope .tweak-beer-slider:has(> input.beer-slider-input:dis
 
 .monitor-cpu-item {
     padding: 10px 0;
-    border-bottom: 1px solid var(--md-sys-color-outline-variant);
+    border-bottom: 1px solid var(--fc-divider-color);
 }
 
 .monitor-cpu-item:last-child {
@@ -2633,7 +2674,7 @@ beer-css.tweak-slider-scope .tweak-beer-slider:has(> input.beer-slider-input:dis
     grid-template-columns: 2fr 1fr 1fr 1fr;
     gap: 8px;
     padding: 8px 0;
-    border-bottom: 1px solid var(--md-sys-color-surface-variant);
+    border-bottom: 1px solid var(--fc-divider-color);
 }
 
 .monitor-thermal-row:last-child {
@@ -2698,7 +2739,7 @@ beer-css.tweak-slider-scope .tweak-beer-slider:has(> input.beer-slider-input:dis
     display: flex;
     justify-content: space-between;
     padding: 8px 0;
-    border-bottom: 1px solid var(--md-sys-color-surface-variant);
+    border-bottom: 1px solid var(--fc-divider-color);
 }
 
 .info-row:last-child {
@@ -2737,8 +2778,8 @@ beer-css.tweak-slider-scope .tweak-beer-slider:has(> input.beer-slider-input:dis
     font-weight: 700;
     color: var(--md-sys-color-on-surface-variant);
     text-transform: uppercase;
-    letter-spacing: 0.08em;
-    border-bottom: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 72%, transparent);
+    letter-spacing: 0.04em;
+    border-bottom: 1px solid transparent;
 }
 
 .link-list {
@@ -2810,10 +2851,10 @@ beer-css.tweak-slider-scope .tweak-beer-slider:has(> input.beer-slider-input:dis
     margin-bottom: 0;
     padding: 16px 16px 16px 18px;
     padding-inline-end: 8px;
-    background-color: var(--md-sys-color-surface-container-high);
-    border: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 76%, transparent);
+    background-color: var(--md-sys-color-surface-container);
+    border: 1px solid transparent;
     border-radius: 24px;
-    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.06);
+    box-shadow: var(--fc-elevation-1);
 }
 
 .m3-switch-label {
@@ -3228,7 +3269,7 @@ beer-css.tweak-slider-scope .tweak-beer-slider:has(> input.beer-slider-input:dis
 /* Feature Cards */
 .feature-item {
     padding: 16px 0;
-    border-bottom: 1px solid var(--md-sys-color-outline-variant);
+    border-bottom: 1px solid var(--fc-divider-color);
 }
 
 .feature-item:last-child {
@@ -3264,9 +3305,9 @@ beer-css.tweak-slider-scope .tweak-beer-slider:has(> input.beer-slider-input:dis
 }
 
 .chip-btn {
-    border: 1px solid var(--md-sys-color-outline);
-    background: transparent;
-    color: var(--md-sys-color-on-surface);
+    border: 1px solid transparent;
+    background: color-mix(in srgb, var(--md-sys-color-surface-container-high) 72%, var(--md-sys-color-surface-container) 28%);
+    color: var(--md-sys-color-on-surface-variant);
     padding: 6px 12px;
     border-radius: 8px;
     font-size: 14px;
@@ -3300,8 +3341,8 @@ beer-css.tweak-slider-scope .tweak-beer-slider:has(> input.beer-slider-input:dis
 
 .option-item {
     position: relative;
-    background-color: var(--md-sys-color-surface-container-low);
-    border: 1px solid var(--md-sys-color-outline-variant);
+    background-color: color-mix(in srgb, var(--md-sys-color-surface-container) 58%, var(--md-sys-color-surface-container-high) 42%);
+    border: 1px solid transparent;
     border-radius: 16px;
     padding: 12px 14px;
     cursor: pointer;
@@ -3367,7 +3408,7 @@ beer-css.tweak-slider-scope .tweak-beer-slider:has(> input.beer-slider-input:dis
     flex-shrink: 0;
     padding: 2px 7px;
     border-radius: 999px;
-    background-color: var(--md-sys-color-surface-container-high);
+    background-color: color-mix(in srgb, var(--md-sys-color-surface-variant) 72%, transparent);
 }
 
 .option-item.selected .option-val {
@@ -3447,7 +3488,7 @@ beer-css.tweak-slider-scope .tweak-beer-slider:has(> input.beer-slider-input:dis
     justify-content: space-between;
     align-items: center;
     padding: 12px 6px;
-    border-bottom: 1px solid var(--md-sys-color-surface-variant);
+    border-bottom: 1px solid var(--fc-divider-color);
 }
 
 .tweak-row:last-child {
@@ -3499,7 +3540,7 @@ beer-css.tweak-slider-scope .tweak-beer-slider:has(> input.beer-slider-input:dis
     font-size: 12px;
     font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.8px;
+    letter-spacing: 0.04em;
     color: var(--md-sys-color-primary);
     padding-inline-start: 6px;
 }
@@ -3512,7 +3553,7 @@ beer-css.tweak-slider-scope .tweak-beer-slider:has(> input.beer-slider-input:dis
 }
 
 .segmented-control.beer.group {
-    background-color: var(--md-sys-color-surface-container-high) !important;
+    background-color: var(--md-sys-color-surface-container) !important;
     border-radius: 20px;
     padding: 4px;
     gap: 4px;
@@ -3559,8 +3600,8 @@ beer-css.tweak-slider-scope .tweak-beer-slider:has(> input.beer-slider-input:dis
 }
 
 .tweak-subsection {
-    background-color: var(--md-sys-color-surface-container-high);
-    border-radius: 12px;
+    background-color: color-mix(in srgb, var(--md-sys-color-surface-container) 58%, var(--md-sys-color-surface-container-high) 42%);
+    border-radius: 16px;
     padding: 12px;
     margin: 16px 0;
 }
