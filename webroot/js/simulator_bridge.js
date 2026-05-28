@@ -122,6 +122,16 @@
     function makeDefaultState(config) {
         const isExynos = config.family === '1280' || config.family === '2100';
         const isTrinket = config.family === 'trinket';
+        const exynosFcClusters = config.family === '1280'
+            ? [
+                { key: 'cpucl0', available: '300000,403000,533000,672000,799000,930000,1053000,1170000,1300000,1417000,1508000,1586000' },
+                { key: 'cpucl1', available: '533000,704000,844000,1001000,1170000,1326000,1482000,1638000,1794000,1950000,2106000,2210000,2288000' }
+            ]
+            : [
+                { key: 'cpucl0', available: '300000,403000,533000,672000,799000,930000,1053000,1170000,1300000,1417000,1508000,1586000' },
+                { key: 'cpucl1', available: '533000,704000,844000,1001000,1170000,1326000,1482000,1638000,1794000,1950000,2106000,2210000,2288000' },
+                { key: 'cpucl2', available: '533000,704000,844000,1001000,1170000,1326000,1482000,1638000,1794000,1950000,2106000,2262000,2418000,2600000,2808000' }
+            ];
 
         const state = {
             config,
@@ -243,11 +253,7 @@
                 { device: '/dev/block/sda', active: 'mq-deadline', available: 'mq-deadline,none,bfq' },
                 { device: '/dev/block/sdb', active: 'none', available: 'none,mq-deadline,bfq' }
             ],
-            exynosFcClusters: [
-                { key: 'cpucl0', available: '300000,403000,533000,672000,799000,930000,1053000,1170000,1300000,1417000,1508000,1586000' },
-                { key: 'cpucl1', available: '533000,704000,844000,1001000,1170000,1326000,1482000,1638000,1794000,1950000,2106000,2210000,2288000' },
-                { key: 'cpucl2', available: '533000,704000,844000,1001000,1170000,1326000,1482000,1638000,1794000,1950000,2106000,2262000,2418000,2600000,2808000' }
-            ]
+            exynosFcClusters
         };
 
         if (!isExynos) {
@@ -263,7 +269,10 @@
             state.tweakSaved.misc = {};
         }
 
-        if (config.family !== '2100') {
+        if (config.family === '1280') {
+            state.tweakCurrent.exynos_fc = { cpucl0: '0', cpucl1: '0' };
+            state.tweakSaved.exynos_fc = {};
+        } else if (config.family !== '2100') {
             delete state.tweakCurrent.thermal_control;
             delete state.tweakCurrent.exynos_fc;
             state.tweakSaved.thermal_control = {};
@@ -306,6 +315,7 @@
             };
             if (config.family === '1280') {
                 defaultPresetTweaks.thermal = { ...state.tweakCurrent.thermal };
+                defaultPresetTweaks.exynos_fc = { ...state.tweakCurrent.exynos_fc };
             }
             if (config.family === '2100') {
                 defaultPresetTweaks.thermal_control = {
@@ -530,7 +540,7 @@
                 (scriptName === 'thermal' && state.config.family === '1280') ||
                 (scriptName === 'thermal_control' && state.config.family === '2100') ||
                 (scriptName === 'undervolt' && (state.config.family === '1280' || state.config.family === '2100')) ||
-                (scriptName === 'exynos_fc' && state.config.family === '2100') ||
+                (scriptName === 'exynos_fc' && (state.config.family === '1280' || state.config.family === '2100')) ||
                 (['soundcontrol', 'charging', 'display', 'adreno', 'misc_trinket'].includes(scriptName) && state.config.family === 'trinket');
             return `available=${available ? '1' : '0'}`;
         }
