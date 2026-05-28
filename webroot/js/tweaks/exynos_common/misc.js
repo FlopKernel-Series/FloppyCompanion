@@ -8,7 +8,6 @@ let miscCapabilities = { block_ed3: '0', htpr: '0', esg_short_burst: '0', gpu_cl
 let exynosFeatureState = { init_protection: '1' };
 let exynosStateInitialized = false;
 let exynosUiBound = false;
-let exynosVariantListenerBound = false;
 
 const runMiscBackend = (...args) => window.runTweakBackend('misc', ...args);
 const EXYNOS_STATE_KEYS = ['block_ed3', 'htpr', 'esg_short_burst', 'gpu_clklck', 'gpu_unlock', 'throttlers_protection'];
@@ -251,20 +250,8 @@ function updateGpuUnlockAvailability() {
         return;
     }
 
-    if (window.KERNEL_NAME === 'Floppy2100') {
-        gpuUnlockSwitch.disabled = false;
-        if (switchContainer) switchContainer.style.opacity = '1';
-        return;
-    }
-
-    let isOcMode = truthy(getTweakVar('isUnlockedOcMode'));
-    if (!isOcMode) {
-        const superfloppyMode = String(getTweakVar('superfloppyMode') ?? window.currentSuperfloppyMode ?? '0');
-        isOcMode = ['1', '2', '3'].includes(superfloppyMode);
-    }
-
-    gpuUnlockSwitch.disabled = !isOcMode;
-    if (switchContainer) switchContainer.style.opacity = isOcMode ? '1' : '0.5';
+    gpuUnlockSwitch.disabled = false;
+    if (switchContainer) switchContainer.style.opacity = '1';
 }
 
 function updateThrottlersProtectionAvailability() {
@@ -534,26 +521,6 @@ function bindExynosUiIfNeeded() {
     });
 }
 
-function bindGpuUnlockVariantListenerIfNeeded() {
-    if (exynosVariantListenerBound || window.KERNEL_NAME !== 'Floppy1280') return;
-    exynosVariantListenerBound = true;
-
-    let lastGpuUnlockCategory = ['1', '2', '3'].includes(String(window.currentSuperfloppyMode ?? '0')) ? 'oc' : 'other';
-
-    document.addEventListener('superfloppyModeChanged', (e) => {
-        const mode = String(e?.detail?.mode ?? window.currentSuperfloppyMode ?? '0');
-        const newCategory = ['1', '2', '3'].includes(mode) ? 'oc' : 'other';
-
-        if (lastGpuUnlockCategory !== null && lastGpuUnlockCategory !== newCategory) {
-            if (window.clearGpuUnlockPersistence) {
-                window.clearGpuUnlockPersistence();
-            }
-        }
-        lastGpuUnlockCategory = newCategory;
-
-        updateGpuUnlockAvailability();
-    });
-}
 
 function registerExynosTweaks() {
     if (typeof window.registerTweak !== 'function') return;
@@ -590,7 +557,6 @@ function initSharedExynosTweakUI() {
     }
 
     bindExynosUiIfNeeded();
-    bindGpuUnlockVariantListenerIfNeeded();
 
     if (!exynosStateInitialized) {
         loadSharedExynosState();
