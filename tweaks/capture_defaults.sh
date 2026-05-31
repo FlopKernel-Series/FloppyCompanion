@@ -212,6 +212,7 @@ $(        first=1
         append_fc_entry "cpucl0" "/sys/kernel/exynos_fc/cpucl0_clamp"
         append_fc_entry "cpucl1" "/sys/kernel/exynos_fc/cpucl1_clamp"
         append_fc_entry "cpucl2" "/sys/kernel/exynos_fc/cpucl2_clamp"
+        append_fc_entry "power_mode" "/sys/kernel/exynos_fc/power_mode"
 )
     }
 EOF_EXYNOS_FC_DEFAULTS

@@ -1,5 +1,5 @@
-const EXYNOS_FC_KEYS = ['cpucl0', 'cpucl1', 'cpucl2'];
-const EXYNOS_FC_BASE_STATE = { cpucl0: '0', cpucl1: '0', cpucl2: '0' };
+const EXYNOS_FC_KEYS = ['cpucl0', 'cpucl1', 'cpucl2', 'power_mode'];
+const EXYNOS_FC_BASE_STATE = { cpucl0: '0', cpucl1: '0', cpucl2: '0', power_mode: '0' };
 
 let exynosFcClusters = [];
 let exynosFcCurrentState = { ...EXYNOS_FC_BASE_STATE };
@@ -50,8 +50,12 @@ function getSupportedExynosFcKeys() {
     return exynosFcClusters.map((cluster) => cluster.key);
 }
 
-function getExynosFcFrequencyText(value) {
+function getExynosFcValueText(key, value) {
     const freq = parseInt(normalizeExynosFcValue(value), 10);
+    if (key === 'power_mode') {
+        if (freq === 1) return 'CoolFloppy';
+        return 'Custom / Disabled';
+    }
     if (!freq) {
         return window.t ? window.t('tweaks.exynosFc.disabled') : 'Disabled';
     }
@@ -69,11 +73,11 @@ function buildExynosFcEffectiveState(source = exynosFcPendingState) {
     return state;
 }
 
-function ensureExynosFcOption(select, value) {
+function ensureExynosFcOption(key, select, value) {
     if (!select || !value || Array.from(select.options).some((option) => option.value === value)) return;
     const option = document.createElement('option');
     option.value = value;
-    option.textContent = getExynosFcFrequencyText(value);
+    option.textContent = getExynosFcValueText(key, value);
     select.appendChild(option);
 }
 
@@ -99,17 +103,17 @@ function renderExynosFcCard() {
             '0'
         );
 
-        if (currentEl) currentEl.textContent = getExynosFcFrequencyText(exynosFcCurrentState[key]);
+        if (currentEl) currentEl.textContent = getExynosFcValueText(key, exynosFcCurrentState[key]);
         if (!select) return;
 
         select.innerHTML = '';
         cluster.available.forEach((freq) => {
             const option = document.createElement('option');
             option.value = freq;
-            option.textContent = getExynosFcFrequencyText(freq);
+            option.textContent = getExynosFcValueText(key, freq);
             select.appendChild(option);
         });
-        ensureExynosFcOption(select, pendingValue);
+        ensureExynosFcOption(key, select, pendingValue);
         select.value = pendingValue;
     });
 

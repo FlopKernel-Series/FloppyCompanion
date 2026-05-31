@@ -125,7 +125,8 @@
         const exynosFcClusters = config.family === '1280'
             ? [
                 { key: 'cpucl0', available: '300000,403000,533000,672000,799000,930000,1053000,1170000,1300000,1417000,1508000,1586000' },
-                { key: 'cpucl1', available: '533000,704000,844000,1001000,1170000,1326000,1482000,1638000,1794000,1950000,2106000,2210000,2288000' }
+                { key: 'cpucl1', available: '533000,704000,844000,1001000,1170000,1326000,1482000,1638000,1794000,1950000,2106000,2210000,2288000' },
+                { key: 'power_mode', available: '0,1' }
             ]
             : [
                 { key: 'cpucl0', available: '300000,403000,533000,672000,799000,930000,1053000,1170000,1300000,1417000,1508000,1586000' },
@@ -199,7 +200,8 @@
                 exynos_fc: {
                     cpucl0: '0',
                     cpucl1: '0',
-                    cpucl2: '0'
+                    cpucl2: '0',
+                    power_mode: '0'
                 },
                 misc: {
                     block_ed3: '0',
@@ -270,7 +272,7 @@
         }
 
         if (config.family === '1280') {
-            state.tweakCurrent.exynos_fc = { cpucl0: '0', cpucl1: '0' };
+            state.tweakCurrent.exynos_fc = { cpucl0: '0', cpucl1: '0', power_mode: '0' };
             state.tweakSaved.exynos_fc = {};
         } else if (config.family !== '2100') {
             delete state.tweakCurrent.thermal_control;
