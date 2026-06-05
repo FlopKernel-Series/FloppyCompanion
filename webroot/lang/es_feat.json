@@ -94,5 +94,9 @@
                 "desc": "Fuerza el modo SELinux Permissive al arrancar."
             }
         }
+    },
+    "usb_sl_disable": {
+        "title": "Desactivar Bloqueo USB",
+        "desc": "Desactiva forzosamente el Bloqueo Seguro (Secure Lock) de USB de Samsung. Solo tiene efecto en One UI."
     }
 }

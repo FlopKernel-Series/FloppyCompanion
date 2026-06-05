@@ -94,5 +94,9 @@
                 "desc": "Force SELinux Permissive mode at boot."
             }
         }
+    },
+    "usb_sl_disable": {
+        "title": "Disable USB Secure Lock",
+        "desc": "Forcefully disable Samsung's USB Secure Lock. Only effective on One UI."
     }
 }
