@@ -5,12 +5,15 @@
 DATA_DIR="/data/adb/floppy_companion"
 CONFIG_FILE="$DATA_DIR/config/exynos_fc.conf"
 FC_DIR="/sys/kernel/exynos_fc"
+GPU_CLAMP_NODE="/sys/kernel/gpu/gpu_clamp"
 CPUFREQ_DIR="/sys/devices/system/cpu/cpufreq"
-CLUSTER_KEYS="cpucl0 cpucl1 cpucl2 power_mode"
+FVMAP_DIR="/sys/kernel/fvmap/fv_tables"
+GPU_SYSFS_DIR="/sys/kernel/gpu"
+CLUSTER_KEYS="cpucl0 cpucl1 cpucl2 gpu power_mode"
 
 is_valid_key() {
     case "$1" in
-        cpucl0|cpucl1|cpucl2|power_mode) return 0 ;;
+        cpucl0|cpucl1|cpucl2|gpu|power_mode) return 0 ;;
         *) return 1 ;;
     esac
 }
@@ -27,6 +30,8 @@ cluster_index() {
 node_for_key() {
     if [ "$1" = "power_mode" ]; then
         echo "$FC_DIR/power_mode"
+    elif [ "$1" = "gpu" ]; then
+        echo "$GPU_CLAMP_NODE"
     else
         echo "$FC_DIR/${1}_clamp"
     fi
@@ -66,6 +71,13 @@ get_available_for_key() {
     key="$1"
     if [ "$key" = "power_mode" ]; then
         echo "0,1"
+        return 0
+    elif [ "$key" = "gpu" ]; then
+        if [ -f "$FVMAP_DIR/g3d_fv_table" ]; then
+            awk 'NR > 1 && $1 ~ /^[0-9]+$/ { print $1 }' "$FVMAP_DIR/g3d_fv_table" 2>/dev/null | sort -n | uniq | tr '\n' ',' | sed 's/,$//'
+        elif [ -f "$GPU_SYSFS_DIR/gpu_freq_table" ]; then
+            tr ' ' '\n' < "$GPU_SYSFS_DIR/gpu_freq_table" 2>/dev/null | sed '/^[0-9][0-9]*$/!d' | sort -n | uniq | tr '\n' ',' | sed 's/,$//'
+        fi
         return 0
     fi
     idx=$(cluster_index "$key")

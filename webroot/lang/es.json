@@ -320,11 +320,12 @@
         },
         "exynosFc": {
             "title": "Control de Frecuencia Exynos",
-            "clampTitle": "Límite de Frecuencia CPU",
+            "clampTitle": "Límite de Frecuencia",
             "presetTitle": "Preajuste",
             "cpucl0": "@tweaks.undervolt.little",
             "cpucl1": "@tweaks.undervolt.big",
             "cpucl2": "@tweaks.undervolt.prime",
+            "gpu": "@tweaks.undervolt.gpu",
             "disabled": "@features.optionDisabled"
         },
         "misc": {

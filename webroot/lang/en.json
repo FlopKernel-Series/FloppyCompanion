@@ -281,11 +281,12 @@
         },
         "exynosFc": {
             "title": "Exynos Frequency Control",
-            "clampTitle": "CPU Frequency Clamp",
+            "clampTitle": "Frequency Clamp",
             "presetTitle": "Preset",
             "cpucl0": "@tweaks.undervolt.little",
             "cpucl1": "@tweaks.undervolt.big",
             "cpucl2": "@tweaks.undervolt.prime",
+            "gpu": "@tweaks.undervolt.gpu",
             "disabled": "@features.optionDisabled"
         },
         "misc": {

@@ -203,7 +203,7 @@ $(      first=1
 )
     }
 $(
-      if [ -d /sys/kernel/exynos_fc ]; then
+      if [ -f /sys/kernel/exynos_fc/cpucl0_clamp ] || [ -f /sys/kernel/exynos_fc/cpucl1_clamp ] || [ -f /sys/kernel/exynos_fc/cpucl2_clamp ] || [ -f /sys/kernel/exynos_fc/power_mode ] || [ -f /sys/kernel/gpu/gpu_clamp ]; then
         cat << EOF_EXYNOS_FC_DEFAULTS
 ,
     "exynos_fc": {
@@ -222,6 +222,7 @@ $(        first=1
         append_fc_entry "cpucl0" "/sys/kernel/exynos_fc/cpucl0_clamp"
         append_fc_entry "cpucl1" "/sys/kernel/exynos_fc/cpucl1_clamp"
         append_fc_entry "cpucl2" "/sys/kernel/exynos_fc/cpucl2_clamp"
+        append_fc_entry "gpu" "/sys/kernel/gpu/gpu_clamp"
         append_fc_entry "power_mode" "/sys/kernel/exynos_fc/power_mode"
 )
     }

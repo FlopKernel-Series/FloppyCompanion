@@ -1,5 +1,5 @@
-const EXYNOS_FC_KEYS = ['cpucl0', 'cpucl1', 'cpucl2', 'power_mode'];
-const EXYNOS_FC_BASE_STATE = { cpucl0: '0', cpucl1: '0', cpucl2: '0', power_mode: '0' };
+const EXYNOS_FC_KEYS = ['cpucl0', 'cpucl1', 'cpucl2', 'gpu', 'power_mode'];
+const EXYNOS_FC_BASE_STATE = { cpucl0: '0', cpucl1: '0', cpucl2: '0', gpu: '0', power_mode: '0' };
 
 let exynosFcClusters = [];
 let exynosFcCurrentState = { ...EXYNOS_FC_BASE_STATE };

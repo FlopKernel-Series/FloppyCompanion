@@ -654,7 +654,7 @@
                         <div class="card-content">
                             <div class="tweak-section">
                                 <h3 class="tweak-section-title" style="display: inline-flex; align-items: center; gap: 6px;">
-                                    <span data-i18n="tweaks.exynosFc.clampTitle">CPU Frequency Clamp</span>
+                                    <span data-i18n="tweaks.exynosFc.clampTitle">Frequency Clamp</span>
                                     <div class="status-icon-wrapper beer">
                                         <button type="button" class="status-icon-button icon-button transparent circle"
                                             aria-label="Info" onclick="toggleBubble('bubble-exynos-fc-clamp', event)">
@@ -683,13 +683,22 @@
                                         <select id="exynos-fc-select-cpucl1"></select>
                                     </div>
                                 </div>
-                                <div class="tweak-row" id="exynos-fc-row-cpucl2" style="border-bottom: none;">
+                                <div class="tweak-row" id="exynos-fc-row-cpucl2">
                                     <div class="tweak-info-col">
                                         <span class="tweak-label" data-i18n="tweaks.exynosFc.cpucl2">Prime Cluster</span>
                                         <span class="tweak-val" id="exynos-fc-val-cpucl2">--</span>
                                     </div>
                                     <div class="tweak-select-container beer field fill border round small inline-input-field exynos-fc-select-field">
                                         <select id="exynos-fc-select-cpucl2"></select>
+                                    </div>
+                                </div>
+                                <div class="tweak-row" id="exynos-fc-row-gpu" style="border-bottom: none;">
+                                    <div class="tweak-info-col">
+                                        <span class="tweak-label" data-i18n="tweaks.exynosFc.gpu">GPU</span>
+                                        <span class="tweak-val" id="exynos-fc-val-gpu">--</span>
+                                    </div>
+                                    <div class="tweak-select-container beer field fill border round small inline-input-field exynos-fc-select-field">
+                                        <select id="exynos-fc-select-gpu"></select>
                                     </div>
                                 </div>
                                 <div class="tweak-section" id="exynos-fc-preset-section" style="margin-top: 16px;">
