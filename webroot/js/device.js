@@ -37,7 +37,10 @@ async function resolveDeviceInfo() {
             'for p in /sys/kernel/sec_detect/device_name /sys/mi_detect/device_name; do [ -r "$p" ] || continue; name=$(cat "$p" 2>/dev/null); [ -n "$name" ] && break; done',
             'model=""',
             'for p in /sys/kernel/sec_detect/device_model /sys/mi_detect/device_model; do [ -r "$p" ] || continue; model=$(cat "$p" 2>/dev/null); [ -n "$model" ] && break; done',
-            'printf "name=%s\\nmodel=%s\\nuname=%s\\n" "$name" "$model" "$(uname -r)"'
+            'uv=""',
+            'if [ -f /proc/version ]; then read -r _ _ uv _ < /proc/version 2>/dev/null; fi',
+            '[ -z "$uv" ] && uv=$(uname -r)',
+            'printf "name=%s\\nmodel=%s\\nuname=%s\\n" "$name" "$model" "$uv"'
         ].join('; '));
 
         if (output) {

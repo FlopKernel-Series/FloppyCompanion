@@ -652,7 +652,7 @@ PRESET_EOF`);
     if (aboutVersion && props.version) aboutVersion.textContent = props.version;
 
     // Populate Status Page
-    const uname = devInfo.uname || (await exec('uname -r'));
+    const uname = devInfo.uname || (await exec('uv=""; if [ -f /proc/version ]; then read -r _ _ uv _ < /proc/version 2>/dev/null; fi; [ -z "$uv" ] && uv=$(uname -r); echo "$uv"'));
 
     if (!uname) {
         if (statusCard) statusCard.classList.add('hidden');

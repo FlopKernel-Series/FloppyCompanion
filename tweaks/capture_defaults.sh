@@ -11,7 +11,11 @@ TMP_OUTPUT_FILE="$OUTPUT_FILE.tmp.$$"
 DEFAULT_OVERRIDES_FILE="$MODDIR/tweaks/default_overrides.sh"
 
 # Detect kernel family (best-effort, aligned with WebUI logic)
-KERN_VER=$(uname -r 2>/dev/null || echo "")
+KERN_VER=""
+if [ -f /proc/version ]; then
+  read -r _ _ KERN_VER _ < /proc/version 2>/dev/null
+fi
+[ -z "$KERN_VER" ] && KERN_VER=$(uname -r 2>/dev/null || echo "")
 IS_1280=0
 IS_2100=0
 IS_TRINKET=0

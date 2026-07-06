@@ -760,13 +760,13 @@
             return handlePresetHereDoc(cmd);
         }
 
-        if (cmd.startsWith('uname -r')) {
+        if (cmd.startsWith('uname -r') || cmd.startsWith('uv=""')) {
             return state.config.uname;
         }
 
         if (cmd.includes('sec_detect/device_name') &&
             cmd.includes('sec_detect/device_model') &&
-            cmd.includes('uname -r') &&
+            (cmd.includes('uname -r') || cmd.includes('/proc/version')) &&
             cmd.includes('printf "name=%s\\nmodel=%s\\nuname=%s\\n"')) {
             return [
                 `name=${state.config.deviceCode}`,

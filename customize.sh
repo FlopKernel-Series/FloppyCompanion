@@ -9,7 +9,10 @@ ui_print "========================================"
 ui_print ""
 
 # Get kernel version
-KERN_VER=$(uname -r)
+if [ -f /proc/version ]; then
+    read -r _ _ KERN_VER _ < /proc/version
+fi
+[ -z "$KERN_VER" ] && KERN_VER=$(uname -r)
 KERN_NAME=""
 
 get_device_prop() {

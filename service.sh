@@ -190,7 +190,10 @@ if [ -f "$MODDIR/tweaks/misc_trinket.sh" ]; then
 fi
 
 # --- Update Module Description ---
-KERN_VER=$(uname -r)
+if [ -f /proc/version ]; then
+    read -r _ _ KERN_VER _ < /proc/version
+fi
+[ -z "$KERN_VER" ] && KERN_VER=$(uname -r)
 DESCRIPTION="Companion module to tweak FloppyKernel."
 
 if echo "$KERN_VER" | grep -q "Floppy"; then
