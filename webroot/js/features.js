@@ -269,6 +269,12 @@ function renderFeatures(schema, procCmdline) {
     orderedSchema.forEach(item => {
         const hasCurrentVal = Object.prototype.hasOwnProperty.call(currentFeatures, item.key);
         const hasLiveVal = Object.prototype.hasOwnProperty.call(currentLiveFeatures, item.key);
+
+        // Hide features if not present in cmdline / supported by fkfeat (only for 1280 and 2100)
+        if ((currentFamily === '1280' || currentFamily === '2100') && !hasCurrentVal && !hasLiveVal) {
+            return;
+        }
+
         const hasExplicitZeroOption = item.type === 'select'
             && Array.isArray(item.options)
             && item.options.some(opt => String(opt.val) === '0');
