@@ -58,6 +58,31 @@
                     "save": true
                 },
                 {
+                    "key": "mali.version",
+                    "title": "Mali Version Selector",
+                    "type": "select",
+                    "desc": "Select Mali GPU kernel driver version.",
+                    "noDisable": true,
+                    "save": true,
+                    "options": [
+                        {
+                            "val": "r32p1",
+                            "label": "Mali r32p1",
+                            "desc": "Select the r32p1 Mali kernel driver."
+                        },
+                        {
+                            "val": "r38p1",
+                            "label": "Mali r38p1 (Default)",
+                            "desc": "Select the r38p1 Mali kernel driver."
+                        },
+                        {
+                            "val": "r44p1",
+                            "label": "Mali r44p1",
+                            "desc": "Select the r44p1 Mali kernel driver."
+                        }
+                    ]
+                },
+                {
                     "key": "aosp_mode",
                     "title": "AOSP Mode",
                     "type": "info",
@@ -128,6 +153,31 @@
                             "val": "2",
                             "label": "Always Permissive",
                             "desc": "Force SELinux Permissive mode at boot."
+                        }
+                    ]
+                },
+                {
+                    "key": "mali.version",
+                    "title": "Mali Version Selector",
+                    "type": "select",
+                    "desc": "Select Mali GPU kernel driver version.",
+                    "noDisable": true,
+                    "save": true,
+                    "options": [
+                        {
+                            "val": "r38p0",
+                            "label": "Mali r38p0",
+                            "desc": "Select the r38p0 Mali kernel driver."
+                        },
+                        {
+                            "val": "r38p1",
+                            "label": "Mali r38p1 (Default)",
+                            "desc": "Select the r38p1 Mali kernel driver."
+                        },
+                        {
+                            "val": "r44p1",
+                            "label": "Mali r44p1",
+                            "desc": "Select the r44p1 Mali kernel driver."
                         }
                     ]
                 },

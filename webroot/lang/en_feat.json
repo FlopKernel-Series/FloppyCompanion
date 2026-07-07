@@ -98,5 +98,27 @@
     "usb_sl_disable": {
         "title": "Disable USB Secure Lock",
         "desc": "Forcefully disable Samsung's USB Secure Lock. Only effective on One UI."
+    },
+    "mali.version": {
+        "title": "Mali Version Selector",
+        "desc": "Select Mali GPU kernel driver version.",
+        "options": {
+            "r32p1": {
+                "label": "Mali r32p1",
+                "desc": "Select the r32p1 Mali kernel driver."
+            },
+            "r38p0": {
+                "label": "Mali r38p0",
+                "desc": "Select the r38p0 Mali kernel driver."
+            },
+            "r38p1": {
+                "label": "Mali r38p1 (Default)",
+                "desc": "Select the r38p1 Mali kernel driver."
+            },
+            "r44p1": {
+                "label": "Mali r44p1",
+                "desc": "Select the r44p1 Mali kernel driver."
+            }
+        }
     }
 }

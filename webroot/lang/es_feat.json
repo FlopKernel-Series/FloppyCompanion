@@ -98,5 +98,27 @@
     "usb_sl_disable": {
         "title": "Desactivar Bloqueo USB",
         "desc": "Desactiva forzosamente el Bloqueo Seguro (Secure Lock) de USB de Samsung. Solo tiene efecto en One UI."
+    },
+    "mali.version": {
+        "title": "Selector de Versión de Mali",
+        "desc": "Selecciona la versión del controlador de kernel de la GPU Mali.",
+        "options": {
+            "r32p1": {
+                "label": "Mali r32p1",
+                "desc": "Selecciona el controlador de kernel Mali r32p1."
+            },
+            "r38p0": {
+                "label": "Mali r38p0",
+                "desc": "Selecciona el controlador de kernel Mali r38p0."
+            },
+            "r38p1": {
+                "label": "Mali r38p1 (Predeterminado)",
+                "desc": "Selecciona el controlador de kernel Mali r38p1."
+            },
+            "r44p1": {
+                "label": "Mali r44p1",
+                "desc": "Selecciona el controlador de kernel Mali r44p1."
+            }
+        }
     }
 }
