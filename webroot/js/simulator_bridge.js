@@ -25,6 +25,7 @@
                 superfloppy: '0',
                 force_perm: '0',
                 ems_efficient: '0',
+                'mali.version': 'r38p1',
                 aosp_mode: '0'
             }
         },
@@ -39,7 +40,8 @@
                 uname_bpf_spoof: '1',
                 mass_storage_hack: '0',
                 init_protection: '1',
-                selinux_mode: '0'
+                selinux_mode: '0',
+                'mali.version': 'r38p1'
             }
         },
         'trinket': {

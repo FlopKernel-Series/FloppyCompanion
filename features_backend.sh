@@ -53,7 +53,7 @@ get_boot_device() {
 
 get_kernel_feature_value() {
     local KEY="$1"
-    strings kernel | grep -E "^${KEY}=[0-9]+$" | head -1 | cut -d= -f2
+    strings kernel | grep -E "^${KEY}=[^[:space:]]+$" | head -1 | cut -d= -f2
 }
 
 case "$1" in
@@ -108,7 +108,7 @@ case "$1" in
             # Use cgroup.memory=nokmem as anchor
             strings kernel | grep "cgroup.memory=nokmem" | head -1
         elif [ "$MODE" = "kernel_tokens" ]; then
-            strings kernel | grep -E '^[A-Za-z0-9_.-]+=[0-9]+$'
+            strings kernel | grep -E '^[A-Za-z0-9_.-]+=[A-Za-z0-9_.-]+$'
         else
             echo "Error: Unsupported feature read mode: $MODE"
             exit 1
@@ -195,7 +195,7 @@ case "$1" in
             for ARG in "$@"; do
                 KEY="${ARG%%=*}"
                 VAL="${ARG#*=}"
-                NEW_CMDLINE=$(echo "$NEW_CMDLINE" | sed -E "s/${KEY}=[0-9]+/${KEY}=${VAL}/g")
+                NEW_CMDLINE=$(echo "$NEW_CMDLINE" | sed -E "s/${KEY}=[^[:space:]]+/${KEY}=${VAL}/g")
             done
             
             log "Old: $CURRENT_CMDLINE"

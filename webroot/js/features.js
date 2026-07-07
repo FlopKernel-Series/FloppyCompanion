@@ -273,11 +273,20 @@ function renderFeatures(schema, procCmdline) {
             && Array.isArray(item.options)
             && item.options.some(opt => String(opt.val) === '0');
 
+        // Default Value Logic for toggle ON
+        let defaultVal = '1';
+        if (item.type === 'select' && item.options && item.options.length > 0) {
+            const preferredDefault = hasExplicitZeroOption
+                ? item.options.find(opt => String(opt.val) !== '0')
+                : item.options[0];
+            defaultVal = preferredDefault ? preferredDefault.val : item.options[0].val;
+        }
+
         // Skip entirely if experimental and toggle off, UNLESS enabled
         const currentVal = hasCurrentVal
             ? String(currentFeatures[item.key])
-            : (hasLiveVal ? String(currentLiveFeatures[item.key]) : '0');
-        const isEnabled = currentVal !== '0';
+            : (hasLiveVal ? String(currentLiveFeatures[item.key]) : (item.noDisable ? defaultVal : '0'));
+        const isEnabled = (currentVal !== '0') || item.noDisable;
         if (item.experimental && !showExperimental && !isEnabled) {
             return;
         }
@@ -288,20 +297,11 @@ function renderFeatures(schema, procCmdline) {
         // Int Toggle Logic: ON if currentVal is not '0'
         const isOn = isEnabled;
 
-        // Default Value Logic for toggle ON
-        let defaultVal = '1';
-        if (item.type === 'select' && item.options && item.options.length > 0) {
-            const preferredDefault = hasExplicitZeroOption
-                ? item.options.find(opt => String(opt.val) !== '0')
-                : item.options[0];
-            defaultVal = preferredDefault ? preferredDefault.val : item.options[0].val;
-        }
-
         let liveVal = null;
         if (hasLiveVal) {
             liveVal = String(currentLiveFeatures[item.key]);
         } else if (procCmdline && item.key) {
-            const match = procCmdline.match(new RegExp(`${item.key}=(\\d+)`));
+            const match = procCmdline.match(new RegExp(`${item.key.replace(/\./g, '\\.')}=([^\\s]+)`));
             if (match) liveVal = match[1];
         }
 
@@ -371,15 +371,17 @@ function renderFeatures(schema, procCmdline) {
         const isInfo = item.type === 'info' || item.readOnly;
         const isReadOnly = isInfo && !allowReadonlyPatch;
 
-        headerControl = `
-            <span class="beer switch-scope${isReadOnly ? ' readonly' : ''}">
-                <label class="switch">
-                    <input type="checkbox" id="switch-${item.key}" ${isOn ? 'checked' : ''} ${isReadOnly ? 'disabled' : ''}
-                        onchange="updateFeature('${item.key}', this.checked ? '${defaultVal}' : '0', this)">
-                    <span></span>
-                </label>
-            </span>
-        `;
+        if (!item.noDisable) {
+            headerControl = `
+                <span class="beer switch-scope${isReadOnly ? ' readonly' : ''}">
+                    <label class="switch">
+                        <input type="checkbox" id="switch-${item.key}" ${isOn ? 'checked' : ''} ${isReadOnly ? 'disabled' : ''}
+                            onchange="updateFeature('${item.key}', this.checked ? '${defaultVal}' : '0', this)">
+                        <span></span>
+                    </label>
+                </span>
+            `;
+        }
 
         let bodyControls = '';
 
@@ -387,7 +389,7 @@ function renderFeatures(schema, procCmdline) {
             // Add "Disabled" option with translated strings
             const disabledLabel = t('features.optionDisabled');
             const disabledDesc = t('features.disabledDesc');
-            const optionsWithDisabled = hasExplicitZeroOption
+            const optionsWithDisabled = (hasExplicitZeroOption || item.noDisable)
                 ? [...item.options]
                 : [
                     { val: '0', label: disabledLabel, desc: disabledDesc, experimental: false, isDisabledOption: true },
