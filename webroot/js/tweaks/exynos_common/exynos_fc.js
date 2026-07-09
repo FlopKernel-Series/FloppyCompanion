@@ -21,14 +21,6 @@ function normalizeExynosFcState(state = {}) {
     EXYNOS_FC_KEYS.forEach((key) => {
         normalized[key] = normalizeExynosFcValue(state[key]);
     });
-    if (normalized.power_mode === '1') {
-        const hasNonZeroClamp = EXYNOS_FC_KEYS.some((key) => {
-            return key !== 'power_mode' && normalized[key] !== '0';
-        });
-        if (hasNonZeroClamp) {
-            normalized.power_mode = '0';
-        }
-    }
     return normalized;
 }
 
@@ -231,7 +223,12 @@ async function applyExynosFc() {
     });
     exynosFcCurrentState = normalizeExynosFcState({ ...EXYNOS_FC_BASE_STATE, ...currentState });
     const failedKeys = Object.keys(effectiveState)
-        .filter((key) => exynosFcCurrentState[key] !== effectiveState[key]);
+        .filter((key) => {
+            if (effectiveState.power_mode === '1' && key.startsWith('cpucl')) {
+                return false;
+            }
+            return exynosFcCurrentState[key] !== effectiveState[key];
+        });
     if (failedKeys.length > 0) {
         renderExynosFcCard();
         showToast(window.t ? window.t('toast.settingsFailed') : 'Failed to apply settings', true);

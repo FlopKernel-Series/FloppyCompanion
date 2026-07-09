@@ -154,10 +154,49 @@ save() {
 
 apply() {
     failed=0
+    pm_val=""
+    for arg in "$@"; do
+        key="${arg%%=*}"
+        val="${arg#*=}"
+        if [ "$key" = "power_mode" ]; then
+            pm_val="$val"
+            break
+        fi
+    done
+
+    if [ "$pm_val" = "0" ]; then
+        node=$(node_for_key "power_mode")
+        if [ -f "$node" ]; then
+            if ! echo "0" > "$node" 2>/dev/null; then
+                echo "error: failed to write power_mode" >&2
+                failed=1
+            fi
+        fi
+    fi
+
     for arg in "$@"; do
         key="${arg%%=*}"
         val="${arg#*=}"
         is_valid_key "$key" || continue
+
+        if [ "$key" = "power_mode" ]; then
+            if [ "$val" = "1" ]; then
+                node=$(node_for_key "power_mode")
+                [ -f "$node" ] || continue
+                if ! echo "1" > "$node" 2>/dev/null; then
+                    echo "error: failed to write power_mode" >&2
+                    failed=1
+                fi
+            fi
+            continue
+        fi
+
+        if [ "$pm_val" = "1" ]; then
+            case "$key" in
+                cpucl*) continue ;;
+            esac
+        fi
+
         node=$(node_for_key "$key")
         [ -f "$node" ] || continue
         if ! echo "$(sanitize_freq "$val")" > "$node" 2>/dev/null; then
