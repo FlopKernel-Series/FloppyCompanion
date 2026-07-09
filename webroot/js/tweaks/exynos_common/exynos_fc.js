@@ -21,6 +21,14 @@ function normalizeExynosFcState(state = {}) {
     EXYNOS_FC_KEYS.forEach((key) => {
         normalized[key] = normalizeExynosFcValue(state[key]);
     });
+    if (normalized.power_mode === '1') {
+        const hasNonZeroClamp = EXYNOS_FC_KEYS.some((key) => {
+            return key !== 'power_mode' && normalized[key] !== '0';
+        });
+        if (hasNonZeroClamp) {
+            normalized.power_mode = '0';
+        }
+    }
     return normalized;
 }
 
@@ -54,7 +62,7 @@ function getExynosFcValueText(key, value) {
     const freq = parseInt(normalizeExynosFcValue(value), 10);
     if (key === 'power_mode') {
         if (freq === 1) return 'CoolFloppy';
-        return 'Custom / Disabled';
+        return window.t ? window.t('tweaks.exynosFc.custom') : 'Custom';
     }
     if (!freq) {
         return window.t ? window.t('tweaks.exynosFc.disabled') : 'Disabled';
@@ -87,8 +95,7 @@ function renderExynosFcCard() {
     const presetSection = document.getElementById('exynos-fc-preset-section');
     if (card) card.classList.toggle('hidden', !exynosFcAvailable || supportedKeys.length === 0);
 
-    const hasPresets = supportedKeys.includes('power_mode') &&
-        exynosFcClusters.find((cluster) => cluster.key === 'power_mode')?.available.some((freq) => freq !== '0');
+    const hasPresets = supportedKeys.includes('power_mode');
     if (presetSection) presetSection.classList.toggle('hidden', !hasPresets);
 
     EXYNOS_FC_KEYS.forEach((key) => {
@@ -157,6 +164,17 @@ async function loadExynosFcState() {
     exynosFcAvailable = parseKeyValue(availabilityOutput).available === '1';
     exynosFcClusters = parseExynosFcOutput(allOutput);
 
+    if (exynosFcAvailable) {
+        const hasPowerMode = exynosFcClusters.some((c) => c.key === 'power_mode');
+        if (!hasPowerMode) {
+            exynosFcClusters.push({
+                key: 'power_mode',
+                current: '0',
+                available: ['0']
+            });
+        }
+    }
+
     const currentState = {};
     exynosFcClusters.forEach((cluster) => {
         currentState[cluster.key] = cluster.current;
@@ -168,11 +186,10 @@ async function loadExynosFcState() {
         exynosFcDefaultState
     );
 
-    const effectiveReferenceState = window.initPendingState(
-        exynosFcCurrentState,
-        exynosFcSavedState,
-        exynosFcDefaultState
-    );
+    const hasSaved = Object.keys(exynosFcSavedState).length > 0;
+    const effectiveReferenceState = hasSaved
+        ? window.initPendingState(exynosFcCurrentState, exynosFcSavedState, exynosFcDefaultState)
+        : { ...EXYNOS_FC_BASE_STATE };
     exynosFcPendingState = normalizeExynosFcState(effectiveReferenceState);
     exynosFcReferenceState = normalizeExynosFcState(effectiveReferenceState);
 
@@ -244,7 +261,19 @@ function initExynosFcTweak() {
         if (!select) return;
         if (window.preventSwipePropagation) window.preventSwipePropagation(select);
         select.addEventListener('change', (e) => {
-            exynosFcPendingState[key] = normalizeExynosFcValue(e.target.value);
+            const val = normalizeExynosFcValue(e.target.value);
+            if (key === 'power_mode') {
+                exynosFcPendingState.power_mode = val;
+                EXYNOS_FC_KEYS.forEach((k) => {
+                    if (k !== 'power_mode') {
+                        exynosFcPendingState[k] = '0';
+                    }
+                });
+            } else {
+                exynosFcPendingState[key] = val;
+                exynosFcPendingState.power_mode = '0';
+            }
+            exynosFcPendingState = normalizeExynosFcState(exynosFcPendingState);
             renderExynosFcCard();
         });
     });

@@ -287,7 +287,8 @@
             "cpucl1": "@tweaks.undervolt.big",
             "cpucl2": "@tweaks.undervolt.prime",
             "gpu": "@tweaks.undervolt.gpu",
-            "disabled": "@features.optionDisabled"
+            "disabled": "@features.optionDisabled",
+            "custom": "@tweaks.zram.custom"
         },
         "misc": {
             "title": "Misc Floppy1280 Tweaks",
