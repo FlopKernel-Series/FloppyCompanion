@@ -99,6 +99,10 @@
         "title": "Disable USB Secure Lock",
         "desc": "Forcefully disable Samsung's USB Secure Lock. Only effective on One UI."
     },
+    "init_debug": {
+        "title": "Init Debug",
+        "desc": "Inject init.rc service to dump logcat to /cache/logcat.txt for debugging early init issues."
+    },
     "mali.version": {
         "title": "Mali Version Selector",
         "desc": "Select Mali GPU kernel driver version.",

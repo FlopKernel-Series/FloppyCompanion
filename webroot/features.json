@@ -193,6 +193,14 @@
                     "type": "toggle",
                     "desc": "Forcefully disable Samsung's USB Secure Lock. Only effective on One UI.",
                     "save": true
+                },
+                {
+                    "key": "init_debug",
+                    "title": "Init Debug",
+                    "type": "toggle",
+                    "desc": "Inject init.rc service to dump logcat to /cache/logcat.txt for debugging early init issues.",
+                    "experimental": true,
+                    "save": true
                 }
             ]
         },

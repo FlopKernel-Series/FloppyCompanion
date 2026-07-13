@@ -99,6 +99,10 @@
         "title": "Desactivar Bloqueo USB",
         "desc": "Desactiva forzosamente el Bloqueo Seguro (Secure Lock) de USB de Samsung. Solo tiene efecto en One UI."
     },
+    "init_debug": {
+        "title": "Init Debug",
+        "desc": "Inyecta un servicio init.rc para guardar el logcat a /cache/logcat.txt para depurar problemas de init tempranos."
+    },
     "mali.version": {
         "title": "Selector de Versión de Mali",
         "desc": "Selecciona la versión del controlador de kernel de la GPU Mali.",
