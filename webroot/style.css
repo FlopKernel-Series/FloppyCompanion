@@ -694,7 +694,7 @@ body:not(.theme-monet) beer-css {
 .status-bubble.center {
     inset-inline-start: 50%;
     inset-inline-end: auto;
-    transform: translateX(-50%); /* This needs to remain physical or be handled by logic if needed, but centering X is direction neutral usually */
+    transform: translateX(-50%); /* Physical transform — RTL correction is applied by JS in positionStatusBubble (features.js) */
     width: min(220px, calc(100vw - 48px));
 }
 

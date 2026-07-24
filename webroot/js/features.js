@@ -648,10 +648,15 @@ window.setReadonlyPatch = function (val) {
 function positionStatusBubble(bubble) {
     if (!bubble) return;
 
+    const isRtl = document.documentElement.dir === 'rtl';
     const viewportPadding = 8;
     const anchor = bubble.closest('.tooltip-anchor, .status-icon-wrapper') || bubble.parentElement;
     const anchorRect = anchor ? anchor.getBoundingClientRect() : null;
 
+    // Reset inline style overrides from any previous positioning run
+    bubble.style.transform = '';
+    bubble.style.insetInlineStart = '';
+    bubble.style.insetInlineEnd = '';
     bubble.classList.remove('bottom');
 
     let rect = bubble.getBoundingClientRect();
@@ -672,6 +677,41 @@ function positionStatusBubble(bubble) {
 
     if (wouldClipBottom && hasRoomAbove) {
         bubble.classList.remove('bottom');
+    }
+
+    // Re-check rect after vertical adjustments
+    rect = bubble.getBoundingClientRect();
+
+    if (bubble.classList.contains('center')) {
+        bubble.style.transform = isRtl ? 'translateX(50%)' : 'translateX(-50%)';
+        rect = bubble.getBoundingClientRect();
+    }
+
+    // Adjust if bubble still goes offscreen horizontally after centering
+    const clipsRight = rect.right > (window.innerWidth - viewportPadding);
+    const clipsLeft = rect.left < viewportPadding;
+
+    if (clipsRight) {
+        bubble.classList.remove('center');
+        bubble.style.transform = '';
+        bubble.style.insetInlineStart = 'auto';
+        bubble.style.insetInlineEnd = '0';
+        bubble.style.maxWidth = `min(220px, ${window.innerWidth - viewportPadding * 2}px)`;
+        rect = bubble.getBoundingClientRect();
+        if (rect.right > (window.innerWidth - viewportPadding)) {
+            // Even right-anchored clips — clamp to viewport right edge
+            bubble.style.insetInlineEnd = `${viewportPadding}px`;
+        }
+    } else if (clipsLeft) {
+        bubble.classList.remove('center');
+        bubble.style.transform = '';
+        bubble.style.insetInlineStart = '0';
+        bubble.style.insetInlineEnd = 'auto';
+        bubble.style.maxWidth = `min(220px, ${window.innerWidth - viewportPadding * 2}px)`;
+        rect = bubble.getBoundingClientRect();
+        if (rect.left < viewportPadding) {
+            bubble.style.insetInlineStart = `${viewportPadding}px`;
+        }
     }
 }
 
