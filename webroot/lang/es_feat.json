@@ -103,6 +103,10 @@
         "title": "Init Debug",
         "desc": "Inyecta un servicio init.rc para guardar el logcat a /cache/logcat.txt para depurar problemas de init tempranos."
     },
+    "dma_buf_env": {
+        "title": "Entorno DMA-BUF",
+        "desc": "Usa el asignador de heaps DMA-BUF en lugar de ION. SOLO activar si tu ROM soporta DMA-BUF."
+    },
     "mali.version": {
         "title": "Selector de Versión de Mali",
         "desc": "Selecciona la versión del controlador de kernel de la GPU Mali.",
