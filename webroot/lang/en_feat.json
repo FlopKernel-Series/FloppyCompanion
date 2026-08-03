@@ -120,7 +120,7 @@
                 "desc": "Select the r38p0 Mali kernel driver."
             },
             "r38p1": {
-                "label": "Mali r38p1 (Default)",
+                "label": "Mali r38p1",
                 "desc": "Select the r38p1 Mali kernel driver."
             },
             "r44p1": {

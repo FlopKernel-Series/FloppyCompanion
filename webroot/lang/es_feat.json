@@ -120,7 +120,7 @@
                 "desc": "Selecciona el controlador de kernel Mali r38p0."
             },
             "r38p1": {
-                "label": "Mali r38p1 (Predeterminado)",
+                "label": "Mali r38p1",
                 "desc": "Selecciona el controlador de kernel Mali r38p1."
             },
             "r44p1": {
