@@ -7,7 +7,8 @@ window.VARIANTS = {
     'MBS': 'MamboSU',
     'RKS': 'RKSU',
     'RESKS': 'ReSukiSU',
-    'SKS': 'SukiSU Ultra'
+    'SKS': 'SukiSU Ultra',
+    'XXK': 'XXKSU'
 };
 
 window.DATA_DIR = '/data/adb/modules/floppy_companion';
