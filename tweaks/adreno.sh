@@ -27,7 +27,7 @@ get_current() {
     idler_downdifferential=""
     idler_idlewait=""
     idler_idleworkload=""
-    
+
     if [ -f "$NODE_ADRENOBOOST" ]; then
         adrenoboost=$(cat "$NODE_ADRENOBOOST" 2>/dev/null | tr -d '\n\r' || echo "0")
     fi
@@ -43,7 +43,7 @@ get_current() {
     if [ -f "$NODE_IDLER_IDLEWORKLOAD" ]; then
         idler_idleworkload=$(cat "$NODE_IDLER_IDLEWORKLOAD" 2>/dev/null | tr -d '\n\r' || echo "5000")
     fi
-    
+
     echo "adrenoboost=$adrenoboost"
     echo "idler_active=$idler_active"
     echo "idler_downdifferential=$idler_downdifferential"
@@ -87,7 +87,7 @@ save() {
     idler_downdifferential="$3"
     idler_idlewait="$4"
     idler_idleworkload="$5"
-    
+
     [ -z "$adrenoboost" ] && adrenoboost="0"
     [ -z "$idler_active" ] && idler_active="N"
     [ -z "$idler_downdifferential" ] && idler_downdifferential="20"
@@ -112,7 +112,7 @@ apply() {
     idler_downdifferential="$3"
     idler_idlewait="$4"
     idler_idleworkload="$5"
-    
+
     [ -z "$adrenoboost" ] && adrenoboost="0"
     [ -z "$idler_active" ] && idler_active="N"
     [ -z "$idler_downdifferential" ] && idler_downdifferential="20"

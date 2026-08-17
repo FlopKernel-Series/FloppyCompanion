@@ -25,13 +25,13 @@ get_current() {
         echo "custom_freq="
         return
     fi
-    
+
     local mode=$(cat "$THERMAL_NODE" 2>/dev/null || echo "")
     local custom_freq=""
     if [ -f "$CUSTOM_FREQ_NODE" ]; then
         custom_freq=$(cat "$CUSTOM_FREQ_NODE" 2>/dev/null || echo "")
     fi
-    
+
     echo "mode=$mode"
     echo "custom_freq=$custom_freq"
 }
@@ -96,22 +96,22 @@ EOF
 apply() {
     local mode="$1"
     local custom_freq="$2"
-    
+
     if [ ! -f "$THERMAL_NODE" ]; then
         echo "error: Thermal control not available"
         return 1
     fi
-    
+
     # Set mode
     if [ -n "$mode" ]; then
         echo "$mode" > "$THERMAL_NODE" 2>/dev/null
     fi
-    
+
     # Set custom frequency (only for mode 2)
     if [ "$mode" = "2" ] && [ -n "$custom_freq" ] && [ -f "$CUSTOM_FREQ_NODE" ]; then
         echo "$custom_freq" > "$CUSTOM_FREQ_NODE" 2>/dev/null
     fi
-    
+
     echo "applied"
 }
 
@@ -120,10 +120,10 @@ apply_saved() {
     if [ ! -f "$CONFIG_FILE" ]; then
         return 0
     fi
-    
+
     local mode=$(grep '^mode=' "$CONFIG_FILE" | cut -d= -f2)
     local custom_freq=$(grep '^custom_freq=' "$CONFIG_FILE" | cut -d= -f2)
-    
+
     if [ -n "$mode" ]; then
         apply "$mode" "$custom_freq"
     fi

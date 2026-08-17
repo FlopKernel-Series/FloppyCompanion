@@ -48,7 +48,7 @@ get_current() {
     local gpu_clklck=""
     local gpu_unlock=""
     local throttlers_protection=""
-    
+
     if [ -f "$BLOCK_ED3_NODE" ]; then
         block_ed3=$(cat "$BLOCK_ED3_NODE" 2>/dev/null || echo "")
     fi
@@ -66,11 +66,11 @@ get_current() {
     if [ -f "$ESG_SHORT_BURST_NODE" ]; then
         esg_short_burst=$(cat "$ESG_SHORT_BURST_NODE" 2>/dev/null || echo "")
     fi
-    
+
     if [ -f "$GPU_CLKLCK_NODE" ]; then
         gpu_clklck=$(cat "$GPU_CLKLCK_NODE" 2>/dev/null || echo "")
     fi
-    
+
     if [ -f "$GPU_UNLOCK_NODE" ]; then
         gpu_unlock=$(cat "$GPU_UNLOCK_NODE" 2>/dev/null || echo "")
     fi
@@ -78,7 +78,7 @@ get_current() {
     if [ -f "$THROTTLERS_PROTECTION_NODE" ]; then
         throttlers_protection=$(cat "$THROTTLERS_PROTECTION_NODE" 2>/dev/null || echo "")
     fi
-    
+
     echo "block_ed3=$block_ed3"
     echo "htpr=$htpr"
     echo "esg_short_burst=$esg_short_burst"
@@ -107,7 +107,7 @@ save() {
     local value="$2"
 
     mkdir -p "$(dirname "$CONFIG_FILE")"
-    
+
     # Create or update config file
     if [ ! -f "$CONFIG_FILE" ]; then
         touch "$CONFIG_FILE"
@@ -119,7 +119,7 @@ save() {
     else
         echo "${key}=${value}" >> "$CONFIG_FILE"
     fi
-    
+
     echo "saved"
 }
 
@@ -208,14 +208,14 @@ apply_saved() {
     if [ ! -f "$CONFIG_FILE" ]; then
         return 0
     fi
-    
+
     local block_ed3=$(grep '^block_ed3=' "$CONFIG_FILE" | cut -d= -f2)
     local htpr=$(grep '^htpr=' "$CONFIG_FILE" | cut -d= -f2)
     local esg_short_burst=$(grep '^esg_short_burst=' "$CONFIG_FILE" | cut -d= -f2)
     local gpu_clklck=$(grep '^gpu_clklck=' "$CONFIG_FILE" | cut -d= -f2)
     local gpu_unlock=$(grep '^gpu_unlock=' "$CONFIG_FILE" | cut -d= -f2)
     local throttlers_protection=$(grep '^throttlers_protection=' "$CONFIG_FILE" | cut -d= -f2)
-    
+
     if [ -n "$block_ed3" ] && [ -f "$BLOCK_ED3_NODE" ]; then
         echo "$block_ed3" > "$BLOCK_ED3_NODE" 2>/dev/null
     fi
@@ -237,11 +237,11 @@ apply_saved() {
     if [ -n "$esg_short_burst" ] && [ -f "$ESG_SHORT_BURST_NODE" ]; then
         echo "$esg_short_burst" > "$ESG_SHORT_BURST_NODE" 2>/dev/null
     fi
-    
+
     if [ -n "$gpu_clklck" ] && [ -f "$GPU_CLKLCK_NODE" ]; then
         echo "$gpu_clklck" > "$GPU_CLKLCK_NODE" 2>/dev/null
     fi
-    
+
     if [ -n "$gpu_unlock" ] && [ -f "$GPU_UNLOCK_NODE" ]; then
         echo "$gpu_unlock" > "$GPU_UNLOCK_NODE" 2>/dev/null
     fi
@@ -249,7 +249,7 @@ apply_saved() {
     if [ -n "$throttlers_protection" ] && [ -f "$THROTTLERS_PROTECTION_NODE" ]; then
         echo "$throttlers_protection" > "$THROTTLERS_PROTECTION_NODE" 2>/dev/null
     fi
-    
+
     echo "applied_saved"
 }
 

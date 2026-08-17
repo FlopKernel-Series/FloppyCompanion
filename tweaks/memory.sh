@@ -87,11 +87,11 @@ case "$1" in
             while IFS= read -r line; do
                 # skip comments and empty lines
                 case "$line" in \#*|"") continue ;; esac
-                
+
                 key=$(echo "$line" | cut -d= -f1)
                 val=$(echo "$line" | cut -d= -f2)
-                
-                # reusing logic via self-call or duplicate? 
+
+                # reusing logic via self-call or duplicate?
                 # duplicate for simplicity inside loop
                  if [ "$key" = "dirty_bytes" ] && [ "$val" != "0" ]; then
                     write_val dirty_ratio 0

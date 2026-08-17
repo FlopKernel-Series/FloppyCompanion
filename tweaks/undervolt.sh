@@ -118,13 +118,13 @@ save() {
     local big="$2"
     local prime="$3"
     local gpu="$4"
-    
+
     # Sanitize inputs (ensure they are numbers)
     [ -z "$little" ] && little="0"
     [ -z "$big" ] && big="0"
     [ -z "$prime" ] && prime="0"
     [ -z "$gpu" ] && gpu="0"
-    
+
     mkdir -p "$(dirname "$CONFIG_FILE")"
     cat > "$CONFIG_FILE" << EOF
 little=$little
@@ -148,12 +148,12 @@ apply() {
         echo "error: undervolt nodes not found"
         return 1
     fi
-    
+
     # Apply Little
     if [ -n "$little" ] && [ -e "$NODE_LITTLE" ]; then
         echo "$little" > "$NODE_LITTLE" 2>/dev/null
     fi
-    
+
     # Apply Big
     if [ -n "$big" ] && [ -e "$NODE_BIG" ]; then
         echo "$big" > "$NODE_BIG" 2>/dev/null
@@ -163,12 +163,12 @@ apply() {
     if [ -n "$prime" ] && [ -e "$NODE_PRIME" ]; then
         echo "$prime" > "$NODE_PRIME" 2>/dev/null
     fi
-    
+
     # Apply GPU
     if [ -n "$gpu" ] && [ -e "$gpu_node" ]; then
         echo "$gpu" > "$gpu_node" 2>/dev/null
     fi
-    
+
     echo "applied"
 }
 
@@ -177,12 +177,12 @@ apply_saved() {
     if [ ! -f "$CONFIG_FILE" ]; then
         return 0
     fi
-    
+
     local little=$(grep '^little=' "$CONFIG_FILE" | cut -d= -f2)
     local big=$(grep '^big=' "$CONFIG_FILE" | cut -d= -f2)
     local prime=$(grep '^prime=' "$CONFIG_FILE" | cut -d= -f2)
     local gpu=$(grep '^gpu=' "$CONFIG_FILE" | cut -d= -f2)
-    
+
     apply "$little" "$big" "$prime" "$gpu"
 }
 

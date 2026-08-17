@@ -22,11 +22,11 @@ is_available() {
 # Get current state from kernel
 get_current() {
     local touchboost=""
-    
+
     if [ -f "$TOUCHBOOST_NODE" ]; then
         touchboost=$(cat "$TOUCHBOOST_NODE" 2>/dev/null | tr -d '\n\r' || echo "")
     fi
-    
+
     echo "touchboost=$touchboost"
 }
 
@@ -43,19 +43,19 @@ get_saved() {
 save() {
     local key="$1"
     local value="$2"
-    
+
     mkdir -p "$(dirname "$CONFIG_FILE")"
-    
+
     if [ ! -f "$CONFIG_FILE" ]; then
         touch "$CONFIG_FILE"
     fi
-    
+
     if grep -q "^${key}=" "$CONFIG_FILE" 2>/dev/null; then
         sed -i "s/^${key}=.*/${key}=${value}/" "$CONFIG_FILE"
     else
         echo "${key}=${value}" >> "$CONFIG_FILE"
     fi
-    
+
     echo "saved"
 }
 
@@ -63,7 +63,7 @@ save() {
 apply() {
     local key="$1"
     local value="$2"
-    
+
     case "$key" in
         touchboost)
             if [ -f "$TOUCHBOOST_NODE" ]; then
@@ -84,13 +84,13 @@ apply_saved() {
     if [ ! -f "$CONFIG_FILE" ]; then
         return 0
     fi
-    
+
     local touchboost=$(grep '^touchboost=' "$CONFIG_FILE" | cut -d= -f2)
-    
+
     if [ -n "$touchboost" ] && [ -f "$TOUCHBOOST_NODE" ]; then
         echo "$touchboost" > "$TOUCHBOOST_NODE" 2>/dev/null
     fi
-    
+
     echo "applied_saved"
 }
 

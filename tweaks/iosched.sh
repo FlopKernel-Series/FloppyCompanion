@@ -11,17 +11,17 @@ CONFIG_FILE="$DATA_DIR/config/iosched.conf"
 get_devices() {
     for dev_path in /sys/block/*; do
         dev_name="${dev_path##*/}"
-        
+
         # Filter unwanted devices
         case "$dev_name" in
             loop*|ram*|zram*|dm-*|sr*) continue ;;
         esac
-        
+
         # Double check if queue/scheduler exists
         if [ ! -f "$dev_path/queue/scheduler" ]; then
             continue
         fi
-        
+
         echo "$dev_name"
     done
 }
@@ -31,16 +31,16 @@ get_devices() {
 get_scheduler() {
     local dev="$1"
     local sched_file="/sys/block/$dev/queue/scheduler"
-    
+
     if [ ! -f "$sched_file" ]; then
         echo "error: device not found"
         return 1
     fi
-    
+
     local content=$(cat "$sched_file")
     local active=$(echo "$content" | grep -o '\[.*\]' | tr -d '[]')
     local available=$(echo "$content" | tr -d '[]' | tr ' ' ',')
-    
+
     echo "device=$dev"
     echo "active=$active"
     echo "available=$available"
@@ -66,7 +66,7 @@ get_saved() {
 save() {
     mkdir -p "$(dirname "$CONFIG_FILE")"
     : > "$CONFIG_FILE"
-    
+
     for arg in "$@"; do
         echo "$arg" >> "$CONFIG_FILE"
     done
@@ -79,7 +79,7 @@ apply() {
     for arg in "$@"; do
         local dev="${arg%%=*}"
         local sched="${arg#*=}"
-        
+
         if [ -f "/sys/block/$dev/queue/scheduler" ]; then
             echo "$sched" > "/sys/block/$dev/queue/scheduler" 2>/dev/null
         fi
@@ -92,7 +92,7 @@ apply_saved() {
     if [ ! -f "$CONFIG_FILE" ]; then
         return 0
     fi
-    
+
     while IFS='=' read -r dev sched; do
         # simple validation
         if [ -n "$dev" ] && [ -n "$sched" ]; then

@@ -86,7 +86,7 @@ if [ -n "$ZRAM_DEV" ]; then
     ZRAM_ALGO_FULL=$(cat /sys/block/zram0/comp_algorithm 2>/dev/null || echo "lz4")
     ZRAM_ALGO=$(echo "$ZRAM_ALGO_FULL" | grep -o '\[.*\]' | tr -d '[]')
     [ -z "$ZRAM_ALGO" ] && ZRAM_ALGO=$(echo "$ZRAM_ALGO_FULL" | awk '{print $1}')
-    
+
     # Check if swap is enabled (or configured)
     ZRAM_ENABLED=0
     # If disksize is non-zero, consider it enabled (available) even if not currently swapped on
@@ -160,10 +160,10 @@ if [ -f "$MODDIR/tweaks/iosched.sh" ]; then
     sh "$MODDIR/tweaks/iosched.sh" get_all | \
     awk '
     BEGIN { first=1 }
-    /^device=/ { 
-        dev=substr($0, 8) 
+    /^device=/ {
+        dev=substr($0, 8)
     }
-    /^active=/ { 
+    /^active=/ {
         sched=substr($0, 8)
         if (!first) printf ",\n"
         printf "      \"%s\": \"%s\"", dev, sched
