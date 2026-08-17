@@ -114,6 +114,14 @@ apply() {
         return 0
     fi
     
+    # Preserve current/default disksize if not explicitly overridden
+    if [ -z "$disksize" ] || [ "$disksize" = "0" ]; then
+        disksize=$(cat /sys/block/zram0/disksize 2>/dev/null || echo "0")
+        if [ "$disksize" = "0" ] && [ -f "$DATA_DIR/presets/.defaults.json" ]; then
+            disksize=$(grep -A 5 '"zram"' "$DATA_DIR/presets/.defaults.json" 2>/dev/null | grep '"disksize"' | grep -o '[0-9]\+')
+        fi
+    fi
+
     # Disable current swap
     swapoff $ZRAM_DEV 2>/dev/null
     
@@ -150,8 +158,8 @@ apply_saved() {
     local algorithm=$(grep '^algorithm=' "$CONFIG_FILE" | cut -d= -f2)
     local enabled=$(grep '^enabled=' "$CONFIG_FILE" | cut -d= -f2)
     
-    # Only apply if we have valid values
-    if [ -n "$disksize" ] || [ "$enabled" = "0" ]; then
+    # Apply if we have any saved configuration override
+    if [ -n "$disksize" ] || [ -n "$algorithm" ] || [ "$enabled" = "0" ]; then
         apply "$disksize" "$algorithm" "$enabled"
     fi
 }

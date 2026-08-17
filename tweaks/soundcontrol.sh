@@ -151,19 +151,24 @@ apply() {
     local hp_r="$2"
     local mic="$3"
 
-    [ -z "$hp_r" ] && hp_r="$hp_l"
+    # If at least one headphone channel is specified, resolve any missing channel from current state / 0
+    if [ -f "$NODE_HEADPHONE" ] && { [ -n "$hp_l" ] || [ -n "$hp_r" ]; }; then
+        local current_hp=$(cat "$NODE_HEADPHONE" 2>/dev/null || echo "0 0")
+        local hp_pair
+        hp_pair=$(read_headphone_gain "$current_hp")
+        local cur_l="${hp_pair%% *}"
+        local cur_r="${hp_pair#* }"
+        [ -z "$hp_l" ] && hp_l="$cur_l"
+        [ -z "$hp_r" ] && hp_r="$cur_r"
 
-    [ -n "$hp_l" ] && hp_l=$(sanitize_headphone_gain "$hp_l")
-    [ -n "$hp_r" ] && hp_r=$(sanitize_headphone_gain "$hp_r")
-    [ -n "$mic" ] && mic=$(sanitize_mic_gain "$mic")
-    
-    # Apply headphone gain (write as "L R")
-    if [ -f "$NODE_HEADPHONE" ] && [ -n "$hp_l" ] && [ -n "$hp_r" ]; then
+        hp_l=$(sanitize_headphone_gain "$hp_l") || hp_l="0"
+        hp_r=$(sanitize_headphone_gain "$hp_r") || hp_r="0"
         echo "$hp_l $hp_r" > "$NODE_HEADPHONE" 2>/dev/null
     fi
     
     # Apply mic gain
     if [ -f "$NODE_MIC" ] && [ -n "$mic" ]; then
+        mic=$(sanitize_mic_gain "$mic") || mic="0"
         echo "$mic" > "$NODE_MIC" 2>/dev/null
     fi
     
