@@ -196,6 +196,7 @@
             "algorithm": "Algoritmo",
             "activeDisksize": "Tamaño activo",
             "activeAlgorithm": "Algoritmo activo",
+            "applying": "Aplicando...",
             "custom": "Personalizado",
             "customSize": "Tamaño Personalizado (MiB)",
             "enterSize": "Ingrese tamaño",

@@ -5,6 +5,7 @@ let zramSavedState = {};
 let zramPendingState = {};
 let zramReferenceState = {};
 let zramDefaultState = {};
+let isZramApplying = false;
 
 // Helper: Convert bytes to MiB for display
 function bytesToMiB(bytes) {
@@ -17,6 +18,88 @@ function mibToBytes(mib) {
 }
 
 const runZramBackend = (...args) => window.runTweakBackend('zram', ...args);
+
+function setZramApplyingState(applying) {
+    isZramApplying = applying;
+    const currentDisksize = document.getElementById('zram-current-disksize');
+    const currentAlgorithm = document.getElementById('zram-current-algorithm');
+    const applyingText = (window.t ? window.t('tweaks.zram.applying') : '') || 'Applying...';
+
+    if (currentDisksize) {
+        if (applying) {
+            currentDisksize.textContent = applyingText;
+            currentDisksize.classList.add('applying');
+        } else {
+            currentDisksize.classList.remove('applying');
+            const sizeMiB = bytesToMiB(parseInt(zramCurrentState.disksize) || 0);
+            currentDisksize.textContent = `${sizeMiB} MiB`;
+        }
+    }
+
+    if (currentAlgorithm) {
+        if (applying) {
+            currentAlgorithm.textContent = applyingText;
+            currentAlgorithm.classList.add('applying');
+        } else {
+            currentAlgorithm.classList.remove('applying');
+            currentAlgorithm.textContent = zramCurrentState.algorithm || '--';
+        }
+    }
+
+    const btnSave = document.getElementById('zram-btn-save');
+    const btnApply = document.getElementById('zram-btn-apply');
+    const btnSaveApply = document.getElementById('zram-btn-save-apply');
+
+    [btnSave, btnApply, btnSaveApply].forEach(btn => {
+        if (btn) {
+            btn.disabled = applying;
+            btn.classList.toggle('disabled', applying);
+        }
+    });
+}
+
+let zramPollInterval = null;
+
+function startZramStatusPolling() {
+    if (zramPollInterval) return;
+
+    setZramApplyingState(true);
+
+    zramPollInterval = setInterval(async () => {
+        try {
+            const status = await runZramBackend('get_apply_status');
+
+            if (status && status.includes('ok')) {
+                clearInterval(zramPollInterval);
+                zramPollInterval = null;
+                await runZramBackend('clear_apply_status');
+                showToast(window.t ? window.t('toast.settingsApplied') : 'ZRAM settings applied');
+                const currentOutput = await runZramBackend('get_current');
+                zramCurrentState = parseKeyValue(currentOutput);
+                setZramApplyingState(false);
+                renderZramCard();
+            } else if (status && status.includes('error')) {
+                clearInterval(zramPollInterval);
+                zramPollInterval = null;
+                await runZramBackend('clear_apply_status');
+                showToast(window.t ? window.t('toast.settingsFailed') : 'Failed to apply ZRAM settings', true);
+                const currentOutput = await runZramBackend('get_current');
+                zramCurrentState = parseKeyValue(currentOutput);
+                setZramApplyingState(false);
+                renderZramCard();
+            } else if (!status || status.includes('idle')) {
+                clearInterval(zramPollInterval);
+                zramPollInterval = null;
+                const currentOutput = await runZramBackend('get_current');
+                zramCurrentState = parseKeyValue(currentOutput);
+                setZramApplyingState(false);
+                renderZramCard();
+            }
+        } catch (e) {
+            console.error('Error polling ZRAM status:', e);
+        }
+    }, 1000);
+}
 
 // Load ZRAM state
 async function loadZramState() {
@@ -40,7 +123,13 @@ async function loadZramState() {
             enabled: effectiveReferenceState.enabled !== undefined ? effectiveReferenceState.enabled : '1'
         };
 
-        renderZramCard();
+        // Check if an apply operation is actively running in background
+        const status = await runZramBackend('get_apply_status');
+        if (status && status.includes('running')) {
+            startZramStatusPolling();
+        } else {
+            renderZramCard();
+        }
     } catch (e) {
         console.error('Failed to load ZRAM state:', e);
     }
@@ -124,12 +213,26 @@ function renderZramCard() {
     const currentDisksize = document.getElementById('zram-current-disksize');
     const currentAlgorithm = document.getElementById('zram-current-algorithm');
 
-    if (currentDisksize) {
-        const sizeMiB = bytesToMiB(parseInt(zramCurrentState.disksize) || 0);
-        currentDisksize.textContent = `${sizeMiB} MiB`;
-    }
-    if (currentAlgorithm) {
-        currentAlgorithm.textContent = zramCurrentState.algorithm || '--';
+    if (isZramApplying) {
+        const applyingText = (window.t ? window.t('tweaks.zram.applying') : '') || 'Applying...';
+        if (currentDisksize) {
+            currentDisksize.textContent = applyingText;
+            currentDisksize.classList.add('applying');
+        }
+        if (currentAlgorithm) {
+            currentAlgorithm.textContent = applyingText;
+            currentAlgorithm.classList.add('applying');
+        }
+    } else {
+        if (currentDisksize) {
+            currentDisksize.classList.remove('applying');
+            const sizeMiB = bytesToMiB(parseInt(zramCurrentState.disksize) || 0);
+            currentDisksize.textContent = `${sizeMiB} MiB`;
+        }
+        if (currentAlgorithm) {
+            currentAlgorithm.classList.remove('applying');
+            currentAlgorithm.textContent = zramCurrentState.algorithm || '--';
+        }
     }
 
     // Hide options if disabled
@@ -223,22 +326,27 @@ async function saveZram() {
     }
 }
 
-// Apply ZRAM config (now, without saving)
+// Apply ZRAM config asynchronously and non-blocking
 async function applyZram() {
-    const result = await runZramBackend('apply',
-        zramPendingState.disksize,
-        zramPendingState.algorithm,
-        zramPendingState.enabled
-    );
+    if (isZramApplying) return;
 
-    if (result && result.includes('applied')) {
-        showToast('ZRAM settings applied');
-        // Reload current state
-        const currentOutput = await runZramBackend('get_current');
-        zramCurrentState = parseKeyValue(currentOutput);
-        renderZramCard();
-    } else {
-        showToast('Failed to apply ZRAM settings', true);
+    try {
+        const startResult = await runZramBackend('apply_async',
+            zramPendingState.disksize,
+            zramPendingState.algorithm,
+            zramPendingState.enabled
+        );
+
+        if (startResult && (startResult.includes('started') || startResult.includes('running'))) {
+            startZramStatusPolling();
+        } else {
+            showToast(window.t ? window.t('toast.settingsFailed') : 'Failed to apply ZRAM settings', true);
+            setZramApplyingState(false);
+        }
+    } catch (e) {
+        console.error('Failed to apply ZRAM settings:', e);
+        showToast(window.t ? window.t('toast.settingsFailed') : 'Failed to apply ZRAM settings', true);
+        setZramApplyingState(false);
     }
 }
 

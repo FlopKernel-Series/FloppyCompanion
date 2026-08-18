@@ -196,6 +196,7 @@
             "algorithm": "@monitor.memory.zramAlgorithm",
             "activeDisksize": "Active disksize",
             "activeAlgorithm": "Active algorithm",
+            "applying": "Applying...",
             "custom": "Custom",
             "customSize": "Custom Size (MiB)",
             "enterSize": "Enter size",

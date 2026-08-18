@@ -6,6 +6,9 @@
 MODDIR="${0%/*}/.."
 DATA_DIR="/data/adb/floppy_companion"
 CONFIG_FILE="$DATA_DIR/config/zram.conf"
+STATUS_FILE="$DATA_DIR/.zram_status"
+PID_FILE="$DATA_DIR/.zram_pid"
+LOG_FILE="$DATA_DIR/.zram_apply.log"
 ZRAM_DEV=""
 
 # Find ZRAM device
@@ -61,44 +64,24 @@ get_saved() {
     fi
 }
 
-# Save config (does not apply)
+# Save ZRAM configuration
 save() {
-    if [ "$#" -eq 0 ]; then
-        rm -f "$CONFIG_FILE"
-        echo "saved"
-        return 0
-    fi
+    mkdir -p "$DATA_DIR/config" 2>/dev/null
 
-    if echo "$1" | grep -q '='; then
-        mkdir -p "$(dirname "$CONFIG_FILE")"
-        : > "$CONFIG_FILE"
-        for arg in "$@"; do
-            key="${arg%%=*}"
-            val="${arg#*=}"
-            [ -n "$key" ] && [ -n "$val" ] && echo "$key=$val" >> "$CONFIG_FILE"
-        done
+    # Write config file with only provided values (sparse)
+    > "$CONFIG_FILE"
+    for arg in "$@"; do
+        case "$arg" in
+            disksize=*|algorithm=*|enabled=*)
+                echo "$arg" >> "$CONFIG_FILE"
+                ;;
+        esac
+    done
 
-        if [ ! -s "$CONFIG_FILE" ]; then
-            rm -f "$CONFIG_FILE"
-        fi
-        echo "saved"
-        return 0
-    fi
-
-    local disksize="$1"
-    local algorithm="$2"
-    local enabled="$3"
-
-    mkdir -p "$(dirname "$CONFIG_FILE")"
-    cat > "$CONFIG_FILE" << EOF
-disksize=$disksize
-algorithm=$algorithm
-enabled=$enabled
-EOF
     echo "saved"
 }
 
-# Apply ZRAM settings immediately
+# Apply ZRAM settings synchronously (Stage 1 tear-down, Stage 2 re-arm)
 apply() {
     local disksize="$1"
     local algorithm="$2"
@@ -108,15 +91,12 @@ apply() {
 
     # If disabling ZRAM
     if [ "$enabled" = "0" ]; then
-        if grep -q "zram" /proc/swaps 2>/dev/null; then
-            swapoff "$ZRAM_DEV" 2>/dev/null || true
-            local wait_count=0
-            while grep -q "zram" /proc/swaps 2>/dev/null && [ "$wait_count" -lt 30 ]; do
-                sleep 0.1 2>/dev/null || usleep 100000 2>/dev/null || sleep 1
-                wait_count=$((wait_count + 1))
-            done
-        fi
-        echo 1 > /sys/block/zram0/reset 2>/dev/null || true
+        while grep -q "zram" /proc/swaps 2>/dev/null || ! echo 1 > /sys/block/zram0/reset 2>/dev/null; do
+            sync
+            echo 3 > /proc/sys/vm/drop_caches 2>/dev/null || true
+            swapoff "$ZRAM_DEV" 2>/dev/null || swapoff -a 2>/dev/null || true
+            sleep 1
+        done
         echo "applied: ZRAM disabled"
         return 0
     fi
@@ -129,55 +109,103 @@ apply() {
         fi
     fi
 
-    # Disable current swap and wait for pages to drain back to RAM
-    if grep -q "zram" /proc/swaps 2>/dev/null; then
-        swapoff "$ZRAM_DEV" 2>/dev/null
-        local wait_count=0
-        while grep -q "zram" /proc/swaps 2>/dev/null && [ "$wait_count" -lt 50 ]; do
-            sleep 0.1 2>/dev/null || usleep 100000 2>/dev/null || sleep 1
-            wait_count=$((wait_count + 1))
-        done
-    fi
-
-    if grep -q "zram" /proc/swaps 2>/dev/null; then
-        echo "error: Swap is busy and could not be disabled"
-        return 1
-    fi
-
-    # Reset the device (retry briefly if block device handle is momentarily held)
-    local reset_ok=0
-    local retry=0
-    while [ "$retry" -lt 10 ]; do
-        if echo 1 > /sys/block/zram0/reset 2>/dev/null; then
-            reset_ok=1
-            break
-        fi
-        sleep 0.1 2>/dev/null || usleep 100000 2>/dev/null || sleep 1
-        retry=$((retry + 1))
+    # Stage 1: Free page cache, disable swap, and reset device
+    while grep -q "zram" /proc/swaps 2>/dev/null || ! echo 1 > /sys/block/zram0/reset 2>/dev/null; do
+        sync
+        echo 3 > /proc/sys/vm/drop_caches 2>/dev/null || true
+        swapoff "$ZRAM_DEV" 2>/dev/null || swapoff -a 2>/dev/null || true
+        sleep 1
     done
 
-    if [ "$reset_ok" != "1" ]; then
-        echo "error: Failed to reset ZRAM device (busy)"
+    # Stage 2: Set compression algorithm on uninitialized device
+    if [ -n "$algorithm" ]; then
+        if ! echo "$algorithm" > /sys/block/zram0/comp_algorithm 2>/dev/null; then
+            echo "error: Failed to set compression algorithm '$algorithm'"
+            return 1
+        fi
+    fi
+
+    # Set disksize on uninitialized device
+    if [ -n "$disksize" ] && [ "$disksize" != "0" ]; then
+        if ! echo "$disksize" > /sys/block/zram0/disksize 2>/dev/null; then
+            echo "error: Failed to set disksize '$disksize'"
+            return 1
+        fi
+    fi
+
+    # Format swap device and re-enable
+    mkswap "$ZRAM_DEV" 2>/dev/null || true
+    if ! swapon "$ZRAM_DEV" 2>/dev/null; then
+        echo "error: Failed to enable swap on $ZRAM_DEV"
         return 1
     fi
 
-    # Set compression algorithm (must be set before disksize)
-    if [ -n "$algorithm" ]; then
-        echo "$algorithm" > /sys/block/zram0/comp_algorithm 2>/dev/null
-    fi
-
-    # Set disksize
-    if [ -n "$disksize" ] && [ "$disksize" != "0" ]; then
-        echo "$disksize" > /sys/block/zram0/disksize 2>/dev/null
-    fi
-
-    # Re-initialize swap
-    mkswap "$ZRAM_DEV" 2>/dev/null
-
-    # Enable swap
-    swapon "$ZRAM_DEV" 2>/dev/null
-
     echo "applied"
+    return 0
+}
+
+# Run apply in background subshell with child PID tracking ($!)
+run_apply_async() {
+    local disksize="$1"
+    local algorithm="$2"
+    local enabled="$3"
+
+    mkdir -p "$DATA_DIR" 2>/dev/null
+
+    # Check if a background apply job is already active
+    if [ -f "$PID_FILE" ]; then
+        local old_pid=$(cat "$PID_FILE" 2>/dev/null)
+        if [ -n "$old_pid" ] && kill -0 "$old_pid" 2>/dev/null; then
+            echo "running"
+            return 0
+        fi
+    fi
+
+    echo "running" > "$STATUS_FILE"
+
+    (
+        if apply "$disksize" "$algorithm" "$enabled" > "$LOG_FILE" 2>&1; then
+            echo "ok" > "$STATUS_FILE"
+        else
+            echo "error" > "$STATUS_FILE"
+        fi
+        rm -f "$PID_FILE" 2>/dev/null
+    ) &
+    local child_pid=$!
+    echo "$child_pid" > "$PID_FILE"
+
+    echo "started"
+}
+
+# Query background apply status
+get_apply_status() {
+    if [ ! -f "$STATUS_FILE" ]; then
+        echo "idle"
+        return 0
+    fi
+
+    local st=$(cat "$STATUS_FILE" 2>/dev/null || echo "idle")
+
+    if [ "$st" = "running" ] && [ -f "$PID_FILE" ]; then
+        local pid=$(cat "$PID_FILE" 2>/dev/null)
+        if [ -n "$pid" ] && ! kill -0 "$pid" 2>/dev/null; then
+            # Child process died unexpectedly
+            st=$(cat "$STATUS_FILE" 2>/dev/null || echo "idle")
+            if [ "$st" = "running" ]; then
+                echo "error"
+                rm -f "$PID_FILE" 2>/dev/null
+                return 0
+            fi
+        fi
+    fi
+
+    echo "$st"
+}
+
+# Clear background apply status files
+clear_apply_status() {
+    rm -f "$STATUS_FILE" "$LOG_FILE" "$PID_FILE" 2>/dev/null
+    echo "cleared"
 }
 
 # Apply saved config (called at boot)
@@ -212,11 +240,20 @@ case "$1" in
     apply)
         apply "$2" "$3" "$4"
         ;;
+    apply_async)
+        run_apply_async "$2" "$3" "$4"
+        ;;
+    get_apply_status)
+        get_apply_status
+        ;;
+    clear_apply_status)
+        clear_apply_status
+        ;;
     apply_saved)
         apply_saved
         ;;
     *)
-        echo "usage: $0 {get_current|get_saved|save|apply|apply_saved}"
+        echo "usage: $0 {get_current|get_saved|save|apply|apply_async|get_apply_status|clear_apply_status|apply_saved}"
         exit 1
         ;;
 esac

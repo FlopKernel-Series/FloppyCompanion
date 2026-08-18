@@ -2147,6 +2147,18 @@ beer-css.tweak-slider-scope .tweak-beer-slider:has(> input.beer-slider-input:dis
     border-radius: 10px;
 }
 
+.value-data.applying {
+    color: var(--md-sys-color-primary);
+    opacity: 0.85;
+    font-style: italic;
+    animation: applying-pulse 1.2s ease-in-out infinite;
+}
+
+@keyframes applying-pulse {
+    0%, 100% { opacity: 0.5; }
+    50% { opacity: 1; }
+}
+
 .tweak-actions {
     display: flex;
     flex-wrap: wrap;
