@@ -108,8 +108,15 @@ apply() {
 
     # If disabling ZRAM
     if [ "$enabled" = "0" ]; then
-        swapoff $ZRAM_DEV 2>/dev/null
-        echo 1 > /sys/block/zram0/reset 2>/dev/null
+        if grep -q "zram" /proc/swaps 2>/dev/null; then
+            swapoff "$ZRAM_DEV" 2>/dev/null || true
+            local wait_count=0
+            while grep -q "zram" /proc/swaps 2>/dev/null && [ "$wait_count" -lt 30 ]; do
+                sleep 0.1 2>/dev/null || usleep 100000 2>/dev/null || sleep 1
+                wait_count=$((wait_count + 1))
+            done
+        fi
+        echo 1 > /sys/block/zram0/reset 2>/dev/null || true
         echo "applied: ZRAM disabled"
         return 0
     fi
@@ -122,11 +129,37 @@ apply() {
         fi
     fi
 
-    # Disable current swap
-    swapoff $ZRAM_DEV 2>/dev/null
+    # Disable current swap and wait for pages to drain back to RAM
+    if grep -q "zram" /proc/swaps 2>/dev/null; then
+        swapoff "$ZRAM_DEV" 2>/dev/null
+        local wait_count=0
+        while grep -q "zram" /proc/swaps 2>/dev/null && [ "$wait_count" -lt 50 ]; do
+            sleep 0.1 2>/dev/null || usleep 100000 2>/dev/null || sleep 1
+            wait_count=$((wait_count + 1))
+        done
+    fi
 
-    # Reset the device
-    echo 1 > /sys/block/zram0/reset 2>/dev/null
+    if grep -q "zram" /proc/swaps 2>/dev/null; then
+        echo "error: Swap is busy and could not be disabled"
+        return 1
+    fi
+
+    # Reset the device (retry briefly if block device handle is momentarily held)
+    local reset_ok=0
+    local retry=0
+    while [ "$retry" -lt 10 ]; do
+        if echo 1 > /sys/block/zram0/reset 2>/dev/null; then
+            reset_ok=1
+            break
+        fi
+        sleep 0.1 2>/dev/null || usleep 100000 2>/dev/null || sleep 1
+        retry=$((retry + 1))
+    done
+
+    if [ "$reset_ok" != "1" ]; then
+        echo "error: Failed to reset ZRAM device (busy)"
+        return 1
+    fi
 
     # Set compression algorithm (must be set before disksize)
     if [ -n "$algorithm" ]; then
@@ -139,10 +172,10 @@ apply() {
     fi
 
     # Re-initialize swap
-    mkswap $ZRAM_DEV 2>/dev/null
+    mkswap "$ZRAM_DEV" 2>/dev/null
 
     # Enable swap
-    swapon $ZRAM_DEV 2>/dev/null
+    swapon "$ZRAM_DEV" 2>/dev/null
 
     echo "applied"
 }
