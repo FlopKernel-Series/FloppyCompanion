@@ -206,6 +206,7 @@ window.showTweakRebootRequiredModal = async function (tweakNames = []) {
 window.reloadTweakState = async function (tweakId) {
     const loaders = {
         hwui: window.loadHwuiState,
+        kswapd: window.loadKswapdState,
         zram: window.loadZramState,
         memory: window.loadMemoryState,
         lmkd: window.loadLmkdState,
@@ -246,6 +247,7 @@ window.clearTweakPersistence = async function (tweakId) {
 
     const configFiles = {
         hwui: 'hwui.conf',
+        kswapd: 'kswapd.conf',
         zram: 'zram.conf',
         memory: 'memory.conf',
         lmkd: 'lmkd.conf',
@@ -849,6 +851,7 @@ async function initTweaksTab() {
     }
 
     if (typeof initHwuiTweak === 'function') initHwuiTweak();
+    if (typeof initKswapdTweak === 'function') initKswapdTweak();
     if (typeof initZramTweak === 'function') initZramTweak();
     if (typeof initMemoryTweak === 'function') initMemoryTweak();
     if (typeof initLmkdTweak === 'function') initLmkdTweak();

@@ -72,6 +72,8 @@ async function clearAllTweakConfigs() {
 
 async function reloadAllTweakStates() {
     const tweakIds = [
+        'hwui',
+        'kswapd',
         'zram',
         'memory',
         'lmkd',

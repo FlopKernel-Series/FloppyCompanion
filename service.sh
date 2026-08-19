@@ -120,6 +120,11 @@ if [ -f "$MODDIR/tweaks/hwui.sh" ]; then
     sh "$MODDIR/tweaks/hwui.sh" apply_saved
 fi
 
+# KSWAPD
+if [ -f "$MODDIR/tweaks/kswapd.sh" ]; then
+    sh "$MODDIR/tweaks/kswapd.sh" apply_saved
+fi
+
 # ZRAM
 if [ -f "$MODDIR/tweaks/zram.sh" ]; then
     sh "$MODDIR/tweaks/zram.sh" apply_saved

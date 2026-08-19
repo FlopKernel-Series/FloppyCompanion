@@ -73,6 +73,17 @@ if [ -f "$MODDIR/tweaks/hwui.sh" ]; then
     HWUI_ROM_DEFAULT=$(sh "$MODDIR/tweaks/hwui.sh" rom_default 2>/dev/null || echo "Unknown")
 fi
 
+# --- KSWAPD Defaults ---
+KSWAPD_THREADS_NODE="/sys/kernel/mm/vmscan/kswapd_threads"
+KSWAPD_CPU_NODE="/sys/kernel/mm/vmscan/kswapd_cpu"
+KSWAPD_AVAILABLE=0
+if [ -f "$KSWAPD_THREADS_NODE" ] || [ -f "$KSWAPD_CPU_NODE" ]; then
+    KSWAPD_AVAILABLE=1
+    KSWAPD_THREADS=$(cat "$KSWAPD_THREADS_NODE" 2>/dev/null || echo "1")
+    KSWAPD_CPU_RAW=$(cat "$KSWAPD_CPU_NODE" 2>/dev/null || echo "0x7f")
+    KSWAPD_CPU=$(printf "0x%x" "$KSWAPD_CPU_RAW" 2>/dev/null || echo "$KSWAPD_CPU_RAW")
+fi
+
 # --- ZRAM Defaults ---
 ZRAM_DEV=""
 if [ -e /dev/block/zram0 ]; then
@@ -118,6 +129,13 @@ cat > "$TMP_OUTPUT_FILE" << EOF
       "renderer": "default",
       "rom_default": "$HWUI_ROM_DEFAULT"
     },
+$(if [ "$KSWAPD_AVAILABLE" = "1" ]; then cat << EOF_KSWAPD
+    "kswapd": {
+      "threads": "$KSWAPD_THREADS",
+      "affinity": "$KSWAPD_CPU"
+    },
+EOF_KSWAPD
+fi)
     "zram": {
       "enabled": "$ZRAM_ENABLED",
       "disksize": "$ZRAM_DISKSIZE",

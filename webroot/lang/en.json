@@ -189,6 +189,16 @@
             "activeRenderer": "Active renderer",
             "romDefault": "ROM default"
         },
+        "kswapd": {
+            "title": "KSWAPD Configuration",
+            "threads": "Thread Count",
+            "affinity": "CPU Affinity",
+            "activeThreads": "Active threads",
+            "activeAffinity": "Active affinity",
+            "threadSingular": "{count} thread",
+            "threadPlural": "{count} threads",
+            "minOneCpu": "At least one CPU must be selected"
+        },
         "zram": {
             "title": "@monitor.memory.zramSection",
             "enable": "Enable ZRAM",
@@ -362,6 +372,7 @@
         "dismiss": "Dismiss",
         "tooltip": {
             "hwui": "Selects Android's Skia HWUI renderer. Default leaves the ROM's renderer choice in control.",
+            "kswapd": "Configures kswapd background page reclaim threads count and CPU core affinity.",
             "zram": "Compressed RAM block device. Helps multitasking by compressing data in RAM. Usually, higher size translates to more apps fitting in ZRAM.",
             "memory": "Settings to control the Linux Virtual Memory (VM) subsystem. Adjusts how the kernel balances performance, battery life, and multitasking.",
             "lmkd": "Runtime overrides for Android's low memory killer daemon. These map to persist.device_config.lmkd_native.* properties and trigger an lmkd reinit.",

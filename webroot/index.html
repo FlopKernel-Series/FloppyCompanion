@@ -1299,6 +1299,59 @@
                         </div>
                     </template>
 
+                    <template id="tpl-kswapd">
+                        <div class="card-content">
+                            <div class="slider-container" id="kswapd-container-threads">
+                                <div class="tweak-row" style="border-bottom: none; padding-bottom: 4px;">
+                                    <div class="tweak-info-col">
+                                        <span class="tweak-label" data-i18n="tweaks.kswapd.threads">Thread Count</span>
+                                        <span class="tweak-val" id="kswapd-val-threads">--</span>
+                                    </div>
+                                </div>
+                                <div class="value-row">
+                                    <beer-css class="tweak-slider-scope">
+                                        <div class="slider tweak-beer-slider">
+                                            <input type="range" id="kswapd-slider-threads"
+                                                class="styled-slider beer-slider-input" min="1" max="8" value="1">
+                                            <span></span>
+                                        </div>
+                                    </beer-css>
+                                    <div class="custom-input-row beer field fill border round small inline-input-field" style="margin-top: 0;">
+                                        <input type="number" id="kswapd-input-threads" min="1" max="8" value="1">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="tweak-section tweak-separator" id="kswapd-section-affinity"
+                                style="border-top: 1px solid var(--md-sys-color-outline-variant); padding-top: 12px; margin-top: 16px;">
+                                <div class="tweak-row" style="border-bottom: none; padding-bottom: 8px;">
+                                    <div class="tweak-info-col">
+                                        <span class="tweak-label" data-i18n="tweaks.kswapd.affinity">CPU Affinity</span>
+                                        <span class="tweak-val" id="kswapd-val-affinity">--</span>
+                                    </div>
+                                </div>
+                                <div class="option-grid beer" id="kswapd-cpu-chips"></div>
+                            </div>
+                            <div class="current-values">
+                                <div class="value-row">
+                                    <span class="value-label" data-i18n="tweaks.kswapd.activeThreads">Active threads</span>
+                                    <span class="value-data" id="kswapd-current-threads">--</span>
+                                </div>
+                                <div class="value-row">
+                                    <span class="value-label" data-i18n="tweaks.kswapd.activeAffinity">Active affinity</span>
+                                    <span class="value-data" id="kswapd-current-affinity">--</span>
+                                </div>
+                            </div>
+                            <div class="tweak-actions beer">
+                                <button class="tweak-action-btn fill action-secondary" id="kswapd-btn-save"
+                                    data-i18n="tweaks.save">Save</button>
+                                <button class="tweak-action-btn fill action-secondary" id="kswapd-btn-apply"
+                                    data-i18n="tweaks.apply">Apply</button>
+                                <button class="tweak-action-btn action-primary" id="kswapd-btn-save-apply"
+                                    data-i18n="tweaks.saveApply">Save & Apply</button>
+                            </div>
+                        </div>
+                    </template>
+
                     <template id="tpl-zram">
                         <div class="card-content">
                             <div class="tweak-toggle-row">
@@ -2156,6 +2209,7 @@
     <script src="js/tweaks.js"></script>
     <!-- Shared tweaks (platform-agnostic) -->
     <script src="js/tweaks/shared/hwui.js"></script>
+    <script src="js/tweaks/shared/kswapd.js"></script>
     <script src="js/tweaks/shared/zram.js"></script>
     <script src="js/tweaks/shared/memory.js"></script>
     <script src="js/tweaks/shared/lmkd.js"></script>

@@ -196,6 +196,17 @@
           "requires": null
         },
         {
+          "id": "kswapd",
+          "cardId": "kswapd-card",
+          "pendingId": "kswapd-pending-indicator",
+          "type": "custom",
+          "templateId": "tpl-kswapd",
+          "iconKey": "memory",
+          "titleKey": "tweaks.kswapd.title",
+          "tooltipKey": "tweaks.tooltip.kswapd",
+          "requires": null
+        },
+        {
           "id": "zram",
           "cardId": "zram-card",
           "pendingId": "zram-pending-indicator",

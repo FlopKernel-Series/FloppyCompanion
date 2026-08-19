@@ -149,6 +149,11 @@
                     renderer: 'default',
                     rom_default: 'Vulkan'
                 },
+                kswapd: {
+                    threads: '1',
+                    affinity: '0x7f',
+                    max_cpus: '8'
+                },
                 zram: {
                     enabled: '1',
                     disksize: '3221225472',
@@ -246,6 +251,7 @@
             },
             tweakSaved: {
                 hwui: {},
+                kswapd: {},
                 zram: {},
                 memory: {},
                 lmkd: {},
@@ -314,6 +320,10 @@
                 '/dev/block/sdb': 'none'
             }
         };
+
+        if (config.family === '2100') {
+            defaultPresetTweaks.kswapd = { ...state.tweakCurrent.kswapd };
+        }
 
         if (isExynos) {
             defaultPresetTweaks.undervolt = { ...state.tweakCurrent.undervolt };
@@ -556,6 +566,7 @@
     function handleTweakBackend(scriptName, action, args) {
         if (action === 'is_available') {
             const available =
+                (scriptName === 'kswapd' && state.config.family === '2100') ||
                 (scriptName === 'thermal' && state.config.family === '1280') ||
                 (scriptName === 'thermal_control' && state.config.family === '2100') ||
                 (scriptName === 'undervolt' && (state.config.family === '1280' || state.config.family === '2100')) ||
@@ -565,6 +576,9 @@
         }
 
         if (action === 'get_capabilities') {
+            if (scriptName === 'kswapd') {
+                return 'threads=1\naffinity=1\nmax_cpus=8';
+            }
             if (scriptName === 'undervolt') {
                 return 'little=1\nbig=1\nprime=1\ngpu=1';
             }
