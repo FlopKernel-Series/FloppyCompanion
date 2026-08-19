@@ -84,6 +84,7 @@ async function reloadAllTweakStates() {
         'exynos_fc',
         'misc',
         'soundcontrol',
+        'xiaomi_parts',
         'charging',
         'display',
         'adreno',

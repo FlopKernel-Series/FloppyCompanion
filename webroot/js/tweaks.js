@@ -218,6 +218,7 @@ window.reloadTweakState = async function (tweakId) {
         misc: window.loadMiscState,
         exynos: window.loadExynosState,
         soundcontrol: window.loadSoundControlState,
+        xiaomi_parts: window.loadXiaomiPartsState,
         charging: window.loadChargingState,
         display: window.loadDisplayState,
         adreno: window.loadAdrenoState,
@@ -257,6 +258,7 @@ window.clearTweakPersistence = async function (tweakId) {
         undervolt: 'undervolt.conf',
         exynos_fc: 'exynos_fc.conf',
         soundcontrol: 'soundcontrol.conf',
+        xiaomi_parts: 'xiaomi_parts.conf',
         charging: 'charging.conf',
         display: 'display.conf',
         adreno: 'adreno.conf',
@@ -878,6 +880,7 @@ function initPlatformTweaks() {
         if (typeof initChargingTweak === 'function') initChargingTweak();
         if (typeof initDisplayTweak === 'function') initDisplayTweak();
         if (typeof initSoundControlTweak === 'function') initSoundControlTweak();
+        if (typeof initXiaomiPartsTweak === 'function') initXiaomiPartsTweak();
         if (typeof initAdrenoTweak === 'function') initAdrenoTweak();
         if (typeof initMiscTrinketTweak === 'function') initMiscTrinketTweak();
     };

@@ -231,6 +231,10 @@
                     hp_r: '0',
                     mic: '0'
                 },
+                xiaomi_parts: {
+                    torch_strength: '85',
+                    vibration_strength: '85'
+                },
                 charging: {
                     bypass: '0',
                     fast: '0'
@@ -263,6 +267,7 @@
                 exynos_fc: {},
                 misc: {},
                 soundcontrol: {},
+                xiaomi_parts: {},
                 charging: {},
                 display: {},
                 adreno: {},
@@ -301,11 +306,13 @@
 
         if (!isTrinket) {
             delete state.tweakCurrent.soundcontrol;
+            delete state.tweakCurrent.xiaomi_parts;
             delete state.tweakCurrent.charging;
             delete state.tweakCurrent.display;
             delete state.tweakCurrent.adreno;
             delete state.tweakCurrent.misc_trinket;
             state.tweakSaved.soundcontrol = {};
+            state.tweakSaved.xiaomi_parts = {};
             state.tweakSaved.charging = {};
             state.tweakSaved.display = {};
             state.tweakSaved.adreno = {};
@@ -354,6 +361,7 @@
 
         if (isTrinket) {
             defaultPresetTweaks.soundcontrol = { ...state.tweakCurrent.soundcontrol };
+            defaultPresetTweaks.xiaomi_parts = { ...state.tweakCurrent.xiaomi_parts };
             defaultPresetTweaks.charging = { ...state.tweakCurrent.charging };
             defaultPresetTweaks.display = { ...state.tweakCurrent.display };
             defaultPresetTweaks.adreno = { ...state.tweakCurrent.adreno };
@@ -572,11 +580,14 @@
                 (scriptName === 'thermal_control' && state.config.family === '2100') ||
                 (scriptName === 'undervolt' && (state.config.family === '1280' || state.config.family === '2100')) ||
                 (scriptName === 'exynos_fc' && (state.config.family === '1280' || state.config.family === '2100')) ||
-                (['soundcontrol', 'charging', 'display', 'adreno', 'misc_trinket'].includes(scriptName) && state.config.family === 'trinket');
+                (['soundcontrol', 'xiaomi_parts', 'charging', 'display', 'adreno', 'misc_trinket'].includes(scriptName) && state.config.family === 'trinket');
             return `available=${available ? '1' : '0'}`;
         }
 
         if (action === 'get_capabilities') {
+            if (scriptName === 'xiaomi_parts') {
+                return 'torch=1\nvibration=1';
+            }
             if (scriptName === 'kswapd') {
                 return 'threads=1\naffinity=1\nmax_cpus=8';
             }

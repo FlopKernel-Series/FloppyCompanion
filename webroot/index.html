@@ -1039,6 +1039,77 @@
                         </div>
                     </template>
 
+                    <template id="tpl-xiaomi-parts">
+                        <div class="card-content">
+                            <!-- Flashlight Brightness -->
+                            <div class="slider-container" id="xiaomi-parts-torch-container">
+                                <div class="tweak-row" style="border-bottom: none; padding-bottom: 4px;">
+                                    <div class="tweak-info-col">
+                                        <span class="tweak-label" data-i18n="tweaks.xiaomiParts.torch">Flashlight Brightness</span>
+                                        <span class="tweak-val" id="xiaomi-parts-val-torch">85%</span>
+                                    </div>
+                                </div>
+                                <div class="value-row">
+                                    <beer-css class="tweak-slider-scope">
+                                        <div class="slider tweak-beer-slider">
+                                            <input type="range" id="xiaomi-parts-slider-torch" class="styled-slider beer-slider-input" min="10"
+                                                max="100" value="85">
+                                            <span></span>
+                                        </div>
+                                    </beer-css>
+                                    <div class="custom-input-row beer field fill border round small suffix inline-input-field inline-input-field-suffix" style="margin-top: 0;">
+                                        <input type="number" id="xiaomi-parts-input-torch" value="85" min="10" max="100">
+                                        <span class="input-suffix">%</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Vibration Strength -->
+                            <div class="slider-container tweak-separator" id="xiaomi-parts-vibration-container"
+                                style="border-top: 1px solid var(--md-sys-color-outline-variant); padding-top: 2px; margin-top: 20px;">
+                                <div class="tweak-row" style="border-bottom: none; padding-bottom: 4px;">
+                                    <div class="tweak-info-col">
+                                        <span class="tweak-label" data-i18n="tweaks.xiaomiParts.vibration">Vibration Strength</span>
+                                        <span class="tweak-val" id="xiaomi-parts-val-vibration">85%</span>
+                                    </div>
+                                </div>
+                                <div class="value-row">
+                                    <beer-css class="tweak-slider-scope">
+                                        <div class="slider tweak-beer-slider">
+                                            <input type="range" id="xiaomi-parts-slider-vibration" class="styled-slider beer-slider-input" min="10"
+                                                max="100" value="85">
+                                            <span></span>
+                                        </div>
+                                    </beer-css>
+                                    <div class="custom-input-row beer field fill border round small suffix inline-input-field inline-input-field-suffix" style="margin-top: 0;">
+                                        <input type="number" id="xiaomi-parts-input-vibration" value="85" min="10" max="100">
+                                        <span class="input-suffix">%</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="current-values" style="margin-top: 20px;">
+                                <div class="value-row">
+                                    <span class="value-label" data-i18n="tweaks.xiaomiParts.activeTorch">Active flashlight</span>
+                                    <span class="value-data" id="xiaomi-parts-current-torch">85%</span>
+                                </div>
+                                <div class="value-row">
+                                    <span class="value-label" data-i18n="tweaks.xiaomiParts.activeVibration">Active vibration</span>
+                                    <span class="value-data" id="xiaomi-parts-current-vibration">85%</span>
+                                </div>
+                            </div>
+
+                            <div class="tweak-actions beer" style="margin-top: 28px;">
+                                <button class="tweak-action-btn fill action-secondary" id="xiaomi-parts-btn-save"
+                                    data-i18n="tweaks.save">Save</button>
+                                <button class="tweak-action-btn fill action-secondary" id="xiaomi-parts-btn-apply"
+                                    data-i18n="tweaks.apply">Apply</button>
+                                <button class="tweak-action-btn action-primary" id="xiaomi-parts-btn-save-apply"
+                                    data-i18n="tweaks.saveApply">Save & Apply</button>
+                            </div>
+                        </div>
+                    </template>
+
                     <template id="tpl-charging">
                         <div class="card-content">
                             <!-- Bypass Charging -->
@@ -2244,6 +2315,7 @@
     <script src="js/tweaks/exynos_common/undervolt.js"></script>
     <script src="js/tweaks/exynos_common/exynos_fc.js"></script>
     <script src="js/tweaks/floppytrinketmi/soundcontrol.js"></script>
+    <script src="js/tweaks/floppytrinketmi/xiaomi_parts.js"></script>
     <script src="js/tweaks/floppytrinketmi/charging.js"></script>
     <script src="js/tweaks/floppytrinketmi/display.js"></script>
     <script src="js/tweaks/floppytrinketmi/adreno.js"></script>

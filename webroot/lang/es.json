@@ -371,6 +371,13 @@
             "headphoneR": "Auricular R",
             "mic": "Ganancia Micrófono"
         },
+        "xiaomiParts": {
+            "title": "Xiaomi Parts",
+            "torch": "Brillo de Linterna",
+            "vibration": "Intensidad de Vibración",
+            "activeTorch": "Linterna activa",
+            "activeVibration": "Vibración activa"
+        },
         "platformTweaks": "Ajustes de Plataforma",
         "dismiss": "Descartar",
         "tooltip": {
@@ -398,6 +405,7 @@
             "gpuUnlock": "Habilita el overclocking de la GPU inmediatamente.",
             "gpuUnlock2100": "Habilita el overclocking de la GPU inmediatamente. En Floppy2100, esto overclockea la GPU hasta 949 MHz y se puede activar o desactivar en cualquier momento con efecto inmediato.",
             "soundcontrol": "Ajusta la ganancia de auriculares y micrófono en decibelios. Valores más altos aumentan el volumen. Usa Separar L/R para controlar los canales izquierdo y derecho de forma independiente.",
+            "xiaomiParts": "Ajusta el brillo de la linterna y la intensidad de la vibración.",
             "adreno": "Ajustes específicos para GPUs Adreno.",
             "adrenoboost": "Un algoritmo de impulso de reemplazo para GPUs Adreno que reemplaza el predeterminado.",
             "adrenoidler": "Un algoritmo que hace que el impulso de la GPU sea menos agresivo, haciendo que tienda a estar inactiva más a menudo.",

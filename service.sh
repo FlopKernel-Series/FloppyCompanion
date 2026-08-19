@@ -174,6 +174,11 @@ if [ -f "$MODDIR/tweaks/soundcontrol.sh" ]; then
     sh "$MODDIR/tweaks/soundcontrol.sh" apply_saved
 fi
 
+# Xiaomi Parts (FloppyTrinketMi only)
+if [ -f "$MODDIR/tweaks/xiaomi_parts.sh" ]; then
+    sh "$MODDIR/tweaks/xiaomi_parts.sh" apply_saved
+fi
+
 # Charging (FloppyTrinketMi only)
 if [ -f "$MODDIR/tweaks/charging.sh" ]; then
     sh "$MODDIR/tweaks/charging.sh" apply_saved

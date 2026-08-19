@@ -117,6 +117,19 @@ SOUND_HP_L="0"
 SOUND_HP_R="0"
 SOUND_MIC="0"
 
+# --- Xiaomi Parts Defaults (FloppyTrinketMi only) ---
+XIAOMI_TORCH="85"
+XIAOMI_VIB="85"
+if [ -f "$MODDIR/tweaks/xiaomi_parts.sh" ]; then
+    xp_vals=$(sh "$MODDIR/tweaks/xiaomi_parts.sh" get_current 2>/dev/null || true)
+    for line in $xp_vals; do
+        case "$line" in
+            torch_strength=*) XIAOMI_TORCH="${line#torch_strength=}" ;;
+            vibration_strength=*) XIAOMI_VIB="${line#vibration_strength=}" ;;
+        esac
+    done
+fi
+
 # --- Output JSON ---
 cat > "$TMP_OUTPUT_FILE" << EOF
 {
@@ -297,6 +310,10 @@ EOF_EXYNOS
       "hp_l": "$SOUND_HP_L",
       "hp_r": "$SOUND_HP_R",
       "mic": "$SOUND_MIC"
+    },
+    "xiaomi_parts": {
+      "torch_strength": "$XIAOMI_TORCH",
+      "vibration_strength": "$XIAOMI_VIB"
     },
     "charging": {
       "bypass": "$(cat /sys/class/power_supply/battery/input_suspend 2>/dev/null || echo 0)",

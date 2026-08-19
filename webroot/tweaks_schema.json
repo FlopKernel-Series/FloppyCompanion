@@ -122,6 +122,20 @@
           }
         },
         {
+          "id": "xiaomi_parts",
+          "cardId": "xiaomi-parts-card",
+          "pendingId": "xiaomi-parts-pending-indicator",
+          "type": "custom",
+          "templateId": "tpl-xiaomi-parts",
+          "iconKey": "xiaomi_parts",
+          "titleKey": "tweaks.xiaomiParts.title",
+          "tooltipKey": "tweaks.tooltip.xiaomiParts",
+          "requires": {
+            "var": "kernelName",
+            "eq": "FloppyTrinketMi"
+          }
+        },
+        {
           "id": "charging",
           "cardId": "charging-card",
           "pendingId": "charging-pending-indicator",

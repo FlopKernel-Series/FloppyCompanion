@@ -333,6 +333,13 @@
             "headphoneR": "Headphone R",
             "mic": "Microphone Gain"
         },
+        "xiaomiParts": {
+            "title": "Xiaomi Parts",
+            "torch": "Flashlight Brightness",
+            "vibration": "Vibration Strength",
+            "activeTorch": "Active flashlight",
+            "activeVibration": "Active vibration"
+        },
         "charging": {
             "title": "Charging",
             "bypass": "Bypass Charging",
@@ -396,6 +403,7 @@
             "gpuUnlock": "Enables GPU overclocking immediately.",
             "gpuUnlock2100": "Enables GPU overclocking immediately. On Floppy2100, this overclocks the GPU to 949 MHz and can be toggled at any time with immediate effect.",
             "soundcontrol": "Adjust headphone and microphone gain in decibels. Higher values increase volume. Use Split L/R to control left and right channels independently.",
+            "xiaomiParts": "Adjust flashlight brightness and vibration strength.",
             "charging": "Configure advanced charging behavior.",
             "chargingBypass": "Stops battery charging while allowing device to run from USB power. Useful for gaming to reduce heat.",
             "chargingFast": "Forces up to 900mA charging current over standard USB connections (e.g. PC ports).",
