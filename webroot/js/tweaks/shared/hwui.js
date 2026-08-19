@@ -276,3 +276,15 @@ document.addEventListener('languageChanged', () => {
         renderHwuiCard();
     }
 });
+
+document.addEventListener('deviceDetected', () => {
+    if (document.getElementById('hwui-card')) {
+        renderHwuiCard();
+    }
+});
+
+document.addEventListener('tweakVarsChanged', (e) => {
+    if (e.detail?.name === 'kernelName' && document.getElementById('hwui-card')) {
+        renderHwuiCard();
+    }
+});

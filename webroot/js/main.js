@@ -643,6 +643,12 @@ PRESET_EOF`);
     ]);
     const [, [props, devInfo]] = await Promise.all([monetReady, detectionReady]);
     window.deviceInfo = devInfo; // Expose globally for other modules (e.g. monitor.js)
+    if (devInfo && devInfo.kernelName) {
+        window.KERNEL_NAME = devInfo.kernelName;
+        if (typeof setTweakVar === 'function') {
+            setTweakVar('kernelName', window.KERNEL_NAME);
+        }
+    }
     document.dispatchEvent(new CustomEvent('deviceDetected', { detail: devInfo }));
 
     // Populate About Page (from module.prop, except description which is i18n)

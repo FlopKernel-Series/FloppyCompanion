@@ -132,6 +132,13 @@ function updateSlide(index) {
         if (window.loadFeaturesIfNeeded) window.loadFeaturesIfNeeded();
     }
 
+    // Refresh tweak cards when entering Tweaks tab (index 2)
+    if (nextIndex === 2) {
+        if (typeof window.refreshAllTweakCards === 'function') {
+            window.refreshAllTweakCards();
+        }
+    }
+
     document.dispatchEvent(new CustomEvent('tabChanged', { detail: { index: nextIndex } }));
 }
 

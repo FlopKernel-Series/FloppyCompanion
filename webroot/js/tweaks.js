@@ -860,6 +860,24 @@ async function initTweaksTab() {
     if (typeof initIoSchedulerTweak === 'function') initIoSchedulerTweak();
 }
 
+function refreshAllTweakCards() {
+    if (window.__tweaksSchema && typeof refreshTweaksAvailability === 'function') {
+        refreshTweaksAvailability(window.__tweaksSchema);
+    }
+    if (window.TWEAK_REGISTRY) {
+        Object.entries(window.TWEAK_REGISTRY).forEach(([id, tweak]) => {
+            if (tweak && typeof tweak.render === 'function') {
+                try {
+                    tweak.render();
+                } catch (e) {
+                    console.error(`Failed to render tweak card (${id}):`, e);
+                }
+            }
+        });
+    }
+}
+window.refreshAllTweakCards = refreshAllTweakCards;
+
 // Initialize platform tweaks
 function initPlatformTweaks() {
     const doInit = async () => {
@@ -883,6 +901,8 @@ function initPlatformTweaks() {
         if (typeof initXiaomiPartsTweak === 'function') initXiaomiPartsTweak();
         if (typeof initAdrenoTweak === 'function') initAdrenoTweak();
         if (typeof initMiscTrinketTweak === 'function') initMiscTrinketTweak();
+
+        refreshAllTweakCards();
     };
 
     // Ensure schema is loaded/rendered even if platform init runs before tweaks tab init.
@@ -900,6 +920,26 @@ function initPlatformTweaks() {
 // Export globally
 window.initPlatformTweaks = initPlatformTweaks;
 
+// Re-render and refresh tweak cards when device is detected
+document.addEventListener('deviceDetected', (e) => {
+    const devInfo = e?.detail;
+    if (devInfo && devInfo.kernelName) {
+        window.KERNEL_NAME = devInfo.kernelName;
+        setTweakVar('kernelName', devInfo.kernelName);
+    }
+    refreshAllTweakCards();
+});
+
+// Re-render and refresh tweak cards when tab is opened
+document.addEventListener('tabChanged', (e) => {
+    if (e.detail?.index === 2) {
+        refreshAllTweakCards();
+        if (typeof syncBeerRangeSliders === 'function') {
+            syncBeerRangeSliders();
+        }
+    }
+});
+
 // Global: listen for Unlocked Mode changes (emitted from features.js)
 document.addEventListener('superfloppyModeChanged', (e) => {
     const mode = e?.detail?.mode != null ? String(e.detail.mode) : (window.currentSuperfloppyMode != null ? String(window.currentSuperfloppyMode) : '0');
@@ -911,6 +951,7 @@ document.addEventListener('superfloppyModeChanged', (e) => {
         updateGpuUnlockAvailability();
     }
     if (window.__tweaksSchema) refreshTweaksAvailability(window.__tweaksSchema);
+    refreshAllTweakCards();
 });
 
 // Auto-init only for general tweaks
