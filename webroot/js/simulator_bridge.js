@@ -147,7 +147,8 @@
             tweakCurrent: {
                 hwui: {
                     renderer: 'default',
-                    rom_default: 'Vulkan'
+                    rom_default: 'Vulkan',
+                    disable_sbwc: '0'
                 },
                 kswapd: {
                     threads: '1',

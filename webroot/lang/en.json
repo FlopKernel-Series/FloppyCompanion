@@ -187,7 +187,9 @@
             "renderer": "Renderer",
             "default": "@features.optionDefault",
             "activeRenderer": "Active renderer",
-            "romDefault": "ROM default"
+            "romDefault": "ROM default",
+            "disableSbwc": "Disable SBWC for video",
+            "vulkanSbwcWarning": "Disabling SBWC is recommended when using Vulkan to avoid issues with video playback."
         },
         "kswapd": {
             "title": "KSWAPD Configuration",

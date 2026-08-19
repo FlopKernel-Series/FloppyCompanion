@@ -187,7 +187,9 @@
             "renderer": "Renderizador",
             "default": "Predeterminado",
             "activeRenderer": "Renderizador activo",
-            "romDefault": "Predeterminado de la ROM"
+            "romDefault": "Predeterminado de la ROM",
+            "disableSbwc": "Desactivar SBWC para video",
+            "vulkanSbwcWarning": "Se recomienda desactivar SBWC al usar Vulkan para evitar problemas en la reproducción de video."
         },
         "kswapd": {
             "title": "Configuración de KSWAPD",

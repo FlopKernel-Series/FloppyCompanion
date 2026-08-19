@@ -127,7 +127,8 @@ cat > "$TMP_OUTPUT_FILE" << EOF
   "tweaks": {
     "hwui": {
       "renderer": "default",
-      "rom_default": "$HWUI_ROM_DEFAULT"
+      "rom_default": "$HWUI_ROM_DEFAULT",
+      "disable_sbwc": "0"
     },
 $(if [ "$KSWAPD_AVAILABLE" = "1" ]; then cat << EOF_KSWAPD
     "kswapd": {

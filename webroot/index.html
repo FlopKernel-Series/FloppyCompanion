@@ -1269,6 +1269,12 @@
 
                     <template id="tpl-hwui">
                         <div class="card-content">
+                            <div id="hwui-sbwc-warning" class="info-notice hidden">
+                                <svg class="notice-icon" viewBox="0 0 24 24" data-icon="info_outline"></svg>
+                                <div class="notice-content">
+                                    <span data-i18n="tweaks.hwui.vulkanSbwcWarning">Disabling SBWC is recommended when using Vulkan to avoid video playback issues.</span>
+                                </div>
+                            </div>
                             <div class="tweak-section" style="padding-top: 0;">
                                 <h3 class="tweak-section-title" data-i18n="tweaks.hwui.renderer">Renderer</h3>
                                 <div id="hwui-renderer-options" class="option-buttons beer">
@@ -1276,6 +1282,17 @@
                                         data-i18n="tweaks.hwui.default">Default</button>
                                     <button class="option-btn chip medium" data-renderer="skiavk">Vulkan</button>
                                     <button class="option-btn chip medium" data-renderer="skiagl">OpenGL</button>
+                                </div>
+                                <div class="tweak-row hidden" id="hwui-sbwc-row" style="margin-top: 12px; padding-bottom: 8px;">
+                                    <div class="tweak-info-col">
+                                        <span class="tweak-label" data-i18n="tweaks.hwui.disableSbwc">Disable SBWC for video</span>
+                                    </div>
+                                    <div class="beer switch-scope">
+                                        <label class="switch">
+                                            <input type="checkbox" id="hwui-disable-sbwc-toggle">
+                                            <span></span>
+                                        </label>
+                                    </div>
                                 </div>
                                 <div class="current-values">
                                     <div class="value-row">

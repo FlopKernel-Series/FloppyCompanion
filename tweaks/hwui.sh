@@ -11,7 +11,7 @@ get_rom_default() {
     local prop_line
     local prop_value
 
-    prop_line=$(getprop | grep '^\[ro\.hwui\.use_vulkan\]:' | head -n 1)
+    prop_line=$(getprop 2>/dev/null | grep '^\[ro\.hwui\.use_vulkan\]:' | head -n 1)
     if [ -z "$prop_line" ]; then
         echo "Unknown"
         return 0
@@ -44,11 +44,19 @@ normalize_renderer() {
 
 get_current() {
     local renderer
+    local disable_sbwc=0
     renderer=$(getprop debug.hwui.renderer 2>/dev/null)
     renderer=$(normalize_renderer "$renderer")
 
+    local sbwc_val
+    sbwc_val=$(getprop vendor.debug.c2.sbwc.enable 2>/dev/null)
+    if [ "$sbwc_val" = "false" ]; then
+        disable_sbwc=1
+    fi
+
     echo "renderer=$renderer"
     echo "rom_default=$(get_rom_default)"
+    echo "disable_sbwc=$disable_sbwc"
 }
 
 get_saved() {
@@ -56,11 +64,13 @@ get_saved() {
         cat "$CONFIG_FILE"
     else
         echo "renderer="
+        echo "disable_sbwc="
     fi
 }
 
 save() {
-    local renderer
+    local renderer=""
+    local disable_sbwc=""
 
     if [ "$#" -eq 0 ]; then
         rm -f "$CONFIG_FILE"
@@ -68,57 +78,103 @@ save() {
         return 0
     fi
 
-    if echo "$1" | grep -q '='; then
-        renderer=""
-        for arg in "$@"; do
-            key="${arg%%=*}"
-            val="${arg#*=}"
-            [ "$key" = "renderer" ] && renderer="$val"
-        done
-    else
-        renderer="$1"
-    fi
+    for arg in "$@"; do
+        case "$arg" in
+            renderer=*)
+                renderer="${arg#renderer=}"
+                ;;
+            disable_sbwc=*)
+                disable_sbwc="${arg#disable_sbwc=}"
+                ;;
+            *)
+                if [ -z "$renderer" ]; then
+                    renderer="$arg"
+                fi
+                ;;
+        esac
+    done
 
-    renderer=$(normalize_renderer "$renderer")
+    [ -n "$renderer" ] && renderer=$(normalize_renderer "$renderer")
     mkdir -p "$(dirname "$CONFIG_FILE")"
 
-    if [ "$renderer" = "default" ]; then
+    > "$CONFIG_FILE"
+    if [ -n "$renderer" ] && [ "$renderer" != "default" ]; then
+        echo "renderer=$renderer" >> "$CONFIG_FILE"
+    fi
+    if [ -n "$disable_sbwc" ] && [ "$disable_sbwc" != "0" ]; then
+        echo "disable_sbwc=$disable_sbwc" >> "$CONFIG_FILE"
+    fi
+
+    if [ ! -s "$CONFIG_FILE" ]; then
         rm -f "$CONFIG_FILE"
-    else
-        echo "renderer=$renderer" > "$CONFIG_FILE"
     fi
 
     echo "saved"
 }
 
 apply() {
-    local renderer
-    renderer=$(normalize_renderer "$1")
+    local renderer=""
+    local disable_sbwc=""
 
-    if [ "$renderer" = "default" ]; then
-        if command -v resetprop >/dev/null 2>&1; then
-            resetprop -d debug.hwui.renderer >/dev/null 2>&1 || true
+    for arg in "$@"; do
+        case "$arg" in
+            renderer=*)
+                renderer="${arg#renderer=}"
+                ;;
+            disable_sbwc=*)
+                disable_sbwc="${arg#disable_sbwc=}"
+                ;;
+            *)
+                if [ -z "$renderer" ]; then
+                    renderer="$arg"
+                elif [ -z "$disable_sbwc" ]; then
+                    disable_sbwc="$arg"
+                fi
+                ;;
+        esac
+    done
+
+    if [ -n "$renderer" ]; then
+        renderer=$(normalize_renderer "$renderer")
+        if [ "$renderer" = "default" ]; then
+            if command -v resetprop >/dev/null 2>&1; then
+                resetprop -d debug.hwui.renderer >/dev/null 2>&1 || true
+            fi
+            setprop debug.hwui.renderer "" 2>/dev/null || true
+        else
+            if command -v resetprop >/dev/null 2>&1; then
+                resetprop -n debug.hwui.renderer "$renderer" >/dev/null 2>&1 || true
+            fi
+            setprop debug.hwui.renderer "$renderer" 2>/dev/null || true
         fi
-        setprop debug.hwui.renderer "" 2>/dev/null || true
-        echo "applied"
-        return 0
     fi
 
-    setprop debug.hwui.renderer "$renderer" 2>/dev/null
+    if [ -n "$disable_sbwc" ]; then
+        if [ "$disable_sbwc" = "1" ] || [ "$disable_sbwc" = "true" ]; then
+            if command -v resetprop >/dev/null 2>&1; then
+                resetprop -n vendor.debug.c2.sbwc.enable false >/dev/null 2>&1 || true
+            fi
+            setprop vendor.debug.c2.sbwc.enable false 2>/dev/null || true
+        else
+            if command -v resetprop >/dev/null 2>&1; then
+                resetprop -d vendor.debug.c2.sbwc.enable >/dev/null 2>&1 || true
+            fi
+            setprop vendor.debug.c2.sbwc.enable "" 2>/dev/null || true
+        fi
+    fi
+
     echo "applied"
 }
 
 apply_saved() {
-    local renderer
-
     if [ ! -f "$CONFIG_FILE" ]; then
         return 0
     fi
 
-    renderer=$(grep '^renderer=' "$CONFIG_FILE" | cut -d= -f2)
-    [ -n "$renderer" ] || return 0
+    local renderer=$(grep '^renderer=' "$CONFIG_FILE" 2>/dev/null | cut -d= -f2)
+    local disable_sbwc=$(grep '^disable_sbwc=' "$CONFIG_FILE" 2>/dev/null | cut -d= -f2)
 
-    apply "$renderer"
+    apply "renderer=$renderer" "disable_sbwc=$disable_sbwc"
 }
 
 case "$1" in
@@ -133,7 +189,8 @@ case "$1" in
         save "$@"
         ;;
     apply)
-        apply "$2"
+        shift
+        apply "$@"
         ;;
     apply_saved)
         apply_saved
