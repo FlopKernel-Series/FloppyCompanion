@@ -197,7 +197,8 @@
             "activeAffinity": "Active affinity",
             "threadSingular": "{count} thread",
             "threadPlural": "{count} threads",
-            "minOneCpu": "At least one CPU must be selected"
+            "minOneCpu": "At least one CPU must be selected",
+            "highValueWarning": "Values above 3 are not very effective and can make performance worse."
         },
         "zram": {
             "title": "@monitor.memory.zramSection",

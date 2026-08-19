@@ -17,17 +17,21 @@ function getMaxKswapdCpus() {
 }
 
 function parseCpumask(val) {
+    const maxCpus = getMaxKswapdCpus();
     if (val === undefined || val === null || val === '') {
-        const maxCpus = getMaxKswapdCpus();
         return (1 << maxCpus) - 1;
     }
     const str = String(val).trim();
+    let parsed = 0;
     if (str.startsWith('0x') || str.startsWith('0X')) {
-        const parsed = parseInt(str, 16);
-        return Number.isFinite(parsed) ? parsed : 0;
+        parsed = parseInt(str, 16);
+    } else {
+        parsed = parseInt(str, 10);
     }
-    const parsed = parseInt(str, 10);
-    return Number.isFinite(parsed) ? parsed : 0;
+    if (!Number.isFinite(parsed) || parsed <= 0) {
+        return (1 << maxCpus) - 1;
+    }
+    return parsed;
 }
 
 function formatCpumaskHex(mask) {
@@ -154,6 +158,13 @@ function renderKswapdCard() {
         '1'
     );
 
+    // High thread warning box (pop if threads > 3)
+    const threadsNum = parseInt(pendingThreads, 10) || 1;
+    const highWarning = document.getElementById('kswapd-high-warning');
+    if (highWarning) {
+        highWarning.classList.toggle('hidden', threadsNum <= 3);
+    }
+
     if (slider) {
         slider.min = '1';
         slider.max = String(maxCpus);
@@ -215,10 +226,20 @@ function renderKswapdCard() {
             }
 
             btn.addEventListener('click', () => {
-                const currentMask = parseCpumask(kswapdPendingState.affinity);
+                const currentMask = parseCpumask(kswapdPendingState.affinity || kswapdCurrentState.affinity || '0x7f');
                 const bit = 1 << i;
-                const newMask = currentMask ^ bit;
+                const isCurrentlySelected = ((currentMask >> i) & 1) === 1;
 
+                // Safeguard: Don't let the user de-select all CPUs
+                if (isCurrentlySelected && (currentMask & (currentMask - 1)) === 0) {
+                    const warnMsg = window.t
+                        ? window.t('tweaks.kswapd.minOneCpu')
+                        : 'At least one CPU must be selected';
+                    window.showToast(warnMsg, true);
+                    return;
+                }
+
+                const newMask = isCurrentlySelected ? (currentMask & ~bit) : (currentMask | bit);
                 if (newMask === 0) {
                     const warnMsg = window.t
                         ? window.t('tweaks.kswapd.minOneCpu')

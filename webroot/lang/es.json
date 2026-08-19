@@ -197,7 +197,8 @@
             "activeAffinity": "Afinidad activa",
             "threadSingular": "{count} hilo",
             "threadPlural": "{count} hilos",
-            "minOneCpu": "Al menos una CPU debe estar seleccionada"
+            "minOneCpu": "Al menos una CPU debe estar seleccionada",
+            "highValueWarning": "Valores superiores a 3 no son muy efectivos y pueden empeorar el rendimiento."
         },
         "zram": {
             "title": "ZRAM",

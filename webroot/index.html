@@ -1301,6 +1301,12 @@
 
                     <template id="tpl-kswapd">
                         <div class="card-content">
+                            <div id="kswapd-high-warning" class="info-notice warning hidden">
+                                <svg class="notice-icon" viewBox="0 0 24 24" data-icon="warning_triangle"></svg>
+                                <div class="notice-content">
+                                    <span data-i18n="tweaks.kswapd.highValueWarning">Values above 3 are not very effective and can make performance worse.</span>
+                                </div>
+                            </div>
                             <div class="slider-container" id="kswapd-container-threads">
                                 <div class="tweak-row" style="border-bottom: none; padding-bottom: 4px;">
                                     <div class="tweak-info-col">
