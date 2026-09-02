@@ -1017,7 +1017,7 @@ PRESET_EOF`);
 
     async function saveLog(type) {
         const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
-        const filename = `/sdcard/${type}_${timestamp}.log`;
+        const filename = `/sdcard/${type}_${timestamp}.txt`;
         let cmd;
 
         if (type === 'last_kmsg') {
