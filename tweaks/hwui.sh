@@ -139,8 +139,9 @@ apply() {
         if [ "$renderer" = "default" ]; then
             if command -v resetprop >/dev/null 2>&1; then
                 resetprop -d debug.hwui.renderer >/dev/null 2>&1 || true
+            else
+                setprop debug.hwui.renderer "" 2>/dev/null || true
             fi
-            setprop debug.hwui.renderer "" 2>/dev/null || true
         else
             if command -v resetprop >/dev/null 2>&1; then
                 resetprop -n debug.hwui.renderer "$renderer" >/dev/null 2>&1 || true
@@ -158,8 +159,9 @@ apply() {
         else
             if command -v resetprop >/dev/null 2>&1; then
                 resetprop -d vendor.debug.c2.sbwc.enable >/dev/null 2>&1 || true
+            else
+                setprop vendor.debug.c2.sbwc.enable "" 2>/dev/null || true
             fi
-            setprop vendor.debug.c2.sbwc.enable "" 2>/dev/null || true
         fi
     fi
 

@@ -92,7 +92,11 @@ set_lmkd_prop() {
 }
 
 clear_lmkd_prop() {
-    setprop "$PROP_PREFIX.$1" ""
+    if command -v resetprop >/dev/null 2>&1; then
+        resetprop -d "$PROP_PREFIX.$1" >/dev/null 2>&1 || true
+    else
+        setprop "$PROP_PREFIX.$1" "" 2>/dev/null || true
+    fi
 }
 
 reinit_lmkd() {
