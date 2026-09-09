@@ -87,6 +87,11 @@
                             "val": "r44p1",
                             "label": "Mali r44p1",
                             "desc": "Select the r44p1 Mali kernel driver."
+                        },
+                        {
+                            "val": "panfr",
+                            "label": "Panfrost",
+                            "desc": "Panfrost open-source DRM driver."
                         }
                     ]
                 },

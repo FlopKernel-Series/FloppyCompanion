@@ -126,6 +126,10 @@
             "r44p1": {
                 "label": "Mali r44p1",
                 "desc": "Selecciona el controlador de kernel Mali r44p1."
+            },
+            "panfr": {
+                "label": "Panfrost",
+                "desc": "Controlador DRM de código abierto Panfrost. EXPERIMENTAL: NO USAR a menos que sepas lo que estás haciendo."
             }
         }
     }
