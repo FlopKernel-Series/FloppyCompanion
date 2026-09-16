@@ -89,6 +89,11 @@
                             "desc": "Select the r44p1 Mali kernel driver."
                         },
                         {
+                            "val": "r54p3",
+                            "label": "Mali r54p3",
+                            "desc": "Select the r54p3 Mali kernel driver."
+                        },
+                        {
                             "val": "panfr",
                             "label": "Panfrost",
                             "desc": "Panfrost open-source DRM driver."
