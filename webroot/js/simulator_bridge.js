@@ -41,6 +41,7 @@
                 mass_storage_hack: '0',
                 init_protection: '1',
                 selinux_mode: '0',
+                default_sbwc_mode: '0',
                 'mali.version': 'r38p1'
             }
         },

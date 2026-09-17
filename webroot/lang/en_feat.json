@@ -107,6 +107,24 @@
         "title": "DMA-BUF Environment",
         "desc": "Use the DMA-BUF heaps allocator instead of ION. ONLY enable if your ROM supports DMA-BUF."
     },
+    "default_sbwc_mode": {
+        "title": "Default MFC SBWC Mode",
+        "desc": "Default MFC decoder SBWC/SBWCL usage at boot. Use the \"Disable SBWC for Video\" toggle in Tweaks instead of this option; that toggle is the runtime switch and overrides this default.",
+        "options": {
+            "0": {
+                "label": "Full SBWC",
+                "desc": "SBWC decode and SBWCL encode."
+            },
+            "1": {
+                "label": "No SBWC decode",
+                "desc": "Linear decode with SBWCL encode."
+            },
+            "2": {
+                "label": "No SBWC/SBWCL",
+                "desc": "Linear decode and encode."
+            }
+        }
+    },
     "mali.version": {
         "title": "Mali Version Selector",
         "desc": "Select Mali GPU kernel driver version.",
