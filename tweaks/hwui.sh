@@ -42,15 +42,36 @@ normalize_renderer() {
     esac
 }
 
+sbwc_sysfs() {
+    local node
+    node="/sys/devices/platform/mfc/support_sbwc"
+    if [ -f "$node" ]; then
+        echo "$node"
+        return 0
+    fi
+    node=$(find /sys/devices/platform -maxdepth 2 -name support_sbwc 2>/dev/null | head -n 1)
+    if [ -n "$node" ]; then
+        echo "$node"
+        return 0
+    fi
+    return 1
+}
+
 get_current() {
     local renderer
     local disable_sbwc=0
     renderer=$(getprop debug.hwui.renderer 2>/dev/null)
     renderer=$(normalize_renderer "$renderer")
 
-    local sbwc_val
-    sbwc_val=$(getprop vendor.debug.c2.sbwc.enable 2>/dev/null)
-    if [ "$sbwc_val" = "false" ]; then
+    local sbwc_node
+    sbwc_node=$(sbwc_sysfs 2>/dev/null || true)
+    if [ -n "$sbwc_node" ] && [ "$(cat "$sbwc_node" 2>/dev/null || true)" = "0" ]; then
+        disable_sbwc=1
+    fi
+
+    local sbwc_prop
+    sbwc_prop=$(getprop vendor.debug.c2.sbwc.enable 2>/dev/null || true)
+    if [ "$sbwc_prop" = "false" ]; then
         disable_sbwc=1
     fi
 
@@ -147,6 +168,14 @@ apply() {
                 resetprop -n debug.hwui.renderer "$renderer" >/dev/null 2>&1 || true
             fi
             setprop debug.hwui.renderer "$renderer" 2>/dev/null || true
+        fi
+    fi
+
+    if [ "$disable_sbwc" = "1" ] || [ "$disable_sbwc" = "true" ]; then
+        local sbwc_node
+        sbwc_node=$(sbwc_sysfs 2>/dev/null || true)
+        if [ -n "$sbwc_node" ]; then
+            { echo 0 > "$sbwc_node"; } 2>/dev/null || true
         fi
     fi
 
