@@ -96,7 +96,8 @@
                         {
                             "val": "panfr",
                             "label": "Panfrost",
-                            "desc": "Panfrost open-source DRM driver."
+                            "desc": "Panfrost open-source DRM driver.",
+                            "experimental": true
                         }
                     ]
                 },
