@@ -235,6 +235,14 @@
                     "save": true
                 },
                 {
+                    "key": "panel_legacy_mode",
+                    "title": "Panel Legacy Mode",
+                    "type": "toggle",
+                    "desc": "Use real 60/120Hz panel modes instead of HW TE SKIP. For aftermarket panels that do not support HW TE SKIP.",
+                    "experimental": true,
+                    "save": true
+                },
+                {
                     "key": "default_sbwc_mode",
                     "title": "Default MFC SBWC Mode",
                     "type": "select",

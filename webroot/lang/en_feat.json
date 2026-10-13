@@ -107,6 +107,10 @@
         "title": "DMA-BUF Environment",
         "desc": "Use the DMA-BUF heaps allocator instead of ION. ONLY enable if your ROM supports DMA-BUF."
     },
+    "panel_legacy_mode": {
+        "title": "Panel Legacy Mode",
+        "desc": "Use real 60/120Hz panel modes instead of HW TE SKIP. For aftermarket panels that do not support HW TE SKIP."
+    },
     "default_sbwc_mode": {
         "title": "Default MFC SBWC Mode",
         "desc": "Default MFC decoder SBWC/SBWCL usage at boot. Use the \"Disable SBWC for Video\" toggle in Tweaks instead of this option; that toggle is the runtime switch and overrides this default.",
