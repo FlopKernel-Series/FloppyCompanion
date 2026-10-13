@@ -479,13 +479,12 @@ PRESET_EOF`);
             item.addEventListener('click', async () => {
                 const action = item.dataset.action;
 
-                // Map action to command
                 const rebootCommands = {
                     'system': 'svc power reboot',
                     'recovery': 'reboot recovery',
-                    'fastboot': 'reboot bootloader',
-                    'download': 'reboot download',
-                    'bootloader': 'reboot bootloader'
+                    'download': 'reboot bootloader',
+                    'bootloader': 'reboot bootloader',
+                    'fastboot': 'reboot fastboot'
                 };
 
                 const command = rebootCommands[action];
