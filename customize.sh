@@ -3,8 +3,11 @@
 # Copyright (c) 2026 Flopster101
 # SPDX-License-Identifier: GPL-3.0
 
+. "$MODPATH/translations/locale.sh"
+load_translations
+
 ui_print "========================================"
-ui_print "       FloppyCompanion Installer"
+ui_print "       $STR_INSTALLER_TITLE"
 ui_print "========================================"
 ui_print ""
 
@@ -67,7 +70,7 @@ resolve_icon_family() {
 
 install_webui_icon() {
     if [ -z "$MODPATH" ]; then
-        ui_print "- ⚠️  Could not access module path; keeping default icon."
+        ui_print "- ⚠️  $STR_COULD_NOT_ACCESS_MODULE_PATH"
         return 0
     fi
 
@@ -80,15 +83,15 @@ install_webui_icon() {
 
     if [ -n "$ICON_SOURCE" ] && [ -f "$ICON_SOURCE" ]; then
         cp -f "$ICON_SOURCE" "$MODPATH/webroot/icon.png"
-        ui_print "- Applied $KERN_NAME WebUI icon."
+        ui_print "- $(printf "$STR_APPLIED_ICON" "$KERN_NAME")"
     else
-        ui_print "- ⚠️  No icon for this variant; keeping default icon."
+        ui_print "- ⚠️  $STR_NO_ICON"
     fi
 
     rm -rf "$MODPATH/icons"
 }
 
-ui_print "- Detecting kernel..."
+ui_print "- $STR_DETECTING_KERNEL"
 
 if echo "$KERN_VER" | grep -q "Floppy"; then
     # Parse kernel name (Floppy1280, FloppyTrinketMi, etc)
@@ -102,9 +105,9 @@ if echo "$KERN_VER" | grep -q "Floppy"; then
 
     # Parse build type
     if echo "$KERN_VER" | grep -q "\-release"; then
-        BUILD_TYPE="Release"
+        BUILD_TYPE="$STR_BUILD_RELEASE"
     else
-        BUILD_TYPE="Testing"
+        BUILD_TYPE="$STR_BUILD_TESTING"
         GIT_HASH=$(echo "$KERN_VER" | grep -o '\-g[0-9a-f]*' | sed 's/-g//')
         if [ -n "$GIT_HASH" ]; then
             BUILD_TYPE="$BUILD_TYPE ($GIT_HASH)"
@@ -114,7 +117,7 @@ if echo "$KERN_VER" | grep -q "Floppy"; then
     # Check for dirty flag
     DIRTY=""
     if echo "$KERN_VER" | grep -q "dirty"; then
-        DIRTY=", dirty"
+        DIRTY="$STR_BUILD_DIRTY"
     fi
 
     # Assemble formatted info
@@ -123,16 +126,16 @@ if echo "$KERN_VER" | grep -q "Floppy"; then
     INFO="$INFO, $BUILD_TYPE$DIRTY"
 
     ui_print ""
-    ui_print "  ✅ FloppyKernel Detected!"
+    ui_print "  ✅ $STR_KERNEL_DETECTED"
     ui_print ""
-    ui_print "  Kernel: $KERN_NAME"
-    [ -n "$VERSION" ] && ui_print "  Version: $VERSION"
-    [ -n "$VARIANT" ] && ui_print "  Variant: $VARIANT"
-    ui_print "  Build: $BUILD_TYPE$DIRTY"
+    ui_print "  $STR_LABEL_KERNEL: $KERN_NAME"
+    [ -n "$VERSION" ] && ui_print "  $STR_LABEL_VERSION: $VERSION"
+    [ -n "$VARIANT" ] && ui_print "  $STR_LABEL_VARIANT: $VARIANT"
+    ui_print "  $STR_LABEL_BUILD: $BUILD_TYPE$DIRTY"
 
     # Check for unsupported version
     UNSUPPORTED=0
-    MIN_MSG=""
+    MIN_VERSION=""
     if [ -n "$VERSION" ]; then
         # Parse version with potential suffix (e.g., "v2.0b" -> major=2, minor=0, suffix=b)
         VERSION_CLEAN=$(echo "$VERSION" | sed 's/v//')
@@ -148,7 +151,7 @@ if echo "$KERN_VER" | grep -q "Floppy"; then
             elif [ "$VER_MAJOR" -eq 6 ] && [ "$VER_MINOR" -lt 2 ] 2>/dev/null; then
                 UNSUPPORTED=1
             fi
-            MIN_MSG="Floppy1280 versions below v6.2"
+            MIN_VERSION="v6.2"
         fi
         
         # FloppyTrinketMi: minimum v2.0b
@@ -164,48 +167,64 @@ if echo "$KERN_VER" | grep -q "Floppy"; then
             elif [ "$VER_MAJOR" -eq 2 ] && [ "$VER_MINOR" -lt 0 ] 2>/dev/null; then
                 UNSUPPORTED=1
             fi
-            MIN_MSG="FloppyTrinketMi versions below v2.0b"
+            MIN_VERSION="v2.0b"
         fi
     fi
     
     if [ "$UNSUPPORTED" = "1" ]; then
         ui_print "  ----------------------------------------"
-        ui_print "  ⚠️  UNSUPPORTED VERSION"
+        ui_print "  ⚠️  $STR_UNSUPPORTED_VERSION"
         ui_print "  ----------------------------------------"
-        ui_print "  $MIN_MSG are"
-        ui_print "  not fully supported by this module."
-        ui_print "  Please update your kernel."
+        ui_print "  $(printf "$STR_UNSUPPORTED_LINE_1" "$MIN_VERSION")"
+        ui_print "  $STR_UNSUPPORTED_LINE_2"
+        ui_print "  $STR_UPDATE_KERNEL"
         ui_print "  ----------------------------------------"
     fi
     ui_print ""
 else
     ui_print ""
     ui_print "========================================"
-    ui_print "           ⚠️  WARNING  ⚠️"
+    ui_print "           ⚠️  $STR_WARNING  ⚠️"
     ui_print "========================================"
     ui_print ""
-    ui_print "  FloppyKernel NOT detected!"
+    ui_print "  $STR_KERNEL_NOT_DETECTED"
     ui_print ""
-    ui_print "  Current kernel: $KERN_VER"
+    ui_print "  $STR_CURRENT_KERNEL: $KERN_VER"
     ui_print ""
-    ui_print "  This module is designed for"
-    ui_print "  FloppyKernel and will NOT work"
-    ui_print "  to its fullest with other kernels."
+    ui_print "  $STR_MODULE_DESIGNED_FOR"
+    ui_print "  $STR_WILL_NOT_WORK"
+    ui_print "  $STR_OTHER_KERNELS"
     ui_print ""
     ui_print "========================================"
     ui_print ""
 fi
 
-ui_print "- Installing module files..."
+ui_print "- $STR_INSTALLING_FILES"
 ui_print ""
 
 install_webui_icon
 ui_print ""
+
+# Set the initial localized description; service.sh adds detected kernel details at boot.
+if [ -f "$MODPATH/module.prop" ]; then
+    DESCRIPTION_TMP="$MODPATH/module.prop.tmp.$$"
+    if awk -v desc="$STR_MODULE_DESCRIPTION" '
+        /^description=/ { print "description=" desc; updated = 1; next }
+        { print }
+        END { if (!updated) print "description=" desc }
+    ' "$MODPATH/module.prop" > "$DESCRIPTION_TMP" &&
+        mv -f "$DESCRIPTION_TMP" "$MODPATH/module.prop"; then
+        :
+    else
+        rm -f "$DESCRIPTION_TMP"
+        ui_print "- ⚠️  $STR_DESCRIPTION_UPDATE_FAILED"
+    fi
+fi
 
 # Create persistent data directory
 DATA_DIR="/data/adb/floppy_companion"
 mkdir -p "$DATA_DIR/config"
 mkdir -p "$DATA_DIR/presets"
 
-ui_print "- Installation complete!"
+ui_print "- $STR_INSTALLATION_COMPLETE"
 ui_print ""
