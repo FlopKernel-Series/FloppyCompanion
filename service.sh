@@ -14,6 +14,9 @@ done
 # Additional delay for vendor scripts to finish
 sleep 3
 
+. "$MODDIR/translations/locale.sh"
+load_translations
+
 # --- Persistence Setup ---
 DATA_DIR="/data/adb/floppy_companion"
 mkdir -p "$DATA_DIR/config"
@@ -204,7 +207,7 @@ if [ -f /proc/version ]; then
     read -r _ _ KERN_VER _ < /proc/version
 fi
 [ -z "$KERN_VER" ] && KERN_VER=$(uname -r)
-DESCRIPTION="Companion module to tweak FloppyKernel."
+DESCRIPTION="$STR_MODULE_DESCRIPTION"
 
 if echo "$KERN_VER" | grep -q "Floppy"; then
     STATUS="✅"
@@ -220,9 +223,9 @@ if echo "$KERN_VER" | grep -q "Floppy"; then
     
     # Parse build type
     if echo "$KERN_VER" | grep -q "\-release"; then
-        BUILD_TYPE="Release"
+        BUILD_TYPE="$STR_BUILD_RELEASE"
     else
-        BUILD_TYPE="Testing"
+        BUILD_TYPE="$STR_BUILD_TESTING"
         # Try to get git hash
         GIT_HASH=$(echo "$KERN_VER" | grep -o '\-g[0-9a-f]*' | sed 's/-g//')
         if [ -n "$GIT_HASH" ]; then
@@ -233,7 +236,7 @@ if echo "$KERN_VER" | grep -q "Floppy"; then
     # Check for dirty flag
     DIRTY=""
     if echo "$KERN_VER" | grep -q "dirty"; then
-        DIRTY=", dirty"
+        DIRTY="$STR_BUILD_DIRTY"
     fi
     
     # Assemble formatted info
@@ -278,14 +281,14 @@ if echo "$KERN_VER" | grep -q "Floppy"; then
     
     if [ "$UNSUPPORTED" = "1" ]; then
         STATUS="⚠️"
-        INFO="$INFO (Unsupported)"
+        INFO="$INFO ($STR_MANAGER_UNSUPPORTED)"
     fi
 else
     STATUS="❌"
-    INFO="Not Floppy or incompatible version"
+    INFO="$STR_MANAGER_INCOMPATIBLE_KERNEL"
 fi
 
 if [ -f "$MODDIR/module.prop" ]; then
     INFO=$(printf '%s' "$INFO" | tr '\r\n' ' ' | sed 's/[[:space:]]\+/ /g; s/^ //; s/ $//')
-    update_module_prop_description "$MODDIR/module.prop" "$DESCRIPTION Detected kernel: $INFO $STATUS"
+    update_module_prop_description "$MODDIR/module.prop" "$DESCRIPTION $STR_MANAGER_DETECTED_KERNEL $INFO $STATUS"
 fi
