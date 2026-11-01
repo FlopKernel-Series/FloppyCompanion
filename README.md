@@ -1,6 +1,6 @@
-# FloppyCompanion
-
 [English](README.md) | [Русский](README_ru.md)
+
+# FloppyCompanion
 
 <p align="center"><img src="docs/images/floppycompanion.png" alt="FloppyCompanion" width="720" /></p>
 
