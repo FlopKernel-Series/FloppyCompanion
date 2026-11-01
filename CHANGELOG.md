@@ -1,5 +1,22 @@
 All notable changes to FloppyCompanion will be documented in this file.
 
+## v1.2.0
+## Added
+- Automatic system-language detection for installer messages and the module description displayed in the manager.
+- A shared locale loader that checks Android’s selected locale, system properties, and activity configuration, then falls back to English.
+- Installer and manager translations for Arabic, Azerbaijani, Spanish, Polish, Brazilian Portuguese, Russian, Albanian, Turkish, Ukrainian, and Vietnamese.
+- A Russian project README with language links at the top of both README files.
+## Changed
+- Localized installer output, including kernel detection, build details, unsupported-version notices, icon messages, and installation status.
+- Localized the module description and detected-kernel information refreshed by the boot service.
+- Included the translations/ directory in generated module packages.
+- Updated the translation guide with instructions for translating installer and manager strings.
+- Normalized translation shell files to LF line endings for compatibility with Android shells.
+  
+## Validation
+- Checked shell syntax for the installer and translation scripts.
+vVerified that all locales contain the same translation keys and matching format placeholders.
+
 ## v1.1.1
 - Many improvements to UI to make more faithful to MD3.
 - Add support for Dynamic Colors "Monet" to UI.
