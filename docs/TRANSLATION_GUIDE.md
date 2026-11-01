@@ -43,3 +43,16 @@ Example:
 Use a two-letter language code when possible, or `language_REGION` when you need a regional variant like `pt_BR` or `es_AR`. Use the native language name for `name`, and `rtl` only for right-to-left languages.
 
 That's it! The dropdown will show your language automatically.
+
+## Installer and module manager
+
+Installer messages and the module description shown in the manager use shell
+translations in `repo/translations/{code}/strings.sh`. Copy
+`repo/translations/strings.sh` into a folder named for the locale code and
+translate the values while keeping the `STR_` variable names and `%s`
+placeholders unchanged. Use a hyphen for region-specific folders such as
+`pt-BR`; Android locale underscores are normalized automatically.
+
+The installer and boot service detect the system language and fall back to
+English when a translation is unavailable. The service adds the detected
+kernel information to the localized module description after boot.
