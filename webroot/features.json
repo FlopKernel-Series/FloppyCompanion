@@ -89,6 +89,16 @@
                             "desc": "Select the r44p1 Mali kernel driver."
                         },
                         {
+                            "val": "r49p1",
+                            "label": "Mali r49p1",
+                            "desc": "Select the r49p1 Mali kernel driver."
+                        },
+                        {
+                            "val": "r54p1",
+                            "label": "Mali r54p1",
+                            "desc": "Select the r54p1 Mali kernel driver."
+                        },
+                        {
                             "val": "r54p3",
                             "label": "Mali r54p3",
                             "desc": "Select the r54p3 Mali kernel driver."
