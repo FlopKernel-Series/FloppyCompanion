@@ -157,6 +157,14 @@
                 "label": "Mali r54p1",
                 "desc": "Selecciona el controlador de kernel Mali r54p1."
             },
+            "r49p1": {
+                "label": "Mali r49p1",
+                "desc": "Selecciona el controlador de kernel Mali r49p1."
+            },
+            "r54p1": {
+                "label": "Mali r54p1",
+                "desc": "Selecciona el controlador de kernel Mali r54p1."
+            },
             "r54p3": {
                 "label": "Mali r54p3",
                 "desc": "Selecciona el controlador de kernel Mali r54p3."
